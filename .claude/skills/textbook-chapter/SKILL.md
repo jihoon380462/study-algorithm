@@ -35,6 +35,14 @@ description: Python 알고리즘·자료구조 교과서의 장 하나를 만든
 6. **한 개념에 이름 하나.** 용어집에 올린 이름을 모든 장에서 그대로 쓴다. 색으로만 구분하지 않고 모양이나 글자를 함께 쓴다. (teach, teach-me, visual-explainer)
 7. **목차를 먼저 보여 주고 승인받는다. 한 번에 한 장만 만들고 확인한 뒤 다음으로 간다.** (book-chapter-generator, learn-with-claude, codebase-to-course)
 
+## 초급 독자에게 읽히기
+
+초안을 쓴 뒤 `novice-reader` 서브에이전트에게 읽힌다. 코드를 전혀 모르는 초급 학습자이자 비평가다. (explainer-book의 first-reader 방식)
+
+- 넘기는 것은 장 파일의 경로뿐이다. 의도나 배경 설명을 덧붙이지 않는다. 독자는 그런 설명 없이 읽는다.
+- "심함"과 "보통"으로 지적된 곳은 전부 고친다. 고친 뒤 한 번 더 읽힌다. 두 번까지만 반복한다.
+- 고치지 않기로 한 지적과 두 번 뒤에도 남은 지적은 사용자에게 그대로 보고한다.
+
 ## 끝내기 전에
 
 (pdf-to-interactive-web, talk-to-me-in-html, codebase-to-course의 점검 방식)
