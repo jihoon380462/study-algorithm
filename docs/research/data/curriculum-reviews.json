@@ -1,0 +1,4981 @@
+{
+ "prerequisite_gradient_review": {
+  "lens": "A — 선수 지식 그래프와 인접 쌍 경사 (prerequisite graph and adjacent-pair gradient)",
+  "overallVerdict": "제안안의 큰 뼈대(추적 기초 → 배열 → 정렬 → 선형 구조 → 재귀 → 분할 정복 → 노드 구조 → 탐색 → DP → 가중치 그래프)는 유지할 만하다. 그러나 '인접 장 난이도 차 ≤ 1, 장마다 새 개념 1개를 이미 만족한다'는 주장은 성립하지 않는다.\n(1) 난이도 숫자가 내용이 아니라 위치를 따라 매겨져 있다(구간 병합 6 = N-Queens 6, heapq 사용 5 = 하노이 5). 규칙 통과가 순환 논증이다.\n(2) 79개 장 중 최소 20개 장이 새 아이디어를 2~5개 담는다(4, 7, 9, 12, 17, 21, 31, 35, 42, 43, 45, 46, 48, 54~58, 61, 67, 68, 73, 77).\n(3) 선수 지식이 19~66장 묵은 채 쓰이는 곳이 17군데다(26→60, 14→53, 17→50, 41→71, 12·22→73 등). 복습 장은 0개다.\n(4) 가르친 적 없는 선수가 쓰인다: 중첩 루프, 2차원 리스트, class, 문자열, 이진수, 가중치 간선 표현, 부모를 넘기는 트리 DFS.\n(5) 이미 내린 결정과 충돌한다: BFS 맛보기가 재귀 뒤(38장)에 있고, 재귀 1의 재생 과제가 프레임 4~5개 스택 추적이며, 여러 예제가 머릿속 카드 상한(5원소·12단계)을 넘는다(선택 정렬 5원소 = 비교 10 + swap 4, fib(5) = 호출 15번, LIS 8원소 = 비교 28번, 4-Queens = 시도 60번).\n(6) 재귀 구간(23~32)과 후반(68~79)에 어려운 장이 10~12개씩 쉬는 장 없이 이어진다.\n\n수정안은 151개 항목이다(core 101, bridge 20, review 16, breather 8, 부록 6). 장 수가 늘어난 것은 '한 장 한 아이디어'를 실제로 지킨 결과이며, 로드맵으로만 두고 한 장씩 생성하면 된다. V1은 1~14장(체크포인트 포함)에서 닫힌다. 같은 주제는 간격을 두고 다시 만난다: DP 51 / 68~72 / 105~110 / 144, 이분 탐색 11 → 15 → 16 → 83, BFS 41 → 82 → 87~89 → 124. 세그먼트 트리, 비트마스크 DP, BST 삭제·균형 트리, 안정 계수 정렬, 3색 DFS는 부록으로 내렸다.\n\n검증한 것: 수정안의 순서·선수·난이도를 scratchpad:lensA_scripts/seq2.py 로 기계 검사했다(선수 선행, 최근성, 묵은 선수, 상승 폭, 꼭대기 연속, 복습 간격). 위반 0건, 회상 상자가 필요한 장 4개(54, 78, 80, 130). 본편 canonicalInput의 답은 같은 디렉터리의 verify1.py~verify5.py 로 Python 3.13.18에서 실제 실행해 확인했다(부록 148, 150의 예는 손으로 확인). Hello Algo의 For → While → Nested loops, DP의 Method 1~3 순서와 USACO 모듈 선수 관계는 원문(scratchpad:lensA_dl/)으로 확인했다.\n\n한계: 난이도 숫자는 여전히 수동 채점이고, 임계값(10장, 12장, 3연속 등)은 검증되지 않은 초안이다. 제어 구조·추적 상태 축은 장을 실제로 생성한 뒤 ast와 trace로 다시 재야 한다. replay 표시는 내 판단이다. 4-Queens, 편집 거리, 플로이드, 단조 덱은 입력을 줄여도 head-with-effort 이상이라 쉬는 시간 전용이다. 실제 공장에서의 재생 가능 여부는 V1 14개 장으로 보정해야 한다.",
+  "issues": [
+   {
+    "at": "1→3",
+    "type": "wrong-order",
+    "severity": "medium",
+    "problem": "문턱 개념인 참조(1장)가 추적 절차(3장)보다 먼저 온다. 이름 둘·객체 하나를 따라가려면 추적표가 먼저 있어야 한다.",
+    "fix": "추적표(정수만) → 동시 대입 → gcd → list → 별칭 순으로 바꾼다. 수정안 1~5장."
+   },
+   {
+    "at": "3, 6",
+    "type": "missing-prerequisite",
+    "severity": "medium",
+    "problem": "6장 gcd의 핵심인 동시 대입 a, b = b, a % b가 3장의 한 항목(for·while·range와 함께)으로만 처리된다. 머릿속 재생에서 가장 자주 틀리는 지점이라고 스스로 적어 놓고 독립시키지 않았다.",
+    "fix": "수정안 2장 'while과 동시 대입'으로 독립시키고 gcd(3장)를 그 직후 응용으로 둔다."
+   },
+   {
+    "at": "4, 4→23",
+    "type": "too-many-new-ideas",
+    "severity": "high",
+    "problem": "4장이 호출·반환, 지역 이름, 프레임, 2~3단 중첩 호출을 한 번에 넣는다. 정작 쓰이는 23장까지는 19장 떨어져 있다. 23장의 재귀 관련 선수는 사실상 4장뿐이라 R2(최근 10장)의 취지를 어긴다.",
+    "fix": "프레임 1개짜리 '함수 호출 추적'(수정안 6장)과, 재귀 바로 앞의 '호출 스택' 다리(깊이 3, 수정안 44장)로 나눈다."
+   },
+   {
+    "at": "7, 15",
+    "type": "missing-prerequisite",
+    "severity": "high",
+    "problem": "중첩 루프를 가르치는 장이 없다(3장은 for/while만). 7장의 '이중 루프 n²'과 15장 선택 정렬이 선수 없이 쓴다. Hello Algo 2.2는 For loops → While loops → Nested loops 순서다(원문 확인).",
+    "fix": "수정안 9장 '중첩 루프 — 모든 쌍'을 다리로 넣는다. 반복문 완전 탐색도 여기서 처음 만난다."
+   },
+   {
+    "at": "7",
+    "type": "too-many-new-ideas",
+    "severity": "high",
+    "problem": "한 장에 n, n², log n, 2¹⁰ ≈ 10³이 다 들어 있다. log n은 절반 버리기(13장)를 보기 전이라 근거가 없다. Wengrow(2장 이분 탐색 → 3장 Big O)와 Khan은 반대 순서다.",
+    "fix": "n과 n²만 다룬다(수정안 10장). log n은 이분 탐색 직후(12장)로 옮긴다."
+   },
+   {
+    "at": "8",
+    "type": "wrong-order",
+    "severity": "medium",
+    "problem": "비용표가 dict/set/deque/sorted의 비용을 그 도구를 처음 쓰기 전(9, 20, 17장)에 외우게 한다. 추적할 것이 없는 순수 암기 장이다.",
+    "fix": "list 하나로 좁혀 '밀리는 칸 수'를 세는 장으로 바꾼다(수정안 19장, 삽입 정렬 직후). 나머지 비용은 각 도구의 사용 장(27, 37, 38)에 나눠 싣는다."
+   },
+   {
+    "at": "9",
+    "type": "too-many-new-ideas",
+    "severity": "medium",
+    "problem": "set 조회, dict 빈도 세기, two-sum의 보수 찾기가 한 장이다.",
+    "fix": "수정안 27(set), 28(dict), 29(보수 찾기)로 나눈다. 28장은 계수 정렬의 cnt를 일반화하는 형태로 잇는다."
+   },
+   {
+    "at": "10→15",
+    "type": "difficulty-spike",
+    "severity": "high",
+    "problem": "난이도가 3, 3, 4, 3, 4, 3으로 오르내린다. 12장은 고정·가변 창 두 아이디어에 dict와 '각 포인터 최대 n번'이라는 분할상환 논증까지 담는데, 선택 정렬(15장)보다 앞이다.",
+    "fix": "기초 정렬을 먼저 둔다(V1은 선택 정렬에서 끝). 창은 고정(32)과 가변(33)으로 나눈다."
+   },
+   {
+    "at": "14→53",
+    "type": "missing-prerequisite",
+    "severity": "high",
+    "problem": "답 이분 탐색이 경계 탐색에서 39장 떨어져 있고 그 사이 재사용이 없다. '간격 복습 효과'는 중간 인출이 있어야 성립한다. 선수 '50 그리디 1'도 불필요하다(판정은 합계 루프로 충분). USACO는 binary-search-sorted-array → binary-search를 바로 이웃한 모듈로 둔다(frontmatter 확인).",
+    "fix": "수정안 15 → 16장으로 붙인다. 판정 예는 x * x >= n처럼 정수 2개로 끝나는 것을 쓴다. 이후 체크포인트 2, 3에서 다시 꺼낸다."
+   },
+   {
+    "at": "17",
+    "type": "too-many-new-ideas",
+    "severity": "high",
+    "problem": "버블 정렬(새 알고리즘), 안정성(새 개념), sorted(key=) 다단계 정렬(새 Python 도구)이 한 장이다.",
+    "fix": "수정안 17(버블), 20(안정성: 선택 정렬이 불안정한 반례), 21(key와 튜플 비교)로 나눈다."
+   },
+   {
+    "at": "18",
+    "type": "not-mentally-replayable",
+    "severity": "medium",
+    "problem": "누적합을 낸 뒤 뒤에서부터 배치하는 안정 계수 정렬은 배열 3개(a, cnt, out)를 동시에 추적해야 한다. 머릿속 카드 상한을 넘는다.",
+    "fix": "본편은 '세고 차례로 꺼내기'(수정안 25장)만 다룬다. 안정 버전과 기수 정렬은 부록 149."
+   },
+   {
+    "at": "20→23",
+    "type": "difficulty-spike",
+    "severity": "high",
+    "problem": "큐(증명 0) → 해시 내부(해시 함수·충돌·체이닝·적재율·재해싱 5요소) → 분할상환(자기 척도 R6에서 3) → 재귀 문턱이 연달아 온다. R6 '인접 증가 ≤ 1'을 스스로 어긴다. 선수도 거꾸로다(재해싱이 두 배 확장을 재사용한다).",
+    "fix": "동적 배열(53) → 해시 1(54) → 해시 2(55)로 쪼개, 재귀 뒤의 쉬어 가는 부(7부)로 옮긴다."
+   },
+   {
+    "at": "20→38",
+    "type": "wrong-order",
+    "severity": "high",
+    "problem": "결정 사항 'BFS 맛보기를 재귀 앞에'가 반영돼 있지 않다. 첫 BFS는 38장(재귀·트리 뒤)이다. 격자에 필요한 2차원 리스트와 방향 배열은 독립 장이 없고 54장 한 줄에 묻혀 있다.",
+    "fix": "수정안 5부: 2차원 리스트(39) → 방향 배열(40) → 격자 BFS(41) → 큐를 스택으로(42). 재귀는 44장부터다."
+   },
+   {
+    "at": "23",
+    "type": "not-mentally-replayable",
+    "severity": "high",
+    "problem": "재생 과제가 fact(4)(프레임 5개)와 sum_list([3,1,2])(프레임 4개, a[1:] 슬라이싱으로 숨은 O(n²)) 스택 추적이다. 결정 사항(정의 카드, 스택 추적은 다리 장에서 깊이 3 이하)과 충돌한다.",
+    "fix": "수정안 45장은 정의 카드(하는 일 / 기저 / 한 줄)만 쓴다. 스택 추적은 다리 장 44, 46에서 프레임 3개까지만."
+   },
+   {
+    "at": "23→32",
+    "type": "difficulty-spike",
+    "severity": "high",
+    "problem": "재귀·분할 정복 10개 장이 난이도 4~5로 이어지고 복습·쉬는 장이 없다. 제어 구조도 선형(23) → 두 갈래(24, 25) → 다시 선형(27)으로 뒤섞인다.",
+    "fix": "선형(45) → 앞뒤의 일(46) → 절반(47) → 쉬는 장(48) → 두 갈래(49) → 메모(50) → 표(51) → 체크포인트(52). 하노이는 병합 정렬 직전(57)으로 옮긴다."
+   },
+   {
+    "at": "24",
+    "type": "not-mentally-replayable",
+    "severity": "medium",
+    "problem": "fib(5) 호출 트리는 호출이 15번이라 12단계 상한을 넘는다.",
+    "fix": "fib(4)(호출 9번)와 호출 수 수열 1, 1, 3, 5, 9, 15를 카드로 쓴다(수정안 49장)."
+   },
+   {
+    "at": "26→60",
+    "type": "missing-prerequisite",
+    "severity": "high",
+    "problem": "메모이제이션(26)과 표 채우기(60)가 34장 떨어져 있고 60장의 유일한 선수가 26장이다(R2 위반). Wengrow 12장, Hello Algo(Method 2 → Method 3, 원문 확인), 백준(재귀·백트래킹 → 동적 계획법 1)은 메모 직후 표로 간다.",
+    "fix": "수정안 50 → 51장으로 붙인다. DP는 네 번에 나눠 만난다: 51 / 68~72 / 105~110 / 144."
+   },
+   {
+    "at": "27, 48",
+    "type": "missing-prerequisite",
+    "severity": "medium",
+    "problem": "'13 = 1101₂'를 쓰는데 이진수 장이 없다. 27장은 모듈러 거듭제곱까지 한 절로 넣었다. 48장의 선수 '7 Big-O'는 실제 의존이 아니다.",
+    "fix": "이진수(101)와 나머지 연산(137)을 쉬는 장으로 독립시킨다."
+   },
+   {
+    "at": "31",
+    "type": "too-many-new-ideas",
+    "severity": "low",
+    "problem": "퀵 정렬과 퀵 셀렉트가 한 장이다.",
+    "fix": "수정안 62(퀵 정렬), 63(퀵 셀렉트)."
+   },
+   {
+    "at": "33",
+    "type": "missing-prerequisite",
+    "severity": "high",
+    "problem": "class Node를 쓰는데 class·속성·None을 가르친 적이 없다(학습자는 기본 문법만 안다). 선수인 1장은 32장 전이다. '쉬어 가는 장'이라고 했지만 class, 포인터 따라가기, 삽입 순서까지 새 요소가 3개 이상이다.",
+    "fix": "class 다리(74) → 순회(75) → 삽입·삭제(76) → 뒤집기(77). 트리 앞에 '재귀로 보는 연결 리스트'(79)를 두어 선형 재귀를 다시 깨운다."
+   },
+   {
+    "at": "35",
+    "type": "too-many-new-ideas",
+    "severity": "low",
+    "problem": "가운데 찾기와 사이클 검출이 한 장이다. 사이클 쪽은 '왜 만나는가' 논증이 따로 필요하다.",
+    "fix": "수정안 78장은 가운데 찾기만 본문으로 두고, 사이클 검출은 같은 장의 선택 절로 둔다."
+   },
+   {
+    "at": "40",
+    "type": "should-be-appendix",
+    "severity": "medium",
+    "problem": "BST 삭제(3경우 + 중위 후속자)는 핵심 함수가 15줄·중첩 3을 넘고 제안안 스스로 재생을 '중간'으로 평가했다.",
+    "fix": "본편에는 '쏠림 관찰'(84)만 남긴다. 삭제와 AVL 회전은 부록 148."
+   },
+   {
+    "at": "42→43",
+    "type": "too-many-new-ideas",
+    "severity": "high",
+    "problem": "42장에 인덱스 공식, 힙 불변식, sift-up, sift-down이 다 들어 있다. 43장은 heapify O(n) 증명(높이의 합)과 힙 정렬을 묶었다.",
+    "fix": "수정안 112(인덱스 공식) → 113(위로) → 114(아래로) → 115(heapify) → 116(힙 정렬)."
+   },
+   {
+    "at": "41→71",
+    "type": "missing-prerequisite",
+    "severity": "medium",
+    "problem": "heapq 사용(41)에서 다익스트라(71)까지 30장이다. 71장은 '가까운 것부터 확정'과 '낡은 항목 건너뛰기'를 동시에 도입한다.",
+    "fix": "heapq 사용은 큐 직후(38)로 당기고, 힙 내부(14부)를 가중치 그래프 바로 앞에 둔다. lazy 삭제는 다리 장 123으로 먼저 뗀다."
+   },
+   {
+    "at": "44, 76→77",
+    "type": "missing-topic",
+    "severity": "high",
+    "problem": "문자열 장이 없다(불변성, join). KMP의 선수를 롤링 해시로 잡았는데 실제 의존이 없고, 모듈러 다항식 해시는 '쉬운 방법'이 아니다. 단순 매칭은 빠져 있다. 77장은 π 정의, π 계산, 탐색 세 아이디어다.",
+    "fix": "문자열(35), 단순 매칭(129) → 경계를 손으로(131) → KMP 탐색(132) → π 만들기(133). 롤링 해시는 심화(138~139)."
+   },
+   {
+    "at": "45→47",
+    "type": "too-many-new-ideas",
+    "severity": "high",
+    "problem": "45장이 선택 트리, 공유 path의 변경·복구, 기록 시 복사를 한 번에 넣는다. 46장은 for 안의 재귀, used, 순열·조합 두 알고리즘이다.",
+    "fix": "for 안의 재귀는 그래프 DFS(90)에서 먼저 만난다. 부분집합(96, 복구 없음) → 되돌리기(97) → 순열(98) → 조합(99) → 가지치기(100)."
+   },
+   {
+    "at": "48, 49→74, 78",
+    "type": "missing-prerequisite",
+    "severity": "medium",
+    "problem": "48장에 비트 요령 4개가 있다. x & -x는 펜윅(74)까지 26장, 비트마스크 집합(49)은 비트마스크 DP(78)까지 29장 방치된다.",
+    "fix": "비트 기초(102), 비트마스크 집합(103), 최하위 비트(140, 펜윅 직전)로 나눈다."
+   },
+   {
+    "at": "50→51",
+    "type": "missing-prerequisite",
+    "severity": "high",
+    "problem": "그리디 1의 선수(17장)가 33장 전이다. 쉬운 직관과 어려운 증명이 한 덩어리로 뒤에 몰려 있다. 한국어 자료 조사의 '맛보기와 반례·증명을 나누라'는 결론도 반영되지 않았다.",
+    "fix": "맛보기(22) → 정렬 후 선택(23) → 구간 병합(24)은 key 정렬 직후에 둔다. 반례(66)와 교환 논증(67)은 동전 DP 앞에 둔다."
+   },
+   {
+    "at": "41, 50, 52, 60",
+    "type": "other",
+    "severity": "high",
+    "problem": "난이도 숫자가 내용이 아니라 위치를 따른다(구간 병합 6 = N-Queens 6, heapq 사용 5 = 하노이 5). 그래서 '인접 차 ≤ 1을 이미 만족한다'는 순환 논증이다.",
+    "fix": "제어 구조, 추적 상태, 증명, 코드 크기 축으로 다시 채점한다. 수정안은 difficultyRules로 기계 검사했다."
+   },
+   {
+    "at": "54→58",
+    "type": "too-many-new-ideas",
+    "severity": "high",
+    "problem": "54 = 인접 리스트 + 암묵적 격자. 55 = 바깥 이중 루프 + BFS(중첩 5단, 상한 3 초과). 56 = dist + 경로 복원. 57 = 재귀 DFS + 명시적 스택. 58 = 방향 그래프 3색 사이클 + 이분 그래프. 방향 그래프와 진입차수를 소개하는 장도 없다.",
+    "fix": "수정안 86~94장으로 나눈다. 3색 DFS는 부록 150으로 내린다(Kahn 알고리즘이 사이클을 스스로 검출한다)."
+   },
+   {
+    "at": "61, 67",
+    "type": "too-many-new-ideas",
+    "severity": "medium",
+    "problem": "집 털기 + 카데인, LCS + 편집 거리가 각각 한 장이다. 카데인의 '여기서 끝나는 상태'는 별개의 아이디어다.",
+    "fix": "수정안 69/70, 109/110으로 나눈다."
+   },
+   {
+    "at": "63, 66, 67",
+    "type": "not-mentally-replayable",
+    "severity": "medium",
+    "problem": "LIS 8원소(비교 28번), 배낭 물건 3 × 용량 5(18칸), LCS 4×4(16칸)는 표 카드 상한(n ≤ 5)을 넘는다.",
+    "fix": "[3, 1, 4, 2, 5], 물건 2개 × 용량 3, 'ABC'/'AC'로 줄인다. 큰 예제는 화면 스테퍼용으로만 쓴다."
+   },
+   {
+    "at": "56, 62",
+    "type": "missing-topic",
+    "severity": "medium",
+    "problem": "경로 복원과 DP 역추적(백준 32단계)이 독립 장이 아니다. 56장 안의 한 줄로만 있다.",
+    "fix": "수정안 89(parent로 경로 복원), 108(DP 역추적)."
+   },
+   {
+    "at": "68",
+    "type": "too-many-new-ideas",
+    "severity": "medium",
+    "problem": "parent 숲, 경로 압축, 크기 기준 합치기가 한 장이다. 재귀 find는 긴 사슬에서 CPython 재귀 한도(1000)에 걸린다.",
+    "fix": "수정안 118(반복문 find), 119(경로 압축). 크기 기준 합치기는 119의 선택 절."
+   },
+   {
+    "at": "69→72",
+    "type": "missing-prerequisite",
+    "severity": "medium",
+    "problem": "가중치 간선 표현((w, u, v), adj[u] = [(v, w)])과 인접 행렬·INF를 가르치는 장이 없다.",
+    "fix": "다리 장 120, 126을 넣는다. 프림은 다익스트라에서 한 줄만 바꾼 장(125)으로 둔다."
+   },
+   {
+    "at": "68→79",
+    "type": "difficulty-spike",
+    "severity": "high",
+    "problem": "난이도 6~8이 12장 이어지고 쉬는 장·복습이 없다. 책 전체에도 복습 장이 하나도 없다. '한 번씩만 지나가면 앞 장을 잊는다'는 자기 blindSpot과 모순이다.",
+    "fix": "체크포인트 16개(review 사이 core 12개 이하)와 쉬는 장 8개를 넣었다."
+   },
+   {
+    "at": "73",
+    "type": "too-many-new-ideas",
+    "severity": "high",
+    "problem": "단조 스택과 단조 덱 두 구조가 한 장이다. 선수 4개가 모두 51~61장 전이라 R2(선수 ≤ 3, 1개는 최근 10장)를 어긴다.",
+    "fix": "체크포인트 13(128)에서 스택·덱·윈도우·분할상환을 깨운 뒤 134, 135로 나눈다."
+   },
+   {
+    "at": "74→75, 78",
+    "type": "should-be-appendix",
+    "severity": "medium",
+    "problem": "반복형 세그먼트 트리('홀짝에 따라 수집')와 비트마스크 DP(TSP n = 4는 64칸)는 머릿속 재생이 안 된다. 완만한 출처(BarkingDog, 이코테, Wengrow, Hello Algo)에도 없다. 펜윅도 난이도 7로 바로 뛴다.",
+    "fix": "부록 146, 147로 내린다. 펜윅은 질의(141)와 갱신(142)으로 나눈다."
+   },
+   {
+    "at": "79",
+    "type": "missing-prerequisite",
+    "severity": "medium",
+    "problem": "트리 DP가 인접 리스트 트리의 '부모를 넘기는 DFS'를 전제하는데 그 장이 없다. 선수(37, 61)는 42장, 18장 전이다. USACO dp-trees의 선수는 intro-tree다.",
+    "fix": "다리 장 143(서브트리 크기) 뒤에 144를 둔다."
+   },
+   {
+    "at": "전체",
+    "type": "missing-topic",
+    "severity": "medium",
+    "problem": "실제 목차들의 합집합에 있는데 빠진 주제: 선형 탐색, 반복문 완전 탐색(모든 쌍), 문자열 기초, 2차원 리스트, 소수 판별·체, 이진수, 공간 복잡도(백준 5·6·9·12·15단계, BarkingDog 부록 A·0x12, Do it! 2~3장, Hello Algo 2.4, USACO Bronze).",
+    "fix": "수정안 8, 9, 35, 39, 48, 56, 101, 60장. 수학 계열은 급경사 사이의 쉬는 장으로 쓴다."
+   },
+   {
+    "at": "21, 22, 23, 33, 57",
+    "type": "python-specific",
+    "severity": "medium",
+    "problem": "(a) 체이닝은 교육용 모델이고 CPython dict는 개방 주소법이다. list도 정확히 2배로 늘지 않는다. (b) lambda, 리스트 컴프리헨션, class, float('inf'), for의 튜플 풀기는 '기본 문법' 밖인데 R8 계산에 없다. (c) 속성 이름 next는 내장 함수를 가린다. (d) 재귀 한도 1000. (e) 문자열 해시는 실행마다 달라진다.",
+    "fix": "(a) 54, 53장에 '모델'이라고 명시한다. (b) 장당 새 문법 1개로 센다(21 lambda, 39 컴프리헨션, 74 class, 126 INF). (c) nxt를 쓴다. (d) 60장에서 소개하고 DFS·find는 반복형을 같이 싣는다. (e) 해시 추적은 정수 키만 쓴다."
+   },
+   {
+    "at": "32, 64",
+    "type": "other",
+    "severity": "low",
+    "problem": "복습 성격의 장이 일반 장으로 섞여 있다. 64장은 SRTBOT 6글자와 DAG 연결을 쓰는데, 결정된 표 카드 4줄(뜻 → 점화식 → 초깃값 → 순서)과 다르다.",
+    "fix": "review로 분류한다(수정안 64, 73, 105). 형식은 표 카드 4줄로 통일한다."
+   }
+  ],
+  "revisedSequence": [
+   {
+    "n": 1,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "추적표 — 한 줄씩 실행하고 바뀐 칸만 고쳐 쓰기",
+    "newIdea": "추적표(변수마다 고정 칸을 둔 메모리 표)로 실행을 따라가는 절차",
+    "prerequisites": [],
+    "difficulty": 1,
+    "formula": "한 줄 실행 → 바뀐 변수 칸만 갱신. range(a, b) = a, …, b-1",
+    "canonicalInput": "s = 0; for i in range(1, 5): s += i → s: 1, 3, 6, 10 (답 10)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 2,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "while과 동시 대입 — 우변을 먼저 다 계산한다",
+    "newIdea": "동시 대입: 우변을 옛 값으로 모두 계산한 뒤 한꺼번에 대입(swap 포함)",
+    "prerequisites": [
+     1
+    ],
+    "difficulty": 1,
+    "formula": "a, b = b, a + b → 새 a = 옛 b, 새 b = 옛 a + 옛 b. swap: x, y = y, x",
+    "canonicalInput": "a, b = 1, 1에서 3번 반복 → (1, 2) → (2, 3) → (3, 5)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 3,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "유클리드 호제법 — 숫자 두 개로 도는 첫 알고리즘",
+    "newIdea": "나머지로 문제를 줄인다: gcd(a, b) = gcd(b, a % b)",
+    "prerequisites": [
+     2
+    ],
+    "difficulty": 2,
+    "formula": "while b: a, b = b, a % b → 끝나면 a가 답. gcd(a, 0) = a",
+    "canonicalInput": "(48, 18) → (18, 12) → (12, 6) → (6, 0) → 6",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 4,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "list 인덱스와 반열림 구간 [l, r)",
+    "newIdea": "반열림 구간: 끝 인덱스는 포함하지 않는다",
+    "prerequisites": [
+     1
+    ],
+    "difficulty": 1,
+    "formula": "len(a[l:r]) = r - l, 마지막 원소는 a[r-1], a[-1] = a[len(a)-1]",
+    "canonicalInput": "a = [5, 2, 4, 1, 3] → a[1:4] = [2, 4, 1] (길이 3), a[-1] = 3",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 5,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "이름과 객체 — b = a는 복사가 아니다",
+    "newIdea": "별칭: 한 객체에 이름이 둘. 복사는 a[:]",
+    "prerequisites": [
+     4
+    ],
+    "difficulty": 2,
+    "formula": "b = a → 같은 객체에 이름표 하나 더. b = a[:] → 새 객체",
+    "canonicalInput": "a = [1, 2]; b = a; c = a[:]; b.append(3) → a = [1, 2, 3], c = [1, 2]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 6,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "함수 호출 추적 — 인자는 이름표, return은 값",
+    "newIdea": "호출하면 새 지역 이름이 같은 객체에 붙는다(프레임 1개)",
+    "prerequisites": [
+     5
+    ],
+    "difficulty": 2,
+    "formula": "매개변수 = 인자 객체의 새 이름. 재대입은 지역에서만, 변경(append)은 호출자에게도 보인다",
+    "canonicalInput": "def f(x): x.append(0); x = [9] / a = [1]; f(a) → a = [1, 0]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 7,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "루프 불변식 — 지금까지 본 것 중 최댓값",
+    "newIdea": "루프 불변식: 매 반복 직전에 항상 참인 한 문장",
+    "prerequisites": [
+     4,
+     6
+    ],
+    "difficulty": 2,
+    "formula": "i번째 반복 직전: best == max(a[:i])",
+    "canonicalInput": "[3, 1, 4, 1, 5] → best: 3, 3, 4, 4, 5 (갱신 2번)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 8,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "선형 탐색 — 찾으면 바로 멈추기",
+    "newIdea": "조기 종료와 최선/최악 비교 횟수",
+    "prerequisites": [
+     7
+    ],
+    "difficulty": 2,
+    "formula": "비교 횟수: 최선 1번, 최악 n번(없으면 n번 보고 -1)",
+    "canonicalInput": "[5, 2, 4, 1, 3]에서 4 → 3번 비교, 인덱스 2. 7 → 5번 비교, -1",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 9,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "중첩 루프 — 모든 쌍 (i, j) 훑기",
+    "newIdea": "중첩 루프: 바깥이 한 번 돌 때 안쪽은 처음부터 끝까지",
+    "prerequisites": [
+     8
+    ],
+    "difficulty": 3,
+    "formula": "i < j인 쌍의 수 = n(n-1)/2",
+    "canonicalInput": "[1, 4, 2, 3]: 쌍 6개 중 합이 5인 것은 (1, 4), (2, 3) → 2개",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 10,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "연산 횟수 세기 — n과 n²",
+    "newIdea": "증가율로 분류하기(Big-O 직관)",
+    "prerequisites": [
+     8,
+     9
+    ],
+    "difficulty": 3,
+    "formula": "루프 하나 → n번 → O(n). 모든 쌍 → n(n-1)/2번 → O(n²). n이 2배면 n²은 약 4배",
+    "canonicalInput": "n = 4: 4번 / 6쌍. n = 8: 8번 / 28쌍",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 11,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "이분 탐색 — 절반 버리기",
+    "newIdea": "정렬된 배열의 가운데를 보고 절반을 버린다",
+    "prerequisites": [
+     4,
+     8,
+     10
+    ],
+    "difficulty": 3,
+    "formula": "불변식: 답이 있다면 a[lo:hi] 안. mid = (lo + hi) // 2. a[mid] < x면 lo = mid + 1, 크면 hi = mid",
+    "canonicalInput": "a = [1, 3, 5, 7, 9], x = 7 → (lo, hi, mid): (0, 5, 2) → (3, 5, 4) → (3, 4, 3) 발견, 3번",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 12,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "log n — 몇 번 절반으로 나눌 수 있나",
+    "newIdea": "log₂ n = 1이 될 때까지 절반으로 나누는 횟수",
+    "prerequisites": [
+     10,
+     11
+    ],
+    "difficulty": 3,
+    "formula": "2¹⁰ = 1024 ≈ 10³. 이분 탐색 최대 확인 횟수 = ⌊log₂ n⌋ + 1",
+    "canonicalInput": "16 → 8 → 4 → 2 → 1: 4번. n = 1000이면 최대 10번 확인",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 13,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "선택 정렬 — 남은 것 중 최솟값을 앞으로",
+    "newIdea": "정렬된 앞부분을 한 칸씩 늘린다(최솟값 찾기 + swap)",
+    "prerequisites": [
+     2,
+     7,
+     9
+    ],
+    "difficulty": 3,
+    "formula": "i회전 후: a[:i]는 가장 작은 i개가 최종 위치. 비교는 항상 n(n-1)/2번",
+    "canonicalInput": "[3, 1, 4, 2] → [1, 3, 4, 2] → [1, 2, 4, 3] → [1, 2, 3, 4] (비교 6, swap 3)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 14,
+    "part": "1부 추적 기초와 첫 알고리즘 (V1 범위)",
+    "chapter": "체크포인트 1 — V1 카드 섞어 떠올리기",
+    "newIdea": "새 개념 없음: 1~13장 카드를 섞어 인출",
+    "prerequisites": [
+     3,
+     5,
+     11,
+     13
+    ],
+    "difficulty": 2,
+    "formula": "카드 한 장 = 불변식 한 문장 + 고정 입력의 답 + '이 줄을 바꾸면?'",
+    "canonicalInput": "gcd(48, 18) = 6 / [1, 3, 5, 7, 9]에서 7 → 3번 / [3, 1, 4, 2] 선택 정렬 2회전 후 [1, 2, 4, 3]",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 15,
+    "part": "2부 기초 정렬과 도구",
+    "chapter": "이분 탐색 경계 — 첫 True 찾기와 bisect",
+    "newIdea": "F…F T…T에서 첫 T의 위치(경계)",
+    "prerequisites": [
+     11,
+     12
+    ],
+    "difficulty": 4,
+    "formula": "while lo < hi: mid = (lo + hi) // 2; ok(mid)면 hi = mid, 아니면 lo = mid + 1 → lo가 첫 True. bisect_left(a, x) = a[i] >= x인 첫 i",
+    "canonicalInput": "a = [1, 3, 3, 5, 7], x = 3 → mid 2 (T) → mid 1 (T) → mid 0 (F) → lo = 1",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 16,
+    "part": "2부 기초 정렬과 도구",
+    "chapter": "답을 이분 탐색하기 — 판정 함수",
+    "newIdea": "배열 대신 단조 판정 함수 ok(x) 위에서 같은 코드(답 공간 탐색)",
+    "prerequisites": [
+     15
+    ],
+    "difficulty": 4,
+    "formula": "ok(x)가 F…F T…T이면 15장 코드 그대로. 예: x * x >= n인 첫 x",
+    "canonicalInput": "n = 30, 범위 [0, 30): mid 15 (T) → 7 (T) → 3 (F) → 5 (F) → 6 (T) → 답 6",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 17,
+    "part": "2부 기초 정렬과 도구",
+    "chapter": "버블 정렬 — 이웃끼리 바꾸기",
+    "newIdea": "인접한 두 칸만 교환해 큰 값을 뒤로 보낸다",
+    "prerequisites": [
+     13
+    ],
+    "difficulty": 3,
+    "formula": "k회전 후: 가장 큰 k개가 맨 뒤 최종 위치. swap 횟수 = 순서가 뒤집힌 쌍의 수",
+    "canonicalInput": "[3, 1, 4, 2] → 1회전 [1, 3, 2, 4] → 2회전 [1, 2, 3, 4] (swap 3번)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 18,
+    "part": "2부 기초 정렬과 도구",
+    "chapter": "삽입 정렬 — 정렬된 앞부분에 끼워 넣기",
+    "newIdea": "큰 값을 한 칸씩 밀고 빈자리에 key를 넣는다",
+    "prerequisites": [
+     13,
+     17
+    ],
+    "difficulty": 4,
+    "formula": "i번째 반복 직전: a[:i]는 정렬됨(최종 위치는 아님). 이미 정렬된 입력이면 비교 n-1번",
+    "canonicalInput": "[3, 1, 4, 2] → [1, 3, 4, 2] → [1, 3, 4, 2] → [1, 2, 3, 4] (밀기 3번)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 19,
+    "part": "2부 기초 정렬과 도구",
+    "chapter": "list 연산 비용 — 끝은 O(1), 앞은 O(n)",
+    "newIdea": "앞·중간에 넣거나 빼면 뒤 원소를 전부 민다",
+    "prerequisites": [
+     10,
+     18
+    ],
+    "difficulty": 3,
+    "formula": "append, pop(): O(1). insert(0, x), pop(0), x in a, 슬라이스: O(n)",
+    "canonicalInput": "길이 4 리스트: insert(0, x) → 4칸 이동, pop(0) → 3칸 이동, pop() → 0칸",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 20,
+    "part": "2부 기초 정렬과 도구",
+    "chapter": "안정성 — 같은 키는 원래 순서대로",
+    "newIdea": "안정 정렬: 같은 키의 상대 순서가 보존된다",
+    "prerequisites": [
+     13,
+     18
+    ],
+    "difficulty": 3,
+    "formula": "버블·삽입은 안정(이웃만 넘는다), 선택은 불안정(멀리 swap)",
+    "canonicalInput": "[(2,'a'), (2,'b'), (1,'c')]를 수로만 정렬: 선택 → (1,c) (2,b) (2,a), 삽입 → (1,c) (2,a) (2,b)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 21,
+    "part": "2부 기초 정렬과 도구",
+    "chapter": "sorted(key=)와 튜플 비교",
+    "newIdea": "정렬 기준을 key 함수로 넘긴다(튜플은 앞 원소부터 비교)",
+    "prerequisites": [
+     20
+    ],
+    "difficulty": 3,
+    "formula": "sorted(a)는 새 리스트·안정. a.sort()는 제자리·None 반환. (1, 9) < (2, 0)",
+    "canonicalInput": "sorted([(2,'b'), (1,'z'), (2,'a')]) → [(1,'z'), (2,'a'), (2,'b')]. key가 첫 원소만 보면 [(1,'z'), (2,'b'), (2,'a')]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 22,
+    "part": "2부 기초 정렬과 도구",
+    "chapter": "그리디 맛보기 — 큰 동전부터",
+    "newIdea": "탐욕 선택: 매 순간 가장 좋아 보이는 것을 고른다",
+    "prerequisites": [
+     3
+    ],
+    "difficulty": 2,
+    "formula": "큰 동전부터: 개수 += 남은돈 // 동전; 남은돈 %= 동전",
+    "canonicalInput": "1260원, 동전 [500, 100, 50, 10] → 2 + 2 + 1 + 1 = 6개",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 23,
+    "part": "2부 기초 정렬과 도구",
+    "chapter": "그리디 1 — 끝나는 시간이 빠른 것부터",
+    "newIdea": "정렬 기준을 정하고 한 번 훑으며 고른다",
+    "prerequisites": [
+     21,
+     22
+    ],
+    "difficulty": 3,
+    "formula": "끝 시간 순 정렬 → 시작 >= 마지막으로 고른 끝이면 선택",
+    "canonicalInput": "(1,10) (2,3) (4,5) → 끝 순: (2,3) (4,5) (1,10) → 2개 선택. 시작 순이면 1개",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 24,
+    "part": "2부 기초 정렬과 도구",
+    "chapter": "구간 병합 — 시작 순으로 이어 붙이기",
+    "newIdea": "스위핑: 정렬 후 현재 구간의 끝을 늘려 가며 한 번 훑는다",
+    "prerequisites": [
+     21,
+     23
+    ],
+    "difficulty": 3,
+    "formula": "시작 순 정렬 → 다음 시작 <= cur_end면 cur_end = max(cur_end, 끝), 아니면 새 구간",
+    "canonicalInput": "(1,3) (2,6) (8,10) (9,12) → (1,6) (8,12)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 25,
+    "part": "2부 기초 정렬과 도구",
+    "chapter": "계수 정렬 — 값을 인덱스로 세기",
+    "newIdea": "값을 배열 인덱스로 쓴다(비교하지 않는 정렬)",
+    "prerequisites": [
+     4,
+     18
+    ],
+    "difficulty": 3,
+    "formula": "cnt[v] += 1 → v를 cnt[v]번씩 차례로 꺼낸다. O(n + k)",
+    "canonicalInput": "[2, 0, 2, 1, 0] → cnt = [2, 1, 2] → [0, 0, 1, 2, 2]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 26,
+    "part": "2부 기초 정렬과 도구",
+    "chapter": "체크포인트 2 — 정렬 구별하기",
+    "newIdea": "새 개념 없음: 1회전 뒤 모양으로 정렬 알아맞히기 + 이분 탐색 카드",
+    "prerequisites": [
+     13,
+     15,
+     16,
+     17,
+     18,
+     23
+    ],
+    "difficulty": 3,
+    "formula": "선택 = 앞 k개 최종 / 버블 = 뒤 k개 최종 / 삽입 = 앞 k+1개 정렬(최종 아님)",
+    "canonicalInput": "[4, 3, 1, 2] 1회전 후: 선택 [1, 3, 4, 2] / 버블 [3, 1, 2, 4] / 삽입 [3, 4, 1, 2]",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 27,
+    "part": "3부 해시 사용과 배열 기법",
+    "chapter": "set — '본 적 있나'를 한 번에 묻기",
+    "newIdea": "해시 집합의 평균 O(1) 조회(내부는 블랙박스)",
+    "prerequisites": [
+     19
+    ],
+    "difficulty": 2,
+    "formula": "if x in seen: … / seen.add(x). list의 in은 O(n), set의 in은 평균 O(1)",
+    "canonicalInput": "[3, 1, 4, 1, 5]의 첫 중복: seen {3} → {3, 1} → {3, 1, 4} → 1에서 발견",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 28,
+    "part": "3부 해시 사용과 배열 기법",
+    "chapter": "dict — 세어 두기",
+    "newIdea": "키 → 값 대응으로 빈도 세기(계수 정렬의 cnt를 아무 키로)",
+    "prerequisites": [
+     25,
+     27
+    ],
+    "difficulty": 3,
+    "formula": "cnt[x] = cnt.get(x, 0) + 1",
+    "canonicalInput": "'banana' → {'b': 1, 'a': 3, 'n': 2}",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 29,
+    "part": "3부 해시 사용과 배열 기법",
+    "chapter": "보수 찾기 — two-sum을 한 번 훑기로",
+    "newIdea": "필요한 짝(target - x)을 기억에서 찾는다",
+    "prerequisites": [
+     9,
+     27
+    ],
+    "difficulty": 3,
+    "formula": "x마다: target - x가 seen에 있으면 답, 없으면 seen.add(x). O(n²) → O(n)",
+    "canonicalInput": "[4, 1, 5, 3], target 8 → 4, 1, 5는 짝 없음 → 3에서 5 발견 → (5, 3)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 30,
+    "part": "3부 해시 사용과 배열 기법",
+    "chapter": "누적합 — 미리 더해 두고 빼서 답하기",
+    "newIdea": "전처리 한 번으로 구간 합을 O(1)에",
+    "prerequisites": [
+     4,
+     7
+    ],
+    "difficulty": 3,
+    "formula": "P[0] = 0, P[i+1] = P[i] + a[i]. sum(a[l:r]) = P[r] - P[l]",
+    "canonicalInput": "a = [3, 1, 4, 1, 5] → P = [0, 3, 4, 8, 9, 14]. sum(a[1:4]) = 9 - 3 = 6",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 31,
+    "part": "3부 해시 사용과 배열 기법",
+    "chapter": "투 포인터 — 양끝에서 좁히기",
+    "newIdea": "정렬된 배열에서 두 인덱스를 마주 보게 움직인다",
+    "prerequisites": [
+     21,
+     29
+    ],
+    "difficulty": 3,
+    "formula": "합이 크면 r -= 1, 작으면 l += 1. 불변식: 답이 있다면 a[l..r] 안",
+    "canonicalInput": "[1, 2, 4, 7, 9], target 9 → 1+9 = 10 큼 → 1+7 = 8 작음 → 2+7 = 9 발견 (3번)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 32,
+    "part": "3부 해시 사용과 배열 기법",
+    "chapter": "슬라이딩 윈도우 1 — 고정 길이",
+    "newIdea": "들어온 값은 더하고 나간 값은 뺀다(창을 다시 계산하지 않는다)",
+    "prerequisites": [
+     30,
+     31
+    ],
+    "difficulty": 3,
+    "formula": "s += a[r] - a[r-k]",
+    "canonicalInput": "[3, 1, 4, 1, 5], k = 3 → 합 8, 6, 10 → 최대 10",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 33,
+    "part": "3부 해시 사용과 배열 기법",
+    "chapter": "슬라이딩 윈도우 2 — 늘리고, 깨지면 줄이기",
+    "newIdea": "가변 창: 조건이 깨지면 왼쪽을 당긴다",
+    "prerequisites": [
+     32
+    ],
+    "difficulty": 4,
+    "formula": "r을 한 칸 늘림 → while 조건 깨짐: s -= a[l]; l += 1 → 답 갱신. l, r은 앞으로만 간다",
+    "canonicalInput": "[1, 2, 1, 3, 1], 합 <= 4인 가장 긴 구간 → 길이 3 ([1, 2, 1])",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 34,
+    "part": "3부 해시 사용과 배열 기법",
+    "chapter": "체크포인트 3 — 어떤 기법을 쓸까",
+    "newIdea": "새 개념 없음: 문제 모양을 보고 기법 고르기",
+    "prerequisites": [
+     16,
+     29,
+     30,
+     31,
+     33
+    ],
+    "difficulty": 3,
+    "formula": "정렬됨 + 쌍 → 투 포인터 / 구간 합 여러 번 → 누적합 / 연속 구간 최적 → 윈도우 / 본 적 있나 → set",
+    "canonicalInput": "[1, 2, 4, 7, 9]에서 합 9: 모든 쌍 최대 10번 / set 4번 / 투 포인터 3번",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 35,
+    "part": "4부 문자열·스택·큐",
+    "chapter": "문자열 — 바꿀 수 없는 시퀀스",
+    "newIdea": "불변성: 고치려면 조각을 모아 ''.join",
+    "prerequisites": [
+     5,
+     31
+    ],
+    "difficulty": 2,
+    "formula": "s[i] = c는 오류. parts.append(…) 후 ''.join(parts). 루프 안의 s += c는 O(n²)이 될 수 있다",
+    "canonicalInput": "'level' 회문 검사: (l, l) (e, e) 2번 비교 → True. 'abc' → ['c', 'b', 'a'] → 'cba'",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 36,
+    "part": "4부 문자열·스택·큐",
+    "chapter": "스택 — 나중에 넣은 것이 먼저 나온다",
+    "newIdea": "LIFO: list의 append / pop",
+    "prerequisites": [
+     19,
+     35
+    ],
+    "difficulty": 3,
+    "formula": "여는 괄호면 push, 닫는 괄호면 pop(비어 있으면 실패). 끝에 스택이 비어야 성공",
+    "canonicalInput": "'(()())' → 깊이 1, 2, 1, 2, 1, 0 → True. '())' → 빈 스택에서 pop → False",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 37,
+    "part": "4부 문자열·스택·큐",
+    "chapter": "큐와 덱 — 먼저 넣은 것이 먼저 나온다",
+    "newIdea": "FIFO: collections.deque의 append / popleft",
+    "prerequisites": [
+     19,
+     36
+    ],
+    "difficulty": 3,
+    "formula": "q.append(x), q.popleft() 모두 O(1). list.pop(0)은 O(n)",
+    "canonicalInput": "요세푸스 n = 5, k = 2 → 나가는 순서 2, 4, 1, 5, 3",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 38,
+    "part": "4부 문자열·스택·큐",
+    "chapter": "우선순위 큐 사용 — heapq, 가장 작은 것부터",
+    "newIdea": "꺼내는 순서가 '가장 작은 값'인 통(내부는 블랙박스)",
+    "prerequisites": [
+     37
+    ],
+    "difficulty": 3,
+    "formula": "heappush(h, x), heappop(h): O(log n). h[0] = 최솟값. 최대 힙은 -x를 넣는다",
+    "canonicalInput": "push 5, 2, 8, 1 → pop 1 → pop 2 → push 3 → pop 3",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 39,
+    "part": "5부 격자와 첫 탐색",
+    "chapter": "2차원 리스트 — grid[r][c]",
+    "newIdea": "리스트의 리스트: 행을 고른 뒤 열을 고른다",
+    "prerequisites": [
+     5,
+     9
+    ],
+    "difficulty": 3,
+    "formula": "grid[r][c]. 만들기: [[0] * m for _ in range(n)]. [[0] * m] * n은 같은 행을 n번 가리킨다",
+    "canonicalInput": "g = [[0] * 3 for _ in range(2)]; g[0][1] = 5 → [[0,5,0],[0,0,0]]. h = [[0] * 3] * 2; h[0][1] = 5 → [[0,5,0],[0,5,0]]",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 40,
+    "part": "5부 격자와 첫 탐색",
+    "chapter": "방향 배열 — 격자에서 이웃 네 칸",
+    "newIdea": "(dr, dc) 목록으로 이웃을 만들고 범위를 검사한다",
+    "prerequisites": [
+     39
+    ],
+    "difficulty": 3,
+    "formula": "for dr, dc in [(-1,0), (1,0), (0,-1), (0,1)]: nr, nc = r + dr, c + dc. 0 <= nr < n and 0 <= nc < m일 때만",
+    "canonicalInput": "2×3 격자의 (0, 1): 위 탈락, 아래 (1,1), 왼쪽 (0,0), 오른쪽 (0,2) → 3칸. (0, 0)은 2칸",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 41,
+    "part": "5부 격자와 첫 탐색",
+    "chapter": "격자 BFS 맛보기 — 큐로 번져 나가기",
+    "newIdea": "방문 표시 + 큐: 닿는 칸을 한 번씩만 방문한다",
+    "prerequisites": [
+     27,
+     37,
+     40
+    ],
+    "difficulty": 4,
+    "formula": "시작 칸을 표시하고 큐에 → 꺼내서 네 이웃 중 (범위 안, 빈칸, 미방문)이면 표시하고 큐에. 표시는 넣을 때 한다",
+    "canonicalInput": "격자 ['..#', '...'], 시작 (0,0), 이웃 순서 위·아래·왼·오른 → (0,0) (1,0) (0,1) (1,1) (1,2)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 42,
+    "part": "5부 격자와 첫 탐색",
+    "chapter": "큐를 스택으로 — 같은 코드로 깊이 먼저",
+    "newIdea": "popleft를 pop으로 바꾸면 방문 순서가 '깊이 먼저'가 된다",
+    "prerequisites": [
+     36,
+     41
+    ],
+    "difficulty": 4,
+    "formula": "BFS: q.popleft() (오래된 칸부터). DFS: st.pop() (방금 넣은 칸부터). 나머지 줄은 같다",
+    "canonicalInput": "같은 격자 → (0,0) (0,1) (1,1) (1,2) (1,0)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 43,
+    "part": "5부 격자와 첫 탐색",
+    "chapter": "체크포인트 4 — 꺼내는 순서 구별하기",
+    "newIdea": "새 개념 없음: 스택·큐·힙·BFS·DFS 카드 섞기(+ log n, dict 다시 보기)",
+    "prerequisites": [
+     36,
+     37,
+     38,
+     41,
+     42,
+     12,
+     28
+    ],
+    "difficulty": 3,
+    "formula": "스택 = 방금 넣은 것, 큐 = 가장 오래된 것, 힙 = 가장 작은 것",
+    "canonicalInput": "3, 1, 2를 넣고 모두 꺼내면: 스택 2 1 3 / 큐 3 1 2 / 힙 1 2 3",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 44,
+    "part": "6부 재귀와 첫 DP",
+    "chapter": "호출 스택 — 함수가 함수를 부를 때",
+    "newIdea": "프레임이 스택처럼 쌓이고(호출) 꺼내진다(return)",
+    "prerequisites": [
+     6,
+     36
+    ],
+    "difficulty": 3,
+    "formula": "호출 = 프레임 push, return = pop. 지역 변수는 프레임마다 따로. 맨 위 프레임만 실행 중",
+    "canonicalInput": "a(x) = b(x) + 1, b(x) = c(x) * 2, c(x) = x + 3 → a(1): 스택 a → a, b → a, b, c → 4 → 8 → 9",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 45,
+    "part": "6부 재귀와 첫 DP",
+    "chapter": "재귀 1 — 자기 자신을 부르기",
+    "newIdea": "자기 호출: 기저 조건 + 더 작은 입력에 대한 한 줄",
+    "prerequisites": [
+     44
+    ],
+    "difficulty": 4,
+    "formula": "정의 카드: total(n)은 1..n의 합 / 기저 total(0) = 0 / total(n) = n + total(n-1)",
+    "canonicalInput": "total(3) = 3 + total(2) = 3 + 3 = 6 (total(2) = 3을 믿는다). 스택 추적은 total(2)까지만(프레임 3개)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 46,
+    "part": "6부 재귀와 첫 DP",
+    "chapter": "내려갈 때와 올라올 때 — 호출 앞의 일, 뒤의 일",
+    "newIdea": "재귀 호출 앞의 코드는 내려가며, 뒤의 코드는 돌아오며 실행된다",
+    "prerequisites": [
+     44,
+     45
+    ],
+    "difficulty": 4,
+    "formula": "print가 호출 앞 → n, …, 1 순서. 호출 뒤 → 1, …, n 순서",
+    "canonicalInput": "f(2) (기저 f(0)): 앞에서 출력하면 2 1, 뒤에서 출력하면 1 2 (프레임 3개 추적)",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 47,
+    "part": "6부 재귀와 첫 DP",
+    "chapter": "빠른 거듭제곱 — 절반으로 줄이는 재귀",
+    "newIdea": "입력을 1이 아니라 절반으로 줄인다",
+    "prerequisites": [
+     12,
+     45
+    ],
+    "difficulty": 4,
+    "formula": "power(x, n) = power(x, n // 2)² × (n이 홀수면 x), power(x, 0) = 1. 곱셈 약 log₂ n번. T(n) = T(n/2) + 1",
+    "canonicalInput": "3⁵: power(3,0) = 1 → power(3,1) = 3 → power(3,2) = 9 → power(3,5) = 9 × 9 × 3 = 243",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 48,
+    "part": "6부 재귀와 첫 DP",
+    "chapter": "소수 판별 — √n까지만 나눠 보기",
+    "newIdea": "약수는 짝으로 온다 → i * i <= n까지만 확인(O(√n))",
+    "prerequisites": [
+     3,
+     10
+    ],
+    "difficulty": 2,
+    "formula": "i = 2; while i * i <= n: n % i == 0이면 합성수; i += 1",
+    "canonicalInput": "29: 2, 3, 4, 5로 나눠 봄(6 × 6 > 29) → 소수. 35: 5에서 나누어떨어짐 → 합성수",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 49,
+    "part": "6부 재귀와 첫 DP",
+    "chapter": "재귀 2 — 두 갈래와 호출 트리 (피보나치)",
+    "newIdea": "자기 호출이 2번이면 호출이 트리 모양으로 불어난다",
+    "prerequisites": [
+     45,
+     46
+    ],
+    "difficulty": 5,
+    "formula": "fib(n) = fib(n-1) + fib(n-2), fib(0) = 0, fib(1) = 1. 호출 수 C(n) = C(n-1) + C(n-2) + 1 → 1, 1, 3, 5, 9, 15",
+    "canonicalInput": "fib(4) = 3, 호출 9번(fib(2) 2번, fib(1) 3번, fib(0) 2번)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 50,
+    "part": "6부 재귀와 첫 DP",
+    "chapter": "메모이제이션 — 한 번 푼 것은 적어 둔다",
+    "newIdea": "결과를 dict에 저장해 같은 호출을 다시 계산하지 않는다",
+    "prerequisites": [
+     28,
+     49
+    ],
+    "difficulty": 5,
+    "formula": "if n in memo: return memo[n] … memo[n] = 값. 호출 수 → 2n - 1",
+    "canonicalInput": "fib(4): 호출 9번 → 7번. fib(30): 2,692,537번 → 59번",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 51,
+    "part": "6부 재귀와 첫 DP",
+    "chapter": "DP 1 — 표를 아래에서부터 채우기",
+    "newIdea": "재귀 없이 작은 것부터 표를 채운다(bottom-up)",
+    "prerequisites": [
+     2,
+     50
+    ],
+    "difficulty": 4,
+    "formula": "표 카드: dp[i] = i번째 피보나치 수 / dp[i] = dp[i-1] + dp[i-2] / dp[0] = 0, dp[1] = 1 / i는 2부터 위로",
+    "canonicalInput": "n = 5 → dp = [0, 1, 1, 2, 3, 5]. 변수 2개로 줄이면 a, b = b, a + b (2장)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 52,
+    "part": "6부 재귀와 첫 DP",
+    "chapter": "체크포인트 5 — 재귀 정의 카드 섞기",
+    "newIdea": "새 개념 없음: 정의 카드 3줄로 답하기(+ list 비용 다시 보기)",
+    "prerequisites": [
+     45,
+     46,
+     47,
+     49,
+     51,
+     19
+    ],
+    "difficulty": 4,
+    "formula": "정의 카드: 함수가 하는 일 한 문장 + 기저 + 한 줄 점화",
+    "canonicalInput": "total(3) = 6 / power(3, 5) = 243 / fib(4) 호출 9번 / dp = [0, 1, 1, 2, 3, 5]",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 53,
+    "part": "7부 쉬어 가기: 내부 들여다보기",
+    "chapter": "동적 배열 — 꽉 차면 두 배",
+    "newIdea": "용량 두 배 확장과 '평균 비용'(분할상환)",
+    "prerequisites": [
+     19
+    ],
+    "difficulty": 3,
+    "formula": "복사 총합 1 + 2 + 4 + … + n/2 < n → append n번에 O(n), 한 번 평균 O(1)",
+    "canonicalInput": "용량 1에서 5개 append → 용량 1 → 2 → 4 → 8, 복사 1 + 2 + 4 = 7번",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 54,
+    "part": "7부 쉬어 가기: 내부 들여다보기",
+    "chapter": "해시 테이블 내부 1 — 버킷과 충돌",
+    "newIdea": "키 → 버킷 번호(hash(key) % m), 충돌은 같은 버킷 리스트에",
+    "prerequisites": [
+     28,
+     39
+    ],
+    "difficulty": 4,
+    "formula": "i = hash(key) % m. 찾을 때는 buckets[i]만 훑는다. 작은 정수는 hash(k) = k",
+    "canonicalInput": "m = 5, 키 7, 12, 3, 10 → 버킷 2: [7, 12], 버킷 3: [3], 버킷 0: [10]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 55,
+    "part": "7부 쉬어 가기: 내부 들여다보기",
+    "chapter": "해시 테이블 내부 2 — 적재율과 재해싱",
+    "newIdea": "적재율이 넘으면 버킷을 두 배로 늘려 전부 다시 넣는다",
+    "prerequisites": [
+     53,
+     54
+    ],
+    "difficulty": 4,
+    "formula": "적재율 = n / m. 넘으면 m을 2배로 하고 모든 키를 hash % (새 m)으로 재배치",
+    "canonicalInput": "m = 5 → 10: 7 → 7번, 12 → 2번, 3 → 3번, 10 → 0번 (충돌 사라짐)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 56,
+    "part": "7부 쉬어 가기: 내부 들여다보기",
+    "chapter": "에라토스테네스의 체 — 배수 지우기",
+    "newIdea": "소수 i의 배수를 i * i부터 지운다",
+    "prerequisites": [
+     48,
+     9
+    ],
+    "difficulty": 3,
+    "formula": "for j in range(i * i, n + 1, i): 지움. i * i > n이면 끝",
+    "canonicalInput": "n = 10: 2로 4, 6, 8, 10을, 3으로 9를 지움 → 2, 3, 5, 7",
+    "replay": "head-with-effort",
+    "kind": "breather"
+   },
+   {
+    "n": 57,
+    "part": "8부 분할 정복",
+    "chapter": "하노이 탑 — 작은 문제는 풀렸다고 믿기",
+    "newIdea": "믿음의 도약: n-1의 답을 믿고 n을 조립한다",
+    "prerequisites": [
+     46,
+     49
+    ],
+    "difficulty": 5,
+    "formula": "move(n, A→C) = move(n-1, A→B) + (원판 n을 A→C) + move(n-1, B→C). T(n) = 2T(n-1) + 1 = 2ⁿ - 1",
+    "canonicalInput": "n = 2: A→B, A→C, B→C (3번). n = 3은 7번",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 58,
+    "part": "8부 분할 정복",
+    "chapter": "두 정렬 리스트 병합",
+    "newIdea": "두 리스트의 맨 앞끼리 비교해 작은 쪽을 옮긴다",
+    "prerequisites": [
+     31
+    ],
+    "difficulty": 4,
+    "formula": "i, j는 각 리스트의 맨 앞. 작은 쪽을 out에 붙이고 그 인덱스 += 1. 한쪽이 끝나면 나머지를 통째로",
+    "canonicalInput": "[1, 4] + [2, 3] → 1, 2, 3 (비교 3번) → 나머지 [4] → [1, 2, 3, 4]",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 59,
+    "part": "8부 분할 정복",
+    "chapter": "병합 정렬 — 반으로 나눠 정렬하고 합치기",
+    "newIdea": "분할 정복: 두 재귀 호출의 결과를 병합으로 조립",
+    "prerequisites": [
+     57,
+     58
+    ],
+    "difficulty": 5,
+    "formula": "sort(a) = merge(sort(a[:mid]), sort(a[mid:])), 길이 1 이하면 그대로. T(n) = 2T(n/2) + n",
+    "canonicalInput": "[3, 1, 4, 2] → [3, 1] | [4, 2] → [1, 3] | [2, 4] → [1, 2, 3, 4]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 60,
+    "part": "8부 분할 정복",
+    "chapter": "공간 복잡도 — 추가로 쓰는 칸과 스택 깊이",
+    "newIdea": "시간 말고 추가 메모리도 센다(제자리 / 새 리스트 / 프레임 수)",
+    "prerequisites": [
+     44,
+     59
+    ],
+    "difficulty": 3,
+    "formula": "선택 정렬: 추가 O(1). 병합 정렬: 새 리스트 O(n). total(n): 프레임 n + 1개(CPython 기본 한도 1000)",
+    "canonicalInput": "total(5): 프레임 최대 6개. [3, 1, 4, 2] 마지막 병합: 새 칸 4개",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 61,
+    "part": "8부 분할 정복",
+    "chapter": "분할 — 피벗보다 작은 것을 앞으로",
+    "newIdea": "한 번 훑으며 '작은 구역'의 경계 i를 유지한다(Lomuto)",
+    "prerequisites": [
+     13,
+     58
+    ],
+    "difficulty": 4,
+    "formula": "구간 [lo, hi), 피벗 = a[hi-1]. 불변식: a[lo:i] < 피벗 <= a[i:j]. 끝에 a[i]와 a[hi-1] 교환 → 피벗의 최종 위치 i",
+    "canonicalInput": "[3, 1, 4, 2], 피벗 2 → 1을 앞으로 [1, 3, 4, 2] (i = 1) → 마지막 교환 [1, 2, 4, 3] → 위치 1",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 62,
+    "part": "8부 분할 정복",
+    "chapter": "퀵 정렬 — 분할하고 양쪽을 재귀로",
+    "newIdea": "나누는 일이 본체인 분할 정복",
+    "prerequisites": [
+     59,
+     61
+    ],
+    "difficulty": 5,
+    "formula": "p = partition(a, lo, hi) → sort(lo, p), sort(p + 1, hi). 평균 n log n. 정렬된 입력 + 끝 피벗이면 n²",
+    "canonicalInput": "[3, 1, 4, 2] → [1, 2, 4, 3] (p = 1) → 왼쪽 [1], 오른쪽 [4, 3] → [3, 4] → [1, 2, 3, 4]",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 63,
+    "part": "8부 분할 정복",
+    "chapter": "퀵 셀렉트 — 한쪽만 따라가기",
+    "newIdea": "k번째 원소는 분할 뒤 한쪽만 보면 된다",
+    "prerequisites": [
+     62
+    ],
+    "difficulty": 5,
+    "formula": "p == k면 끝, k < p면 왼쪽만, 아니면 오른쪽만. 평균 n + n/2 + n/4 + … < 2n",
+    "canonicalInput": "[3, 1, 4, 2], k = 2 (0부터): p = 1 → 오른쪽 [4, 3] 분할 → p = 2 → 답 3",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 64,
+    "part": "8부 분할 정복",
+    "chapter": "점화식 세 가지 읽기",
+    "newIdea": "새 알고리즘 없음: 재귀의 비용을 '층 수 × 층당 일'로 읽기",
+    "prerequisites": [
+     47,
+     57,
+     59,
+     63
+    ],
+    "difficulty": 4,
+    "formula": "T(n) = T(n/2) + 1 → log n. T(n) = 2T(n/2) + n → n log n. T(n) = 2T(n-1) + 1 → 2ⁿ",
+    "canonicalInput": "n = 8: 절반 재귀 3층 / 병합 정렬 3층 × 8 = 24 / 하노이 2⁸ - 1 = 255",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 65,
+    "part": "8부 분할 정복",
+    "chapter": "체크포인트 6 — 병합·퀵, 그리고 그리디·DP 표 다시 보기",
+    "newIdea": "새 개념 없음: 분할 정복 카드 + 다음 부에 쓸 옛 카드 깨우기",
+    "prerequisites": [
+     59,
+     62,
+     22,
+     23,
+     51
+    ],
+    "difficulty": 4,
+    "formula": "병합 = 합치기가 일, 퀵 = 나누기가 일. 그리디 = 정렬 후 한 번 훑기. DP = 표 4줄",
+    "canonicalInput": "[3, 1, 4, 2]: 마지막 병합 [1, 3] + [2, 4], 첫 분할 [1, 2, 4, 3] / 1260원 = 6개 / dp = [0, 1, 1, 2, 3, 5]",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 66,
+    "part": "9부 그리디의 한계와 1차원 DP",
+    "chapter": "그리디 2 — 반례 하나면 끝",
+    "newIdea": "그리디는 틀릴 수 있고, 반례 하나로 반증된다",
+    "prerequisites": [
+     22,
+     23
+    ],
+    "difficulty": 3,
+    "formula": "동전 {1, 3, 4}로 6원: 큰 것부터 4 + 1 + 1 = 3개, 최적은 3 + 3 = 2개",
+    "canonicalInput": "동전 {1, 3, 4}, 6원 → 그리디 3개 vs 최적 2개",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 67,
+    "part": "9부 그리디의 한계와 1차원 DP",
+    "chapter": "그리디 3 — 교환 논증",
+    "newIdea": "교환 논증: 최적해의 첫 선택을 그리디 선택으로 바꿔도 나빠지지 않는다",
+    "prerequisites": [
+     23,
+     66
+    ],
+    "difficulty": 4,
+    "formula": "가장 빨리 끝나는 회의 g: 어떤 최적해든 첫 회의를 g로 바꿔도 겹치지 않는다 → g를 포함한 최적해가 있다",
+    "canonicalInput": "(1,10) (2,3) (4,5): 해 {(1,10)}의 첫 회의를 g = (2,3)으로 바꿔도 1개 유지, 이후 (4,5) 추가 가능",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 68,
+    "part": "9부 그리디의 한계와 1차원 DP",
+    "chapter": "DP 다시 시작 — 계단 오르기, 표의 뜻부터",
+    "newIdea": "문장제에서 '표의 뜻'을 먼저 정하고 4단(뜻 → 점화식 → 초깃값 → 순서)으로 푼다",
+    "prerequisites": [
+     51
+    ],
+    "difficulty": 3,
+    "formula": "dp[i] = i번째 계단에 오르는 방법 수 / dp[i] = dp[i-1] + dp[i-2] / dp[0] = dp[1] = 1 / i 오름차순",
+    "canonicalInput": "n = 5 → dp = [1, 1, 2, 3, 5, 8] → 8가지",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 69,
+    "part": "9부 그리디의 한계와 1차원 DP",
+    "chapter": "DP 2 — 고르거나 건너뛰거나 (집 털기)",
+    "newIdea": "점화식에 max: 두 선택 중 더 좋은 쪽",
+    "prerequisites": [
+     68
+    ],
+    "difficulty": 4,
+    "formula": "dp[i] = max(dp[i-1], dp[i-2] + a[i]) (i번 집까지 봤을 때의 최대)",
+    "canonicalInput": "[2, 7, 9, 3, 1] → dp = [2, 7, 11, 11, 12] → 12",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 70,
+    "part": "9부 그리디의 한계와 1차원 DP",
+    "chapter": "DP 3 — '여기서 끝나는' 상태 (최대 연속 부분합)",
+    "newIdea": "상태를 'i에서 끝나는 최적'으로 잡고 답은 그중 최댓값",
+    "prerequisites": [
+     69
+    ],
+    "difficulty": 4,
+    "formula": "cur = max(a[i], cur + a[i]); best = max(best, cur)",
+    "canonicalInput": "[2, -3, 4, -1, 2] → cur: 2, -1, 4, 3, 5 → best = 5",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 71,
+    "part": "9부 그리디의 한계와 1차원 DP",
+    "chapter": "DP 4 — 후보가 여러 개 (동전 교환)",
+    "newIdea": "전이 후보를 루프로 돌며 min을 고른다(금액이 인덱스)",
+    "prerequisites": [
+     66,
+     69
+    ],
+    "difficulty": 5,
+    "formula": "dp[x] = min(dp[x - c] for c in coins if c <= x) + 1, dp[0] = 0",
+    "canonicalInput": "동전 {1, 3, 4}, x = 6 → dp = [0, 1, 2, 1, 1, 2, 2] → 2개",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 72,
+    "part": "9부 그리디의 한계와 1차원 DP",
+    "chapter": "DP 5 — LIS, 앞의 모든 칸을 본다",
+    "newIdea": "전이가 이전의 모든 j를 훑는 이중 루프 DP",
+    "prerequisites": [
+     70,
+     71
+    ],
+    "difficulty": 5,
+    "formula": "dp[i] = 1 + max(dp[j] for j < i if a[j] < a[i]) (없으면 1). 답 = max(dp)",
+    "canonicalInput": "[3, 1, 4, 2, 5] → dp = [1, 1, 2, 2, 3] → 3",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 73,
+    "part": "9부 그리디의 한계와 1차원 DP",
+    "chapter": "체크포인트 7 — DP 표 카드 다섯 장",
+    "newIdea": "새 개념 없음: 표 카드 4줄로 답하기(+ 이분 탐색 경계, 재귀 1 다시 보기)",
+    "prerequisites": [
+     68,
+     69,
+     70,
+     71,
+     72,
+     15,
+     45
+    ],
+    "difficulty": 4,
+    "formula": "표 카드 4줄: 표의 뜻 / 점화식 / 초깃값 / 채우는 순서",
+    "canonicalInput": "계단 5 → 8 / 집 털기 → 12 / 최대 부분합 → 5 / 동전 6 → 2 / LIS → 3",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 74,
+    "part": "10부 노드로 잇는 구조",
+    "chapter": "객체와 속성 — class Node 하나",
+    "newIdea": "속성을 가진 객체를 직접 만든다(속성도 이름표다)",
+    "prerequisites": [
+     5,
+     6
+    ],
+    "difficulty": 3,
+    "formula": "class Node: def __init__(self, val, nxt=None). a.nxt = b는 b 객체에 이름표 하나 더. 끝은 None",
+    "canonicalInput": "a = Node(1); b = Node(2); a.nxt = b; b.val = 9 → a.nxt.val = 9",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 75,
+    "part": "10부 노드로 잇는 구조",
+    "chapter": "연결 리스트 1 — 따라가며 세기",
+    "newIdea": "cur = cur.nxt로 한 칸씩 이동하는 순회",
+    "prerequisites": [
+     74
+    ],
+    "difficulty": 3,
+    "formula": "cur = head; while cur: …; cur = cur.nxt",
+    "canonicalInput": "1 → 2 → 3 → None: 길이 3, 합 6",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 76,
+    "part": "10부 노드로 잇는 구조",
+    "chapter": "연결 리스트 2 — 끼워 넣기와 빼기",
+    "newIdea": "화살표를 바꾸는 순서: 새 노드를 먼저 잇고 앞 노드를 돌린다",
+    "prerequisites": [
+     75
+    ],
+    "difficulty": 3,
+    "formula": "삽입: new.nxt = cur.nxt; cur.nxt = new. 삭제: cur.nxt = cur.nxt.nxt",
+    "canonicalInput": "1 → 3에서 1 뒤에 2 삽입 → 1 → 2 → 3. 두 줄의 순서를 바꾸면 3을 잃는다",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 77,
+    "part": "10부 노드로 잇는 구조",
+    "chapter": "연결 리스트 뒤집기",
+    "newIdea": "세 이름(prev, cur, nxt)으로 화살표를 하나씩 뒤집는다",
+    "prerequisites": [
+     2,
+     76
+    ],
+    "difficulty": 4,
+    "formula": "nxt = cur.nxt; cur.nxt = prev; prev = cur; cur = nxt. cur가 None이면 prev가 새 머리",
+    "canonicalInput": "1 → 2 → 3: (prev, cur) = (None, 1) → (1, 2) → (2, 3) → (3, None) → 3 → 2 → 1",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 78,
+    "part": "10부 노드로 잇는 구조",
+    "chapter": "빠른/느린 포인터 — 가운데 찾기",
+    "newIdea": "속도가 다른 두 포인터",
+    "prerequisites": [
+     31,
+     75
+    ],
+    "difficulty": 3,
+    "formula": "slow 1칸, fast 2칸. fast가 끝에 닿으면 slow가 가운데. 둘이 다시 만나면 사이클",
+    "canonicalInput": "1 → 2 → 3 → 4 → 5: (slow, fast) = (1, 1) → (2, 3) → (3, 5) → 가운데 3",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 79,
+    "part": "10부 노드로 잇는 구조",
+    "chapter": "재귀로 보는 연결 리스트",
+    "newIdea": "재귀적 자료구조: 리스트 = 머리 + 나머지 리스트",
+    "prerequisites": [
+     45,
+     46,
+     75
+    ],
+    "difficulty": 4,
+    "formula": "length(node) = 0 if node is None else 1 + length(node.nxt). 출력을 호출 뒤에 두면 거꾸로 나온다",
+    "canonicalInput": "1 → 2 → 3: length = 1 + (1 + (1 + 0)) = 3. 호출 뒤 출력 → 3 2 1",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 80,
+    "part": "10부 노드로 잇는 구조",
+    "chapter": "이진 트리 — 가지가 둘인 노드",
+    "newIdea": "노드에 left, right 두 가지: 구조 자체가 두 갈래 재귀",
+    "prerequisites": [
+     49,
+     79
+    ],
+    "difficulty": 5,
+    "formula": "height(t) = 0 if t is None else 1 + max(height(t.left), height(t.right)). size(t) = 1 + size(왼쪽) + size(오른쪽)",
+    "canonicalInput": "트리 1(2(4, 5), 3) → 높이 3, 노드 5개",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 81,
+    "part": "10부 노드로 잇는 구조",
+    "chapter": "트리 순회 — 전위·중위·후위",
+    "newIdea": "방문 위치만 다르다: 두 재귀 호출의 앞 / 사이 / 뒤",
+    "prerequisites": [
+     46,
+     80
+    ],
+    "difficulty": 5,
+    "formula": "전위 N L R / 중위 L N R / 후위 L R N",
+    "canonicalInput": "트리 1(2(4, 5), 3) → 전위 1 2 4 5 3 / 중위 4 2 5 1 3 / 후위 4 5 2 3 1",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 82,
+    "part": "10부 노드로 잇는 구조",
+    "chapter": "레벨 순회 — 큐로 트리 훑기",
+    "newIdea": "격자 BFS를 트리로 옮긴다(방문 표시가 필요 없는 BFS)",
+    "prerequisites": [
+     37,
+     41,
+     81
+    ],
+    "difficulty": 4,
+    "formula": "q = deque([root]); node = q.popleft(); 자식이 있으면 왼쪽, 오른쪽 순으로 q.append",
+    "canonicalInput": "트리 1(2(4, 5), 3) → 1 2 3 4 5. 큐: [1] → [2, 3] → [3, 4, 5] → [4, 5] → [5] → []",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 83,
+    "part": "10부 노드로 잇는 구조",
+    "chapter": "이진 탐색 트리 — 탐색과 삽입",
+    "newIdea": "왼쪽 < 노드 < 오른쪽: 이분 탐색이 트리 모양이 된 것",
+    "prerequisites": [
+     15,
+     80
+    ],
+    "difficulty": 5,
+    "formula": "불변식: 왼쪽 서브트리 < 노드 < 오른쪽 서브트리. 중위 순회 = 정렬 순서",
+    "canonicalInput": "5, 3, 8, 1, 4 순서로 삽입 → 중위 1 3 4 5 8. 4 찾기: 5 → 3 → 4 (3번)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 84,
+    "part": "10부 노드로 잇는 구조",
+    "chapter": "BST가 한쪽으로 쏠릴 때",
+    "newIdea": "정렬된 순서로 넣으면 높이가 n이 된다(균형이 필요한 이유)",
+    "prerequisites": [
+     83
+    ],
+    "difficulty": 3,
+    "formula": "높이 h이면 탐색 O(h). 최선 h ≈ log₂ n, 최악 h = n. Python에서는 bisect.insort나 heapq로 대신한다",
+    "canonicalInput": "1, 2, 3, 4 순서로 삽입 → 오른쪽으로만 이어진 사슬, 높이 4",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 85,
+    "part": "10부 노드로 잇는 구조",
+    "chapter": "체크포인트 8 — 노드 구조 카드 섞기",
+    "newIdea": "새 개념 없음: 뒤집기·순회·BST 카드(+ 스택 DFS, dict 다시 보기)",
+    "prerequisites": [
+     77,
+     81,
+     82,
+     83,
+     42,
+     28
+    ],
+    "difficulty": 4,
+    "formula": "순회 4종: 전위 N L R / 중위 L N R / 후위 L R N / 레벨 = 큐",
+    "canonicalInput": "트리 1(2(4, 5), 3)의 네 가지 순서 / 1 → 2 → 3 뒤집기의 (prev, cur) 3단계",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 86,
+    "part": "11부 그래프 탐색",
+    "chapter": "그래프 표현 — 인접 리스트",
+    "newIdea": "정점마다 이웃 목록 adj[u] (트리는 사이클 없는 그래프)",
+    "prerequisites": [
+     28,
+     80
+    ],
+    "difficulty": 3,
+    "formula": "adj[u] = u의 이웃들. 무방향 간선 (u, v)는 양쪽에 추가. 차수의 합 = 2 × 간선 수",
+    "canonicalInput": "간선 (0,1) (0,2) (1,3) (2,3) → adj = {0: [1, 2], 1: [0, 3], 2: [0, 3], 3: [1, 2]}",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 87,
+    "part": "11부 그래프 탐색",
+    "chapter": "그래프 BFS — 방문 집합",
+    "newIdea": "BFS를 adj로 옮긴다: 이웃 = adj[u], 방문 = set",
+    "prerequisites": [
+     82,
+     86
+    ],
+    "difficulty": 4,
+    "formula": "seen = {s}; q = deque([s]); u = q.popleft(); for v in adj[u]: if v not in seen: seen.add(v); q.append(v)",
+    "canonicalInput": "간선 (0,1) (0,2) (1,3) (2,3), 시작 0 → 방문 순서 0, 1, 2, 3",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 88,
+    "part": "11부 그래프 탐색",
+    "chapter": "BFS 거리 — 몇 걸음 만에 닿나",
+    "newIdea": "dist[v] = dist[u] + 1 (처음 발견할 때만)",
+    "prerequisites": [
+     87
+    ],
+    "difficulty": 4,
+    "formula": "큐에서 나오는 순서 = 거리 오름차순. dist[v] = dist[u] + 1",
+    "canonicalInput": "간선 (0,1) (0,2) (1,3) (2,3) (3,4), 시작 0 → dist = {0: 0, 1: 1, 2: 1, 3: 2, 4: 3}",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 89,
+    "part": "11부 그래프 탐색",
+    "chapter": "경로 복원 — 어디서 왔는지 적어 두기",
+    "newIdea": "parent[v] = u를 기록하고 도착점에서 거꾸로 따라간다",
+    "prerequisites": [
+     88
+    ],
+    "difficulty": 5,
+    "formula": "발견할 때 parent[v] = u. t에서 parent를 따라 s까지 간 뒤 뒤집는다",
+    "canonicalInput": "같은 그래프, 0 → 4: parent = {1: 0, 2: 0, 3: 1, 4: 3} → 4, 3, 1, 0 → [0, 1, 3, 4]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 90,
+    "part": "11부 그래프 탐색",
+    "chapter": "그래프 DFS — 재귀로 깊이 먼저",
+    "newIdea": "재귀 안의 for: 가지 수가 이웃 수만큼(+ 방문 집합)",
+    "prerequisites": [
+     42,
+     81,
+     87
+    ],
+    "difficulty": 5,
+    "formula": "dfs(u): seen.add(u); for v in adj[u]: if v not in seen: dfs(v)",
+    "canonicalInput": "간선 (0,1) (0,2) (1,3) (2,3), 시작 0 → 0, 1, 3, 2",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 91,
+    "part": "11부 그래프 탐색",
+    "chapter": "연결 요소 세기 — 섬의 개수",
+    "newIdea": "아직 안 본 정점마다 탐색을 새로 시작한 횟수 = 덩어리 수",
+    "prerequisites": [
+     90
+    ],
+    "difficulty": 4,
+    "formula": "for s in 모든 정점: if s not in seen: count += 1; 탐색(s)",
+    "canonicalInput": "정점 5개, 간선 (0,1) (2,3) → {0, 1}, {2, 3}, {4} → 3개",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 92,
+    "part": "11부 그래프 탐색",
+    "chapter": "방향 그래프와 진입차수",
+    "newIdea": "간선에 방향이 있다: 들어오는 화살표 수 indeg",
+    "prerequisites": [
+     86
+    ],
+    "difficulty": 3,
+    "formula": "간선 u → v는 adj[u]에만 추가하고 indeg[v] += 1",
+    "canonicalInput": "0→1, 0→2, 1→3, 2→3 → adj = {0: [1, 2], 1: [3], 2: [3], 3: []}, indeg = [0, 1, 1, 2]",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 93,
+    "part": "11부 그래프 탐색",
+    "chapter": "위상 정렬 — 진입차수 0부터 (Kahn)",
+    "newIdea": "앞선 일이 모두 끝난(indeg 0) 정점만 큐에 넣는다",
+    "prerequisites": [
+     87,
+     92
+    ],
+    "difficulty": 5,
+    "formula": "indeg 0인 정점을 큐에 → 꺼내며 이웃의 indeg -= 1, 0이 되면 큐에. 다 꺼내지 못하면 사이클",
+    "canonicalInput": "0→1, 0→2, 1→3, 2→3: indeg [0, 1, 1, 2] → 순서 0, 1, 2, 3",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 94,
+    "part": "11부 그래프 탐색",
+    "chapter": "이분 그래프 — 두 색으로 칠하기",
+    "newIdea": "방문 표시를 색(0/1)으로 넓힌다: 이웃은 반대 색",
+    "prerequisites": [
+     88
+    ],
+    "difficulty": 5,
+    "formula": "color[v] = 1 - color[u]. 이미 칠한 이웃이 같은 색이면 실패",
+    "canonicalInput": "사각형 (0,1) (0,2) (1,3) (2,3) → 색 0, 1, 1, 0 성공. 삼각형 (0,1) (1,2) (2,0) → 실패",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 95,
+    "part": "11부 그래프 탐색",
+    "chapter": "체크포인트 9 — 그래프 탐색 카드 섞기",
+    "newIdea": "새 개념 없음: BFS·DFS·거리·경로·위상 정렬 구별(+ 두 갈래 재귀 다시 보기)",
+    "prerequisites": [
+     88,
+     89,
+     90,
+     93,
+     49
+    ],
+    "difficulty": 4,
+    "formula": "BFS = 큐 = 가까운 것부터 / DFS = 스택·재귀 = 깊이 먼저 / 위상 정렬 = indeg 0부터",
+    "canonicalInput": "간선 (0,1) (0,2) (1,3) (2,3): BFS 0 1 2 3 / DFS 0 1 3 2 / 방향이면 위상 순서 0 1 2 3",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 96,
+    "part": "12부 완전 탐색과 되돌리기",
+    "chapter": "부분집합 — 고른다 / 안 고른다",
+    "newIdea": "원소마다 두 갈래로 나뉘는 선택 트리(고른 것은 새 리스트로 넘긴다)",
+    "prerequisites": [
+     49,
+     90
+    ],
+    "difficulty": 5,
+    "formula": "go(i, chosen): i == n이면 기록. go(i + 1, chosen); go(i + 1, chosen + [a[i]]) → 2ⁿ개",
+    "canonicalInput": "[1, 2, 3] → [], [3], [2], [2,3], [1], [1,3], [1,2], [1,2,3] (8개)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 97,
+    "part": "12부 완전 탐색과 되돌리기",
+    "chapter": "되돌리기 — path 하나를 넣었다 뺀다",
+    "newIdea": "공유 상태를 선택 → 재귀 → 원상 복구(백트래킹)",
+    "prerequisites": [
+     5,
+     96
+    ],
+    "difficulty": 6,
+    "formula": "go(i + 1); path.append(a[i]); go(i + 1); path.pop(). 기록할 때는 res.append(path[:])",
+    "canonicalInput": "[1, 2] → [], [2], [1], [1, 2] 순서로 기록(96장과 같은 순서). path[:] 없이 넣으면 결과 4개가 모두 []",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 98,
+    "part": "12부 완전 탐색과 되돌리기",
+    "chapter": "순열 — 남은 것 중 하나씩",
+    "newIdea": "used 표시로 '아직 안 쓴 것' 중에서 고른다",
+    "prerequisites": [
+     90,
+     97
+    ],
+    "difficulty": 6,
+    "formula": "for i in range(n): if not used[i]: used[i] = True; path.append(a[i]); go(); path.pop(); used[i] = False → n!개",
+    "canonicalInput": "[1, 2, 3] → 123, 132, 213, 231, 312, 321 (6개)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 99,
+    "part": "12부 완전 탐색과 되돌리기",
+    "chapter": "조합 — 시작 위치를 넘겨 중복 막기",
+    "newIdea": "start 인덱스로 '뒤쪽에서만' 고른다",
+    "prerequisites": [
+     98
+    ],
+    "difficulty": 5,
+    "formula": "go(start): for i in range(start, n): path.append(a[i]); go(i + 1); path.pop() → nCk개",
+    "canonicalInput": "[1, 2, 3, 4]에서 2개 → 12, 13, 14, 23, 24, 34 (6개)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 100,
+    "part": "12부 완전 탐색과 되돌리기",
+    "chapter": "가지치기 — N-Queens",
+    "newIdea": "안 될 가지는 내려가기 전에 자른다(제약 검사)",
+    "prerequisites": [
+     98
+    ],
+    "difficulty": 6,
+    "formula": "행마다 열 하나. 같은 열 c, 같은 대각선 r - c, r + c가 이미 쓰였으면 continue",
+    "canonicalInput": "4-Queens → 해 2개: 행별 열 번호 [1, 3, 0, 2], [2, 0, 3, 1]",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 101,
+    "part": "12부 완전 탐색과 되돌리기",
+    "chapter": "이진수 — 2로 나눈 나머지를 거꾸로",
+    "newIdea": "2진 자리값 표현",
+    "prerequisites": [
+     12
+    ],
+    "difficulty": 3,
+    "formula": "n % 2를 적고 n //= 2를 반복 → 거꾸로 읽는다. 자릿수 = ⌊log₂ n⌋ + 1",
+    "canonicalInput": "13 → 나머지 1, 0, 1, 1 → 1101₂ = 8 + 4 + 1. bin(13) = '0b1101'",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 102,
+    "part": "12부 완전 탐색과 되돌리기",
+    "chapter": "비트 연산 기초",
+    "newIdea": "정수를 비트 묶음으로 다룬다(&, |, ^, <<, >>)",
+    "prerequisites": [
+     101
+    ],
+    "difficulty": 4,
+    "formula": "x >> k & 1 = k번째 비트. x | 1 << k = 켜기. x & ~(1 << k) = 끄기. x ^ x = 0",
+    "canonicalInput": "13 = 1101₂: 13 >> 2 & 1 = 1, 13 >> 1 & 1 = 0, 13 | 2 = 15, 13 & 7 = 5, 13 ^ 5 = 8",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 103,
+    "part": "12부 완전 탐색과 되돌리기",
+    "chapter": "비트마스크로 부분집합 — 정수 하나가 집합",
+    "newIdea": "집합을 정수로 표현한다(i번 비트 = i번 원소 포함)",
+    "prerequisites": [
+     96,
+     102
+    ],
+    "difficulty": 5,
+    "formula": "for mask in range(1 << n): mask >> i & 1이면 i번 원소 포함 → 2ⁿ개",
+    "canonicalInput": "[a, b, c]: mask 5 = 101₂ → {a, c}. mask 0..7이 부분집합 8개",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 104,
+    "part": "12부 완전 탐색과 되돌리기",
+    "chapter": "체크포인트 10 — itertools로 답 맞추기",
+    "newIdea": "새 개념 없음: 완전 탐색 4종의 개수와 순서(+ 2차원 리스트, 동전 DP, 경로 복원 다시 보기)",
+    "prerequisites": [
+     96,
+     98,
+     99,
+     103,
+     39,
+     71,
+     89
+    ],
+    "difficulty": 5,
+    "formula": "부분집합 2ⁿ / 순열 n! / 조합 nCk. itertools.product, permutations, combinations로 확인",
+    "canonicalInput": "n = 3: 부분집합 8개, 순열 6개. 4개 중 2개 조합 6개",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 105,
+    "part": "13부 2차원 DP",
+    "chapter": "DP 다시 보기 — 완전 탐색에서 표로",
+    "newIdea": "DP = 같은 부분 문제가 반복되는 완전 탐색(시간 = 상태 수 × 전이 수)",
+    "prerequisites": [
+     69,
+     71,
+     96
+    ],
+    "difficulty": 4,
+    "formula": "선택 트리(고른다 / 안 고른다) → 같은 i가 반복 → 메모 → 표. 시간 = 상태 수 × 전이 수",
+    "canonicalInput": "집 털기 [2, 7, 9, 3, 1]: 선택 트리의 잎 최대 2⁵ = 32개 → 상태 5개 → dp = [2, 7, 11, 11, 12]",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 106,
+    "part": "13부 2차원 DP",
+    "chapter": "DP 6 — 격자 경로 (2차원 표)",
+    "newIdea": "상태가 두 인덱스 (r, c): 위와 왼쪽에서 온다",
+    "prerequisites": [
+     39,
+     105
+    ],
+    "difficulty": 5,
+    "formula": "dp[r][c] = dp[r-1][c] + dp[r][c-1], 첫 행과 첫 열은 1",
+    "canonicalInput": "3×3 격자 → [[1, 1, 1], [1, 2, 3], [1, 3, 6]] → 6가지",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 107,
+    "part": "13부 2차원 DP",
+    "chapter": "DP 7 — 0/1 배낭",
+    "newIdea": "물건은 한 번만: (물건 수, 용량) 두 축의 표",
+    "prerequisites": [
+     71,
+     106
+    ],
+    "difficulty": 6,
+    "formula": "dp[i][w] = max(dp[i-1][w], dp[i-1][w - wᵢ] + vᵢ) (wᵢ <= w일 때만 둘째 항)",
+    "canonicalInput": "물건 (무게, 가치) (1, 1), (2, 3), 용량 3 → 행 [0, 1, 1, 1] → [0, 1, 3, 4] → 4",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 108,
+    "part": "13부 2차원 DP",
+    "chapter": "DP 역추적 — 어느 칸에서 왔나",
+    "newIdea": "값과 함께 선택을 기록해 답의 구성을 복원한다(BFS의 parent와 같은 생각)",
+    "prerequisites": [
+     89,
+     71
+    ],
+    "difficulty": 5,
+    "formula": "prev[x] = dp[x]를 만든 동전. x에서 x - prev[x]로 0까지 따라간다",
+    "canonicalInput": "동전 {1, 3, 4}, 6 → prev[6] = 3 → prev[3] = 3 → [3, 3]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 109,
+    "part": "13부 2차원 DP",
+    "chapter": "DP 8 — LCS, 두 문자열을 두 축에",
+    "newIdea": "두 수열의 접두사 쌍이 상태: 같으면 대각선 + 1",
+    "prerequisites": [
+     107
+    ],
+    "difficulty": 6,
+    "formula": "a[i-1] == b[j-1]이면 dp[i][j] = dp[i-1][j-1] + 1, 아니면 max(dp[i-1][j], dp[i][j-1])",
+    "canonicalInput": "'ABC'와 'AC' → 행 [1, 1] → [1, 1] → [1, 2] → 2 ('AC')",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 110,
+    "part": "13부 2차원 DP",
+    "chapter": "DP 9 — 편집 거리",
+    "newIdea": "전이 후보 3개(삭제·삽입·교체)와 0행·0열 초깃값",
+    "prerequisites": [
+     109
+    ],
+    "difficulty": 7,
+    "formula": "같으면 dp[i-1][j-1], 다르면 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]). dp[i][0] = i, dp[0][j] = j",
+    "canonicalInput": "'ab' → 'ba': 표 [[0, 1, 2], [1, 1, 1], [2, 1, 2]] → 2. 'cat' → 'cut' = 1",
+    "replay": "needs-paper",
+    "kind": "core"
+   },
+   {
+    "n": 111,
+    "part": "13부 2차원 DP",
+    "chapter": "체크포인트 11 — 2차원 표 카드",
+    "newIdea": "새 개념 없음: 2차원 표 카드 4줄(+ heapq, 이진 트리, 레벨 순회 다시 보기)",
+    "prerequisites": [
+     106,
+     107,
+     109,
+     110,
+     38,
+     80,
+     82
+    ],
+    "difficulty": 5,
+    "formula": "2차원 표 카드: 두 축의 뜻 / 점화식 / 0행·0열 / 행 → 열 순서",
+    "canonicalInput": "격자 3×3 → 6 / 배낭 → 4 / LCS('ABC', 'AC') → 2 / 편집 거리('ab', 'ba') → 2",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 112,
+    "part": "14부 힙 내부",
+    "chapter": "배열 속 이진 트리 — 인덱스 공식",
+    "newIdea": "완전 이진 트리를 배열 한 줄로(레벨 순회 순서 = 배열 순서)",
+    "prerequisites": [
+     80,
+     82
+    ],
+    "difficulty": 4,
+    "formula": "0부터 셀 때: 자식 2i + 1, 2i + 2. 부모 (i - 1) // 2",
+    "canonicalInput": "[1, 3, 2, 7, 4]: 인덱스 1(값 3)의 자식은 7, 4. 인덱스 4의 부모는 인덱스 1",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 113,
+    "part": "14부 힙 내부",
+    "chapter": "힙 1 — 위로 올리기 (push)",
+    "newIdea": "힙 불변식(부모 <= 자식)과 sift-up",
+    "prerequisites": [
+     38,
+     112
+    ],
+    "difficulty": 5,
+    "formula": "끝에 붙이고 부모보다 작으면 교환하며 위로: while i > 0 and h[i] < h[(i-1)//2]",
+    "canonicalInput": "[1, 3, 2, 7]에 0 push → [1, 3, 2, 7, 0] → [1, 0, 2, 7, 3] → [0, 1, 2, 7, 3]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 114,
+    "part": "14부 힙 내부",
+    "chapter": "힙 2 — 아래로 내리기 (pop)",
+    "newIdea": "루트를 빼고 끝 원소를 올린 뒤, 더 작은 자식과 바꾸며 내린다",
+    "prerequisites": [
+     113
+    ],
+    "difficulty": 5,
+    "formula": "두 자식 중 작은 쪽이 나보다 작으면 교환하고 그 자리에서 반복",
+    "canonicalInput": "[0, 1, 2, 7, 3]에서 pop → 0 반환, [3, 1, 2, 7] → 3 ↔ 1 → [1, 3, 2, 7] (자식 7 > 3이라 멈춤)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 115,
+    "part": "14부 힙 내부",
+    "chapter": "heapify — 아래에서부터 내리기",
+    "newIdea": "마지막 부모부터 거꾸로 sift-down하면 통째로 힙이 된다",
+    "prerequisites": [
+     114
+    ],
+    "difficulty": 5,
+    "formula": "for i in range(n // 2 - 1, -1, -1): sift_down(i). 잎 절반은 0번 이동 → 전체 O(n)",
+    "canonicalInput": "[4, 3, 1, 2] → i = 1: 3 ↔ 2 → [4, 2, 1, 3] → i = 0: 4 ↔ 1 → [1, 2, 4, 3]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 116,
+    "part": "14부 힙 내부",
+    "chapter": "힙 정렬 — 힙에서 n번 꺼내기",
+    "newIdea": "조립: heapify 한 번 + pop n번 = 정렬, O(n log n)",
+    "prerequisites": [
+     115
+    ],
+    "difficulty": 4,
+    "formula": "heapify(a) → heappop을 n번 → 오름차순",
+    "canonicalInput": "[4, 3, 1, 2] → 힙 [1, 2, 4, 3] → 1, 2, 3, 4 순서로 나옴",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 117,
+    "part": "14부 힙 내부",
+    "chapter": "체크포인트 12 — 힙 카드, 그리고 그래프 다시 보기",
+    "newIdea": "새 개념 없음: 힙 인덱스 공식 + 다음 부에 쓸 그래프·튜플 정렬 카드 깨우기",
+    "prerequisites": [
+     113,
+     114,
+     115,
+     86,
+     88,
+     91,
+     21
+    ],
+    "difficulty": 4,
+    "formula": "힙: 자식 2i + 1, 2i + 2, 부모 (i - 1) // 2, 부모 <= 자식. 그래프: BFS 거리, 연결 요소",
+    "canonicalInput": "[1, 3, 2, 7]에 0 push → [0, 1, 2, 7, 3] / 간선 (0,1) (2,3), 정점 5개 → 요소 3개",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 118,
+    "part": "15부 가중치 그래프",
+    "chapter": "유니온 파인드 1 — 대표를 따라 올라가기",
+    "newIdea": "parent 배열 하나로 묶음을 표현한다(find = 루트까지, union = 루트끼리 연결)",
+    "prerequisites": [
+     91,
+     112
+    ],
+    "difficulty": 5,
+    "formula": "parent[i] = i로 시작. find(x): while parent[x] != x: x = parent[x]. union(a, b): parent[find(a)] = find(b)",
+    "canonicalInput": "n = 5: union(0,1), union(2,3), union(1,3) → parent = [1, 3, 3, 3, 4], 묶음 2개",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 119,
+    "part": "15부 가중치 그래프",
+    "chapter": "유니온 파인드 2 — 경로 압축",
+    "newIdea": "find가 지나간 노드를 루트에 바로 붙인다",
+    "prerequisites": [
+     118
+    ],
+    "difficulty": 6,
+    "formula": "루트 r을 찾은 뒤, 지나온 x마다 parent[x] = r. 재귀 대신 반복문으로 쓴다",
+    "canonicalInput": "parent = [1, 2, 3, 3], find(0) → 3, 이후 parent = [3, 3, 3, 3]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 120,
+    "part": "15부 가중치 그래프",
+    "chapter": "가중치 그래프 표현",
+    "newIdea": "간선에 값을 붙인다: (w, u, v) 목록과 adj[u] = [(v, w)]",
+    "prerequisites": [
+     21,
+     86
+    ],
+    "difficulty": 3,
+    "formula": "정렬용: edges = [(w, u, v)] (튜플은 w부터 비교). 탐색용: adj[u] = [(v, w)]",
+    "canonicalInput": "0-1(4), 0-2(1), 2-1(2) → sorted(edges) = [(1, 0, 2), (2, 2, 1), (4, 0, 1)]",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 121,
+    "part": "15부 가중치 그래프",
+    "chapter": "크루스칼 — 싼 간선부터, 사이클이면 버린다",
+    "newIdea": "최소 신장 트리 = 가중치 순 그리디 + 유니온 파인드로 사이클 검사",
+    "prerequisites": [
+     119,
+     120
+    ],
+    "difficulty": 6,
+    "formula": "간선을 w 오름차순으로: find(u) != find(v)면 채택하고 union. n - 1개를 고르면 끝",
+    "canonicalInput": "0-1(4), 0-2(1), 2-1(2), 1-3(5) → 0-2, 2-1 채택, 0-1 버림, 1-3 채택 → 합 8",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 122,
+    "part": "15부 가중치 그래프",
+    "chapter": "간선 완화 — 벨만-포드",
+    "newIdea": "완화: 더 짧은 길을 찾으면 dist를 줄인다(모든 간선을 n - 1번 반복)",
+    "prerequisites": [
+     88,
+     120
+    ],
+    "difficulty": 6,
+    "formula": "if dist[u] + w < dist[v]: dist[v] = dist[u] + w. 모든 간선 × (n - 1)회전. n번째에도 줄면 음수 사이클",
+    "canonicalInput": "0→1(4), 0→2(1), 2→1(2): dist [0, ∞, ∞] → 1회전 [0, 3, 1] → 2회전 변화 없음",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 123,
+    "part": "15부 가중치 그래프",
+    "chapter": "heapq 다시 보기 — 낡은 항목 건너뛰기",
+    "newIdea": "고칠 수 없는 힙: 새로 넣고, 꺼냈을 때 낡은 것이면 버린다",
+    "prerequisites": [
+     21,
+     38,
+     116
+    ],
+    "difficulty": 5,
+    "formula": "heappush(h, (새 값, 항목)). pop한 d가 best[항목]보다 크면 continue",
+    "canonicalInput": "push (5,'a'), (3,'b'), (2,'a') → pop (2,'a') 처리 → (3,'b') 처리 → (5,'a')는 낡아서 건너뜀",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 124,
+    "part": "15부 가중치 그래프",
+    "chapter": "다익스트라 — 가까운 정점부터 확정",
+    "newIdea": "힙에서 꺼낸 가장 가까운 정점의 거리는 확정이다(음수 간선이 없을 때)",
+    "prerequisites": [
+     122,
+     123
+    ],
+    "difficulty": 7,
+    "formula": "d, u = heappop(h); d > dist[u]면 건너뜀; 이웃 v를 완화했으면 heappush(h, (dist[v], v))",
+    "canonicalInput": "0→1(4), 0→2(1), 2→1(2), 1→3(1): pop (0,0) (1,2) (3,1) (4,1: 낡음) (4,3) → dist = [0, 3, 1, 4]",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 125,
+    "part": "15부 가중치 그래프",
+    "chapter": "프림 — 다익스트라에서 한 줄 바꾸기",
+    "newIdea": "힙의 키를 '시작점부터의 거리'에서 '간선 가중치'로 바꾼다",
+    "prerequisites": [
+     121,
+     124
+    ],
+    "difficulty": 6,
+    "formula": "heappush(h, (w, v)) (dist[u] + w 대신 w). 꺼낸 정점이 이미 트리에 있으면 건너뜀",
+    "canonicalInput": "0-1(4), 0-2(1), 2-1(2), 1-3(5), 시작 0 → 채택 가중치 1, 2, 5 → 합 8 (크루스칼과 같다)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 126,
+    "part": "15부 가중치 그래프",
+    "chapter": "인접 행렬과 INF — 거리표 만들기",
+    "newIdea": "그래프를 n×n 표로: 길이 없으면 INF, 자기 자신은 0",
+    "prerequisites": [
+     39,
+     120
+    ],
+    "difficulty": 4,
+    "formula": "INF = float('inf'). d[i][i] = 0, 간선 u→v(w)는 d[u][v] = w, 나머지는 INF",
+    "canonicalInput": "0→1(4), 0→2(1), 2→1(2) → [[0, 4, 1], [∞, 0, ∞], [∞, 2, 0]]",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 127,
+    "part": "15부 가중치 그래프",
+    "chapter": "플로이드-워셜 — 경유지를 하나씩 허용",
+    "newIdea": "'k번 정점까지 거쳐도 될 때의 최단 거리'로 표를 갱신한다",
+    "prerequisites": [
+     122,
+     126
+    ],
+    "difficulty": 6,
+    "formula": "for k: for i: for j: d[i][j] = min(d[i][j], d[i][k] + d[k][j]). k가 가장 바깥",
+    "canonicalInput": "[[0, 4, 1], [∞, 0, ∞], [∞, 2, 0]]: k = 2일 때 d[0][1] = min(4, 1 + 2) = 3 한 칸만 바뀜",
+    "replay": "needs-paper",
+    "kind": "core"
+   },
+   {
+    "n": 128,
+    "part": "15부 가중치 그래프",
+    "chapter": "체크포인트 13 — 가중치 그래프 카드 섞기",
+    "newIdea": "새 개념 없음: 네 알고리즘 구별(+ 문자열, 스택·덱, 윈도우, 분할상환, 이진 트리 다시 보기)",
+    "prerequisites": [
+     119,
+     121,
+     122,
+     124,
+     127,
+     35,
+     36,
+     37,
+     32,
+     53,
+     80
+    ],
+    "difficulty": 5,
+    "formula": "크루스칼 = 간선 정렬 + find / 벨만-포드 = 전부 n-1번 / 다익스트라 = 힙 + 완화 / 플로이드 = k, i, j",
+    "canonicalInput": "0→1(4), 0→2(1), 2→1(2), 1→3(1): dist = [0, 3, 1, 4]. 무방향 0-1(4), 0-2(1), 2-1(2), 1-3(5): MST 합 8",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 129,
+    "part": "16부 문자열 매칭과 단조 구조",
+    "chapter": "문자열 매칭 — 한 칸씩 밀며 비교",
+    "newIdea": "패턴을 한 칸씩 옮기며 처음부터 다시 비교한다(최악 n × m)",
+    "prerequisites": [
+     9,
+     35
+    ],
+    "difficulty": 4,
+    "formula": "for i in range(n - m + 1): t[i + j] == p[j]를 j = 0부터. 최악 (n - m + 1) × m번",
+    "canonicalInput": "t = 'ABABC', p = 'ABC' → i = 0: 3번째에서 실패, i = 1: 바로 실패, i = 2: 성공 (비교 3 + 1 + 3 = 7번) → 위치 2",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 130,
+    "part": "16부 문자열 매칭과 단조 구조",
+    "chapter": "트라이 — 글자마다 가지",
+    "newIdea": "자식을 dict로 가진 트리: 공통 접두사를 한 길로 공유한다",
+    "prerequisites": [
+     28,
+     80,
+     129
+    ],
+    "difficulty": 5,
+    "formula": "node = node.setdefault(ch, {})로 내려가고 끝에 표시. 탐색 비용은 글자 수",
+    "canonicalInput": "'tea', 'ten', 'to' 삽입 → t 아래 e(a, n)와 o, 글자 노드 5개. 접두사 'te' 아래 단어 2개",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 131,
+    "part": "16부 문자열 매칭과 단조 구조",
+    "chapter": "접두사이자 접미사 — π 표를 손으로",
+    "newIdea": "경계: 진접두사이면서 진접미사인 가장 긴 것의 길이",
+    "prerequisites": [
+     129
+    ],
+    "difficulty": 5,
+    "formula": "π[i] = p[:i+1]에서 (진접두사 = 진접미사)인 최대 길이",
+    "canonicalInput": "'ABAB' → [0, 0, 1, 2]. 'AAAB' → [0, 1, 2, 0]",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 132,
+    "part": "16부 문자열 매칭과 단조 구조",
+    "chapter": "KMP 탐색 — π 표가 주어졌을 때",
+    "newIdea": "불일치하면 패턴만 j = π[j-1]로 당긴다(텍스트 위치는 뒤로 가지 않는다)",
+    "prerequisites": [
+     131
+    ],
+    "difficulty": 6,
+    "formula": "while j > 0 and t[i] != p[j]: j = π[j-1]. 같으면 j += 1. j == m이면 발견",
+    "canonicalInput": "t = 'ABABAC', p = 'ABAC', π = [0, 0, 1, 0]: i = 3에서 불일치 → j: 3 → 1 → 계속 → 위치 2에서 발견",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 133,
+    "part": "16부 문자열 매칭과 단조 구조",
+    "chapter": "π 표 만들기 — 패턴을 자기 자신과 매칭",
+    "newIdea": "π 계산도 같은 당기기 루프(이미 구한 π를 재사용)",
+    "prerequisites": [
+     132
+    ],
+    "difficulty": 7,
+    "formula": "j = 0; for i in 1..m-1: while j > 0 and p[i] != p[j]: j = π[j-1]; 같으면 j += 1; π[i] = j",
+    "canonicalInput": "'ABABC' → [0, 0, 1, 2, 0] (C에서 j: 2 → 0)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 134,
+    "part": "16부 문자열 매칭과 단조 구조",
+    "chapter": "단조 스택 — 다음 큰 원소",
+    "newIdea": "스택을 감소 순으로 유지한다: 새 값보다 작은 것을 꺼내며 답을 채운다",
+    "prerequisites": [
+     36,
+     53
+    ],
+    "difficulty": 6,
+    "formula": "while 스택 and a[스택 top] < a[i]: ans[pop()] = a[i]. 그다음 push(i). 원소마다 push 1번, pop 최대 1번 → O(n)",
+    "canonicalInput": "[2, 1, 3, 2] → ans = [3, 3, -1, -1]",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 135,
+    "part": "16부 문자열 매칭과 단조 구조",
+    "chapter": "단조 덱 — 창 안의 최솟값",
+    "newIdea": "덱의 뒤는 단조 유지, 앞은 창을 벗어난 인덱스 버리기 → 맨 앞이 창의 최솟값",
+    "prerequisites": [
+     32,
+     37,
+     134
+    ],
+    "difficulty": 7,
+    "formula": "뒤: a[dq[-1]] >= a[i]인 동안 pop → append(i). 앞: dq[0] <= i - k면 popleft. 답 = a[dq[0]]",
+    "canonicalInput": "[2, 3, 1, 4, 5], k = 2 → 2, 1, 1, 4",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 136,
+    "part": "16부 문자열 매칭과 단조 구조",
+    "chapter": "체크포인트 14 — 문자열·단조 구조 카드",
+    "newIdea": "새 개념 없음: π 표 암송 + 심화에 쓸 옛 카드 깨우기(누적합, 비트, 트리 순회, DFS, 집 털기, 거듭제곱, 해시)",
+    "prerequisites": [
+     132,
+     133,
+     134,
+     135,
+     30,
+     102,
+     81,
+     90,
+     69,
+     47,
+     54
+    ],
+    "difficulty": 5,
+    "formula": "KMP: j = π[j-1]. 단조 스택: 작은 것을 꺼내며 답 채우기",
+    "canonicalInput": "'ABABC' → [0, 0, 1, 2, 0] / [2, 1, 3, 2] → [3, 3, -1, -1] / [2, 3, 1, 4, 5], k = 2 → 2, 1, 1, 4",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 137,
+    "part": "17부 심화(선택)",
+    "chapter": "나머지 연산 — 큰 수를 작게 유지하기",
+    "newIdea": "더하고 곱할 때마다 % m을 해도 결과가 같다",
+    "prerequisites": [
+     3,
+     47
+    ],
+    "difficulty": 4,
+    "formula": "(a + b) % m = (a % m + b % m) % m. 곱셈도 같다. pow(x, n, m). Python의 %는 음수에도 0 이상을 준다",
+    "canonicalInput": "(7 × 8) % 5 = (2 × 3) % 5 = 1. pow(3, 5, 7) = 243 % 7 = 5",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 138,
+    "part": "17부 심화(선택)",
+    "chapter": "문자열을 수 하나로 — 다항식 해시",
+    "newIdea": "문자열을 B진수 수처럼 읽고 M으로 나눈 나머지로 요약한다",
+    "prerequisites": [
+     54,
+     137
+    ],
+    "difficulty": 5,
+    "formula": "H = 0; 글자마다 H = (H × B + 글자 값) % M",
+    "canonicalInput": "'314', B = 10, M = 7: H = 3 → 31 % 7 = 3 → 314 % 7 = 6",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 139,
+    "part": "17부 심화(선택)",
+    "chapter": "롤링 해시 — 창의 해시를 O(1)에 갱신",
+    "newIdea": "창을 한 칸 밀 때 나가는 글자를 빼고 들어오는 글자를 더한다",
+    "prerequisites": [
+     32,
+     129,
+     138
+    ],
+    "difficulty": 6,
+    "formula": "H = ((H - 나가는 값 × Bᵐ⁻¹) × B + 들어오는 값) % M. 해시가 같으면 실제 문자열을 비교해 확인",
+    "canonicalInput": "'3141', 창 길이 2, B = 10, M = 7: 31 → 3, 14 → 0, 41 → 6",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 140,
+    "part": "17부 심화(선택)",
+    "chapter": "최하위 1 비트 — x & -x",
+    "newIdea": "x & -x는 가장 오른쪽 1만 남긴다",
+    "prerequisites": [
+     102,
+     103
+    ],
+    "difficulty": 5,
+    "formula": "x & -x = 최하위 1 비트의 값. x & (x - 1) = 그 비트를 지운 값",
+    "canonicalInput": "6 = 110₂ → 6 & -6 = 2, 6 & 5 = 4. 12 & -12 = 4. 8 & -8 = 8",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 141,
+    "part": "17부 심화(선택)",
+    "chapter": "펜윅 트리 1 — 구간 담당과 누적합 질의",
+    "newIdea": "tree[i]는 i에서 끝나는 길이 (i & -i) 구간의 합을 맡는다",
+    "prerequisites": [
+     30,
+     140
+    ],
+    "difficulty": 6,
+    "formula": "1부터 세는 인덱스. 질의(1..i의 합): while i > 0: s += tree[i]; i -= i & -i",
+    "canonicalInput": "[3, 1, 4, 1] → tree[1..4] = [3, 4, 4, 9]. 합(1..3) = tree[3] + tree[2] = 8. n = 8에서 7의 경로 7 → 6 → 4",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 142,
+    "part": "17부 심화(선택)",
+    "chapter": "펜윅 트리 2 — 점 갱신",
+    "newIdea": "값을 바꾸면 그 칸을 덮는 담당 구간들만 고친다",
+    "prerequisites": [
+     141
+    ],
+    "difficulty": 7,
+    "formula": "갱신: while i <= n: tree[i] += d; i += i & -i",
+    "canonicalInput": "n = 8: 5번 칸 갱신 경로 5 → 6 → 8, 3번 칸은 3 → 4 → 8",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 143,
+    "part": "17부 심화(선택)",
+    "chapter": "루트 있는 트리 — 부모를 넘기는 DFS",
+    "newIdea": "인접 리스트 트리를 루트에서 내려가며(부모 제외) 자식 결과를 모아 올라온다",
+    "prerequisites": [
+     81,
+     90
+    ],
+    "difficulty": 6,
+    "formula": "size(u, p) = 1 + Σ size(c, u) (c는 adj[u] 중 p가 아닌 것)",
+    "canonicalInput": "간선 0-1, 0-2, 1-3, 1-4, 루트 0 → size = [5, 3, 1, 1, 1]",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 144,
+    "part": "17부 심화(선택)",
+    "chapter": "트리 DP — 고르면 자식은 못 고른다",
+    "newIdea": "정점마다 (고름, 안 고름) 두 값을 자식에서 모아 올린다(집 털기의 트리판)",
+    "prerequisites": [
+     69,
+     143
+    ],
+    "difficulty": 7,
+    "formula": "take[u] = w[u] + Σ skip[c]. skip[u] = Σ max(take[c], skip[c])",
+    "canonicalInput": "간선 0-1, 0-2, 1-3, 1-4, 가중치 [1, 5, 2, 3, 4] → take = [8, 5, 2, 3, 4], skip = [9, 7, 0, 0, 0] → 9",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 145,
+    "part": "17부 심화(선택)",
+    "chapter": "체크포인트 15 — 전체 지도 다시 보기",
+    "newIdea": "새 개념 없음: 부마다 대표 카드 한 장씩 인출",
+    "prerequisites": [
+     139,
+     142,
+     144,
+     124,
+     110,
+     97
+    ],
+    "difficulty": 5,
+    "formula": "카드마다: 불변식 또는 점화식 한 줄 + 고정 입력의 답",
+    "canonicalInput": "gcd(48, 18) = 6부터 트리 DP 9까지, 부마다 한 장",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 146,
+    "part": "부록",
+    "chapter": "[부록] 세그먼트 트리 — 점 갱신·구간 합",
+    "newIdea": "구간을 반씩 나눈 트리를 배열에 저장한다",
+    "prerequisites": [
+     112,
+     142
+    ],
+    "difficulty": 8,
+    "formula": "리프는 n..2n-1, tree[i] = tree[2i] + tree[2i+1]",
+    "canonicalInput": "[3, 1, 4, 1] → tree[1..7] = [9, 4, 5, 3, 1, 4, 1]",
+    "replay": "needs-paper",
+    "kind": "appendix"
+   },
+   {
+    "n": 147,
+    "part": "부록",
+    "chapter": "[부록] 비트마스크 DP — 방문 집합이 상태",
+    "newIdea": "dp[mask][last]: 방문한 집합과 마지막 정점이 상태",
+    "prerequisites": [
+     103,
+     107
+    ],
+    "difficulty": 8,
+    "formula": "dp[mask | 1 << j][j] = min(…, dp[mask][i] + cost[i][j])",
+    "canonicalInput": "TSP n = 3, cost = [[0,1,4],[1,0,2],[4,2,0]] → 0 → 1 → 2 → 0 = 7 (상태 8 × 3 = 24칸)",
+    "replay": "needs-paper",
+    "kind": "appendix"
+   },
+   {
+    "n": 148,
+    "part": "부록",
+    "chapter": "[부록] BST 삭제와 균형 트리(AVL 회전)",
+    "newIdea": "삭제 3경우(잎 / 자식 1개 / 자식 2개 → 중위 후속자)와 회전 4패턴",
+    "prerequisites": [
+     83,
+     84
+    ],
+    "difficulty": 8,
+    "formula": "자식 2개인 노드 삭제 = 오른쪽 서브트리의 최솟값으로 대체. 회전: LL, RR, LR, RL",
+    "canonicalInput": "5, 3, 8, 1, 4로 만든 트리에서 3 삭제 → 4가 올라옴 → 중위 1 4 5 8",
+    "replay": "needs-paper",
+    "kind": "appendix"
+   },
+   {
+    "n": 149,
+    "part": "부록",
+    "chapter": "[부록] 변형 모음 — 안정 계수 정렬·기수 정렬, 배낭 1차원 압축, LIS O(n log n)",
+    "newIdea": "본편 알고리즘의 변형: 누적 개수로 자리 배치, 역순 갱신, bisect로 tails 유지",
+    "prerequisites": [
+     25,
+     107,
+     72
+    ],
+    "difficulty": 7,
+    "formula": "배낭 1차원: for w in range(W, wᵢ - 1, -1): dp[w] = max(dp[w], dp[w - wᵢ] + vᵢ). LIS: tails[bisect_left(tails, x)] = x",
+    "canonicalInput": "[3, 1, 4, 2, 5] → tails: [3] → [1] → [1, 4] → [1, 2] → [1, 2, 5] → 길이 3",
+    "replay": "needs-paper",
+    "kind": "appendix"
+   },
+   {
+    "n": 150,
+    "part": "부록",
+    "chapter": "[부록] 그래프 심화 — 3색 DFS 사이클 검출, DFS 위상 정렬, SCC, 0-1 BFS, 플로우",
+    "newIdea": "DFS의 방문 상태(방문 중 / 끝남)와 간선 분류 등 탐색의 확장",
+    "prerequisites": [
+     90,
+     93,
+     124
+    ],
+    "difficulty": 8,
+    "formula": "방향 그래프 사이클: 회색(방문 중) 정점을 다시 만나면 사이클",
+    "canonicalInput": "0→1, 1→2, 2→0: 0(회색) → 1(회색) → 2에서 0이 회색 → 사이클",
+    "replay": "reference-only",
+    "kind": "appendix"
+   },
+   {
+    "n": 151,
+    "part": "부록",
+    "chapter": "[부록] 그 밖의 고급 주제",
+    "newIdea": "본편 경사로 닿지 않는 주제의 입구만: lazy 세그먼트 트리, LCA, 구간·digit DP, Z·아호코라식·접미사 배열, FFT, 기하, NP-완전성, 허프만, 원형 큐",
+    "prerequisites": [
+     145
+    ],
+    "difficulty": 9,
+    "formula": "한 줄 공식으로 줄지 않는 주제는 링크와 한 문단 소개만 둔다",
+    "canonicalInput": "없음(읽기 전용, 순서 제약 없음)",
+    "replay": "reference-only",
+    "kind": "appendix"
+   }
+  ],
+  "difficultyRules": [
+   {
+    "rule": "새 아이디어 수",
+    "threshold": "장마다 introduces 정확히 1개, 보조 용어 2개 이하, 새 Python 문법·import 1개 이하. review 장은 0개.",
+    "howToCheck": "frontmatter의 introduces 길이를 검사한다. 대표 코드를 ast로 파싱해 이전 장들에 없던 노드 종류(Lambda, ListComp, ClassDef, Starred 등)와 import 이름 수를 센다."
+   },
+   {
+    "rule": "제어 구조 단계",
+    "threshold": "0 직선, 1 단일 루프, 2 중첩 루프·두 인덱스, 3 컨테이너(스택·큐·힙)가 모는 루프, 4 선형 재귀, 5 갈래 재귀(자기 호출 2번 이상 또는 for 안의 재귀), 6 재귀 + 상태 복구. 누적 최고 단계는 한 장에 +1까지. 단계가 오르는 장에서는 추적 상태·증명 축 증가 0.",
+    "howToCheck": "ast로 자동 분류한다: For/While 중첩 깊이, 함수 안 자기 호출 수, 재귀 호출 뒤의 pop·되돌림 대입 여부. ordering 순서대로 누적 최고값과 비교한다."
+   },
+   {
+    "rule": "머릿속 카드의 추적 상태",
+    "threshold": "배열 원소 5개 이하, 동시에 바뀌는 스칼라 3개 이하, 이벤트(비교·swap·대입) 12개 이하면 head. 스칼라 4개 또는 보조 구조 1개가 더 있으면 head-with-effort. 표 8칸 초과 또는 보조 구조 2개면 needs-paper. 인접 장 대비 스칼라 +1까지.",
+    "howToCheck": "canonicalInput을 sys.settrace로 실제 실행해 줄 이벤트 수, 값이 바뀐 지역 변수 수, 리스트 길이를 계산하고 frontmatter의 replay 값과 대조한다."
+   },
+   {
+    "rule": "코드 크기",
+    "threshold": "핵심 함수 15줄 이하(주석·빈 줄 제외), 한 줄 40자 이하, 중첩 3단 이하, 인접 장 대비 +5줄 이내. 넘으면 장을 나눈다.",
+    "howToCheck": "ast로 함수 본문 줄 수와 최대 중첩 깊이를 계산하고, 줄 길이는 lint로 검사한다."
+   },
+   {
+    "rule": "증명 부담",
+    "threshold": "0 없음, 1 불변식 한 줄, 2 교환 논증·귀납, 3 분할상환·확률. 인접 장 대비 +1까지. 제어 구조 단계가 오르는 장에서는 오르지 않는다.",
+    "howToCheck": "frontmatter의 proof 필드를 ordering 순서로 비교한다."
+   },
+   {
+    "rule": "난이도 상승 폭",
+    "threshold": "d(n) <= max(d(n-1), d(n-2), d(n-3)) + 1 이고 d(n) <= 지금까지의 최고 난이도 + 1. 하강은 제한 없음.",
+    "howToCheck": "ordering 파일을 한 번 순회한다. 부록은 제외한다."
+   },
+   {
+    "rule": "꼭대기 연속 제한(어려운 장 뒤에 어려운 장)",
+    "threshold": "d가 누적 최고 이상인 장은 3연속까지. d >= max(4, 누적 최고 - 1)인 장은 5연속까지. review 장 또는 d <= 누적 최고 - 2인 장이 연속을 끊는다.",
+    "howToCheck": "순회하며 두 카운터를 유지한다. 넘으면 쉬는 장이나 복습 장을 넣으라고 보고한다."
+   },
+   {
+    "rule": "선수 지식 최근성",
+    "threshold": "core 장은 선수 3개 이하. 그중 1개 이상이 최근 10장 안에 있거나, 최근 10장 안의 다른 장 prerequisites에 다시 등장해야 한다. 1~10장(추적 기초)만 선수인 장은 예외.",
+    "howToCheck": "선수 p마다 last_touch(p) = p 자신 또는 p를 prerequisites에 가진 가장 최근 장을 구하고 n - last_touch <= 10인 것이 있는지 본다."
+   },
+   {
+    "rule": "묵은 선수와 회상 상자",
+    "threshold": "last_touch가 12장보다 먼 선수는 장당 1개까지 허용하고, 그 장 첫 화면에 해당 카드의 회상 상자를 자동으로 넣는다. 2개 이상이면 앞에 review 또는 bridge 장을 넣는다. bridge·review 장은 면제.",
+    "howToCheck": "위와 같은 last_touch 계산. 1개면 recallBox 목록에 추가, 2개 이상이면 위반으로 보고한다."
+   },
+   {
+    "rule": "복습 간격",
+    "threshold": "review 장 사이의 core 장 12개 이하, 전체 간격 15장 이하. 각 review는 다음 부에서 쓰일 12장 이상 묵은 카드를 prerequisites에 포함한다.",
+    "howToCheck": "ordering 순회로 간격을 센다. 다음 review까지의 장들의 묵은 선수 집합이 직전 review의 prerequisites에 들어 있는지 대조한다."
+   },
+   {
+    "rule": "추상화가 처음 나오는 장",
+    "threshold": "값을 인덱스로, 답 공간 탐색, 집합을 정수로, 암묵적 그래프, '여기서 끝나는' 상태가 처음 등장하는 장은 제어 구조 단계·스칼라 수 증가 0, 코드 +3줄 이내.",
+    "howToCheck": "frontmatter의 flags 필드가 처음 나타나는 장을 찾아 제어 구조·추적 상태·코드 크기 규칙의 증가량을 비교한다."
+   },
+   {
+    "rule": "사용 먼저, 구현 나중",
+    "threshold": "내부 구현 장(동적 배열, 해시 테이블, 힙, 연결 리스트)은 같은 도구의 사용 장(list, dict/set, heapq, deque)보다 뒤에 온다. 사용 장이 12장보다 멀면 직전 review에 포함한다.",
+    "howToCheck": "frontmatter의 implements 필드가 가리키는 사용 장 번호가 현재 장보다 작은지 검사하고, 최근성 규칙을 함께 적용한다."
+   },
+   {
+    "rule": "재귀 카드 형식",
+    "threshold": "제어 구조 단계 4 이상인 core 장의 머릿속 카드는 정의 카드(하는 일 한 문장 / 기저 / 한 줄). 스택 프레임 추적은 kind가 bridge인 장에서만, 프레임 3개까지.",
+    "howToCheck": "canonicalInput 실행 trace에서 최대 호출 깊이를 재고, 카드 템플릿 종류와 kind를 대조한다."
+   },
+   {
+    "rule": "카드 정답은 실제 실행에서",
+    "threshold": "canonicalInput의 답과 추적표가 Python 3.13 실행 결과와 100% 일치. 문자열 키의 해시값이나 set 순회 순서에 의존하는 추적 금지.",
+    "howToCheck": "CI에서 장마다 코드를 다시 실행해 저장된 trace JSON과 diff한다. PYTHONHASHSEED를 바꿔 두 번 실행해 결과가 같은지 확인한다."
+   }
+  ]
+ },
+ "mental_replay_review": {
+  "lens": "B — 머릿속 재생·작업 기억·Python 현실",
+  "overallVerdict": "원안의 큰 뼈대(선형 구조 → 재귀 → 분할 정복 → 트리 → 완전 탐색 → 그리디 → 그래프 → DP → 가중치 그래프)는 유지할 만하다. 그러나 렌즈 B 기준으로는 그대로 쓸 수 없다.\n\n1. 재생 판정이 결정된 규격(원소 ≤5, 변수 ≤3, 사건 ≤12)이 아니라 원안 R3(단계 ≤25, 배열 6~8, 표 4×5)에 맞춰져 있다. Python 3.13.18에서 실제로 세어 보니 선택 정렬 5원소는 비교 10 + swap 3 = 13, 삽입 정렬 [5,2,4,1,3]은 16, 요세푸스(7,3)은 21, fib(5)는 호출 15, LIS 8원소는 비교 28, 4-Queens는 호출 17, 플로이드 3노드는 검사 27이다. '높음'으로 표시된 장 다수가 규격 밖이다.\n2. '한 장 = 새 개념 1개'를 어긴 묶음 장이 20개 안팎이다(9, 12, 17, 21, 27, 31, 40, 42, 43, 45, 46, 48, 54, 57, 58, 61, 67, 68, 71, 73, 76, 77).\n3. 기본 문법만 아는 학습자에게 필요한 Python 다리가 빠져 있다: 동시 대입, 컴프리헨션과 2차원 별칭, class, lambda와 튜플 비교, 이진수.\n4. 이미 내린 결정(큐 뒤·재귀 앞의 반복형 BFS)이 반영되지 않았고, 메모이제이션(26)과 표(60) 사이가 34장이다. 원안이 근거로 든 Hello Algo와 pythonds는 이 둘을 연속으로 둔다(원문 목차 확인).\n5. CPython 현실과 어긋나는 서술이 있다: dict는 체이닝이 아니고, list 용량은 실측 4→8→16→24로 2배가 아니다. heapq의 max 함수는 3.13에 없다.\n6. 15줄×40자 규격에 안 들어가는 코드가 있다(측정): 격자 BFS 18줄·49자, BST 삭제 16줄, TSP 16줄·중첩 4·62자, 2D DP 한 줄 46~53자.\n7. 쉬어 가는 장이 사실상 gcd 하나뿐이고 73~79장은 무거운 추적만 7연속이다.\n\n수정안은 137장 + 부록이다. V1은 1~14장(gcd, 거스름돈, 선택·삽입 정렬, 이분 탐색 포함)이다. 인접 장의 난이도 상승은 모두 +1 이하이고, 숨 고르기 14장, 다리 9장, 복습 6장을 넣었다. 재생 등급은 head 93, head-with-effort 40, needs-paper 4, reference-only 1이며, 인용한 입력과 답은 모두 실행으로 확인했다. 장 수가 늘어난 것은 묶음 장을 카드 한 장 단위로 쪼갠 결과다. 선수 지식이 10장보다 멀리 있는 장이 34개라서 30초 복습 상자를 자동으로 붙여야 한다. 임계값은 V1을 실제로 공장에서 돌려 본 뒤 보정해야 하는 초안이다.\n\n측정·검증 스크립트:\n- scratchpad:lensB_scripts/count_events.py\n- scratchpad:lensB_scripts/candidates.py\n- scratchpad:lensB_scripts/verify.py",
+  "issues": [
+   {
+    "at": "1->6",
+    "type": "wrong-order",
+    "severity": "medium",
+    "problem": "첫 5개 장(참조·슬라이싱·추적표·호출 스택·불변식)에 알고리즘이 하나도 없고, 문턱 개념인 참조(별칭)가 1장이다. 원안대로면 V1(12~14장)이 정렬 없이 끝나 머릿속 재생 재료가 빈약하다. 지루함과 싸우는 학습자에게 가장 느린 구간이 맨 앞이다.",
+    "fix": "추적표(1) → 반열림(2) → 동시 대입(3) 직후 gcd(4)·최댓값(5)·거스름돈(6)을 넣고 별칭은 7장으로 미룬다. V1 = 수정안 1~14장."
+   },
+   {
+    "at": "3,6,34",
+    "type": "python-specific",
+    "severity": "high",
+    "problem": "동시 대입 `a, b = b, a % b`가 6장의 핵심인데 3장의 메모로만 처리된다. 34장 한 줄 뒤집기 `cur.next, prev, cur = prev, cur, cur.next`는 '우변 먼저'만으로 설명되지 않는다(좌변은 왼쪽부터 대입). 3.13에서 좌변을 `cur, cur.next, prev` 순으로 쓰면 AttributeError가 난다(실행 확인).",
+    "fix": "동시 대입을 독립 장(3)으로 둔다. 뒤집기 카드는 4줄 버전만 싣고 한 줄 버전은 함정 변형 질문으로 돌린다."
+   },
+   {
+    "at": "2,9,15,16,17,19,20,21,24,28,30,37,63",
+    "type": "not-mentally-replayable",
+    "severity": "high",
+    "problem": "'암산 가능' 판정이 결정된 규격(원소 ≤5, 변수 ≤3, 사건 ≤12)이 아니라 R3(단계 ≤25, 배열 6~8)에 맞춰져 있다. 실행으로 센 값: 선택 정렬 [5,2,4,1,3] 비교 10 + swap 3 = 13, 삽입 9 + 7 = 16, 버블 10 + 7 = 17, 요세푸스(7,3) 21회, fib(5) 호출 15, 병합 정렬 8원소 비교 15, LIS 8원소 비교 28. '5~6원소 완전 암산', '7노드 트리', '8자 괄호열', 'm=5 키 6개'는 모두 규격 밖이다.",
+    "fix": "정렬은 [3,1,4,2](선택 6+3, 삽입 5+3, 버블 6+3), 요세푸스 (5,2) 10회, fib(4) 9회, LIS [3,1,4,2,5] 10회, 트리는 5노드 T5로 고정한다. 모든 장의 정확한 입력을 revisedSequence에 적었다."
+   },
+   {
+    "at": "8",
+    "type": "should-be-appendix",
+    "severity": "medium",
+    "problem": "비용표 장은 사실 8개 이상의 나열이고 추적할 실행이 없다. 새 개념 1개 규칙도 어기고 재생 등급은 reference-only다.",
+    "fix": "'list는 뒤가 싸다'(밀리는 칸 수 세기)만 본편 31장으로 남긴다. deque·dict·heapq 비용은 각 구조의 장에서 한 줄씩 다루고, 전체 표는 부록의 누적 참조 카드로 둔다."
+   },
+   {
+    "at": "9,12",
+    "type": "too-many-new-ideas",
+    "severity": "medium",
+    "problem": "9장은 set 멤버십 + dict 빈도 + two-sum 보수, 12장은 고정 창 + 가변 창이다. 가변 창을 dict 예제로 하면 l, r에 dict 내용까지 들고 있어야 해 변수 3개를 넘는다. set 순회 순서와 str 해시는 실행마다 달라 추적표가 재현되지 않는다.",
+    "fix": "20(set)·21(dict 세기)·23(two-sum), 26(고정)·27(가변: 합 기준 [1,2,1,3,1], limit 4 → 3)로 나눈다. 추적 예제는 int 키만 쓰고 set은 순회하지 않는다."
+   },
+   {
+    "at": "17",
+    "type": "too-many-new-ideas",
+    "severity": "medium",
+    "problem": "버블 정렬 + 안정성 + key 정렬 + lambda(새 문법)가 한 장에 있다.",
+    "fix": "16(버블) / 17(안정성: [2a,2b,1]을 선택 정렬하면 [1,2b,2a], 실행 확인) / 18(key와 lambda, sort()는 None 반환) / 19(튜플 비교)로 나눈다."
+   },
+   {
+    "at": "18",
+    "type": "not-mentally-replayable",
+    "severity": "medium",
+    "problem": "세기 → 누적합 → 뒤에서부터 배치하는 안정 계수 정렬은 배열 3개(약 14칸)를 동시에 들어야 한다.",
+    "fix": "본편은 `out += [v] * cnt[v]` 단순 버전(30장, [2,0,2,1,0] → cnt [2,1,2])만 둔다. 안정 버전과 기수 정렬은 부록으로 보낸다."
+   },
+   {
+    "at": "20->23",
+    "type": "wrong-order",
+    "severity": "high",
+    "problem": "결정 사항(큐 뒤·재귀 앞에 반복형 BFS 맛보기)이 반영되지 않았다. 원안의 첫 BFS는 38장으로 재귀(23장) 뒤다. 이웃 목록 표현(dict 안의 list)도 54장에야 나와 선수 지식이 빈다.",
+    "fix": "34(dict 안의 list) → 35(큐로 층별 순회: visited 없는 트리) → 36(BFS 거리: dist가 방문 표시)을 재귀 앞에 넣는다. 원안 38장은 복습 장(66)이 된다."
+   },
+   {
+    "at": "21->22",
+    "type": "python-specific",
+    "severity": "high",
+    "problem": "쉬운 동적 배열(22)이 어려운 해시 내부(21)에 의존하도록 순서가 뒤집혀 있다. CPython과도 다르다: dict는 체이닝이 아니라 개방 주소법이고, list 용량은 3.13 실측 4→8→16→24→32→40으로 2배가 아니며, hash(-1) == -2이고 str 해시는 실행마다 다르다. '실제 실행에서 뽑은 추적표' 원칙과 충돌한다.",
+    "fix": "37(동적 배열: 장난감 DynArray로 2배 모델임을 밝히고 실측 용량을 한 줄 병기) → 38 → 39(체이닝은 교재 모델로 명시, int 키만) → 40(재해싱은 새 개념 없는 복습 장) 순서로 바꾼다."
+   },
+   {
+    "at": "21,54,65",
+    "type": "missing-prerequisite",
+    "severity": "high",
+    "problem": "`[[] for _ in range(m)]`, `[[0] * m for _ in range(n)]` 같은 컴프리헨션과 `[[0] * m] * n` 별칭 버그가 blindSpots에만 있고 장이 없다. 버킷·격자·DP 표가 모두 여기에 의존한다.",
+    "fix": "38장 '리스트의 리스트 — 행은 따로 만든다'를 다리 장으로 추가한다(g=[[0]*2]*2; g[0][0]=1 → [[1,0],[1,0]])."
+   },
+   {
+    "at": "23,24,25",
+    "type": "not-mentally-replayable",
+    "severity": "medium",
+    "problem": "fact(4)는 프레임 깊이 4로 결정(≤3)을 넘는다. sum_list에 a[1:]를 넘기면 호출마다 O(n) 복사가 생기고 길이 2000에서 RecursionError가 난다(실행 확인, 한도 1000). 하노이 n=3의 호출 추적은 15번이다.",
+    "fix": "42(fact(3) 프레임 읽기) → 43('정의 카드' 형식 자체를 한 장으로, 인덱스 버전) → 44(fib(4) 호출 9) → 45(하노이는 n=2 세 수와 횟수 2**n - 1만)."
+   },
+   {
+    "at": "26->60",
+    "type": "difficulty-spike",
+    "severity": "high",
+    "problem": "메모이제이션(26)과 표 채우기(60) 사이가 34장이라 다리가 끊겼다. 원안이 근거로 든 출처는 연속 배치다: Hello Algo intro_to_dynamic_programming.md의 절이 Method 1 Brute-force search → Method 2 Memoized search → Method 3 Dynamic programming → Space optimization이고, pythonds Recursion toctree의 마지막 본문 절이 DynamicProgramming이다(둘 다 원문 확인). fib 표 카드는 재귀 추적보다 쉬운 재생 재료인데 뒤로 밀려 있다.",
+    "fix": "46(메모) → 47(표) → 48(변수 두 개)을 연속으로 둔다. 본격 DP(101장~)는 복습 장으로 다시 시작한다."
+   },
+   {
+    "at": "27",
+    "type": "missing-prerequisite",
+    "severity": "high",
+    "problem": "3^13 = 1594323은 암산할 수 없다. '13 = 1101₂'는 48장(비트)보다 먼저 이진수를 쓰고, pow(x, n, mod)로 모듈러 연산을 한 절에 끼워 넣어 새 개념이 2개다.",
+    "fix": "41(이진수 읽기) → 49(러시아 농부 곱셈) → 50(2**10: 1, 2, 4, 32, 1024) 순서로 가고, 모듈러 연산은 119장으로 분리한다."
+   },
+   {
+    "at": "29,30,31",
+    "type": "too-many-new-ideas",
+    "severity": "medium",
+    "problem": "병합 정렬 '길이 4~8 암산'은 호출 추적 기준이면 불가능하다. 31장은 퀵 정렬과 퀵 셀렉트를 묶었다. 분할 예제가 6원소다.",
+    "fix": "병합 정렬은 정의 카드 + [3,1,4,2](비교 5회). 분할은 [2,5,1,4,3](결과 [2,1,3,4,5]가 정렬처럼 보이지 않는 입력). 퀵 셀렉트는 55장으로 분리한다."
+   },
+   {
+    "at": "33",
+    "type": "missing-prerequisite",
+    "severity": "high",
+    "problem": "`class Node`가 나오는데 class 문법은 한 번도 소개되지 않았다. class + 노드 + 삽입 순서로 새 개념이 3개인데 '쉬어 가는 장'으로 분류돼 있다.",
+    "fix": "59(class로 노드 만들기, 다리) → 60(순회) → 61(삽입·삭제 순서) → 62(뒤집기)로 나눈다."
+   },
+   {
+    "at": "40",
+    "type": "too-many-new-ideas",
+    "severity": "medium",
+    "problem": "삭제 3경우와 불균형 동기가 한 장이다. 재귀 삭제 코드는 16줄·44자로 규격(15줄·40자)을 넘는다(측정).",
+    "fix": "68(쏠림: 1,2,3,4 삽입 → 높이 4, '표준 라이브러리에 균형 BST 없음')과 69(삭제: 최솟값 찾기 helper 분리)로 나눈다."
+   },
+   {
+    "at": "41,42,43",
+    "type": "too-many-new-ideas",
+    "severity": "medium",
+    "problem": "42장은 인덱스 공식 + sift-up + sift-down, 43장은 heapify + 힙 정렬 + O(n) 합계 논증이다. 41장은 3.14의 max 함수를 언급하지만 결정은 3.13이다(hasattr(heapq, 'heappush_max') == False 확인). heapq 내부의 _siftdown/_siftup은 교재와 이름 방향이 반대다.",
+    "fix": "70(heapq) / 71(부호 뒤집기) / 72(top-k) / 73(인덱스 공식) / 74(sift-up) / 75(sift-down) / 76(heapify)로 나눈다. 제자리 힙 정렬은 부록."
+   },
+   {
+    "at": "45,46,47",
+    "type": "too-many-new-ideas",
+    "severity": "high",
+    "problem": "45장은 두 갈래 선택과 공유 path 되돌리기를 동시에 도입하고, 46장은 순열과 조합을 묶었다. 4-Queens는 호출 17번이라 종이가 필요하다(측정). 집합 3개 + 되돌리기 코드는 15줄·51자다.",
+    "fix": "79(새 리스트를 넘기는 부분집합) → 80(append/pop과 path[:]) → 81(순열) → 82(조합) → 83(작은 가지치기) → 84(N-Queens는 needs-paper, safe() 분리)."
+   },
+   {
+    "at": "48",
+    "type": "too-many-new-ideas",
+    "severity": "medium",
+    "problem": "'난이도를 내리는 장'인데 이진 표현 + 연산자 5개 + 트릭 2개가 들어 있다. 이진수 읽기 자체가 앞에서 소개되지 않았다.",
+    "fix": "41(이진수) / 57(연산자) / 58(XOR) / 95(x &= x - 1) / 133(x & -x)로 흩어 급경사마다 숨 고르기 장으로 쓴다."
+   },
+   {
+    "at": "50,51->62",
+    "type": "wrong-order",
+    "severity": "medium",
+    "problem": "그리디 맛보기가 50장에야 나온다. 동전 반례(51)와 동전 DP(62) 사이가 11장이라 반례가 동기로 작동하지 않는다.",
+    "fix": "거스름돈을 6장(숫자만으로 암산: 1260원 → 6개)에 두고, 반례 {1,3,4}는 동전 DP 바로 앞(105 → 106)에 둔다."
+   },
+   {
+    "at": "14->53",
+    "type": "not-mentally-replayable",
+    "severity": "high",
+    "problem": "14장과 53장 사이가 39장이다. 나무 자르기는 반복마다 배열 전체를 훑어 12단계를 넘는다. 게다가 '마지막 True' 문제라 14장의 '첫 True' 템플릿과 방향이 다르다.",
+    "fix": "28장에서 숫자만 쓰는 판정(x*x >= 30 → 6, 5단계, 변수 2개)으로 먼저 가르치고, 89장에서 그리디 판정(무게 [3,2,4,1], 2일 → 용량 5)으로 재방문한다."
+   },
+   {
+    "at": "54,55,56",
+    "type": "too-many-new-ideas",
+    "severity": "medium",
+    "problem": "격자 BFS를 한 함수로 쓰면 18줄·49자로 규격에 안 들어간다(측정). 4×5 격자는 20칸이다. 54장은 인접 리스트와 격자를 묶었고 경로 복원은 한 구절뿐이다.",
+    "fix": "90(간선 → 인접 리스트) / 91(격자 이웃: near() helper가 한 장) / 92(3×3 격자 BFS) / 93(섬) / 94(경로 복원)로 나눈다."
+   },
+   {
+    "at": "57,58",
+    "type": "too-many-new-ideas",
+    "severity": "medium",
+    "problem": "57장은 재귀 DFS와 스택 DFS를 묶었다(이웃을 reversed로 넣지 않으면 방문 순서가 달라지고, 방문 표시 시점도 다르다). 58장은 3색 사이클과 2색 이분 그래프라는 서로 다른 알고리즘이다.",
+    "fix": "96(재귀) / 97(스택: G5에서 재귀와 같은 순서 A B D C E 확인) / 98(3색) / 99(2색)로 나눈다."
+   },
+   {
+    "at": "61,63,64",
+    "type": "redundant",
+    "severity": "medium",
+    "problem": "61장은 집 털기와 카데인을 묶었다. 카데인의 'i에서 끝나는' 상태는 LIS로 가는 다리인데 활용되지 않는다. 64장 SRTBOT 6글자는 작업 기억(3~5청크)을 넘고 결정된 표 카드 4줄과 중복이다.",
+    "fix": "102(집 털기) → 103(카데인) → 104(LIS) 순으로 두고, 108장은 표 카드 4줄(칸의 뜻 → 점화식 → 초기값 → 순서)을 레시피로 쓴다."
+   },
+   {
+    "at": "65,66,67",
+    "type": "not-mentally-replayable",
+    "severity": "high",
+    "problem": "3×4, 3×5(18칸), 4×4 표는 종이가 필요하다. 들여쓰기 4칸·40자 제한에서 함수 안 3단 중첩의 한 줄 여유는 24자라 `dp[i][j] = dp[i-1][j-1] + 1`이 안 들어간다(측정 폭: 배낭 48, LCS 53, 편집 46).",
+    "fix": "2D DP 코드는 prev/cur 행 변수와 임시 이름을 쓴다. LCS와 편집 거리를 분리하고, 배낭 1D는 물건 1개 (2,3)·용량 4로 [0,0,3,3,3] 대 [0,0,3,3,6]을 대비한다. 2D 배낭은 needs-paper로 표시한다."
+   },
+   {
+    "at": "68",
+    "type": "too-many-new-ideas",
+    "severity": "low",
+    "problem": "parent 배열 숲 + 경로 압축 + 크기 순 합치기가 한 장이다.",
+    "fix": "109(대표 찾기: [1,3,3,3])와 110(경로 압축: [1,2,3,3] → [3,3,3,3])으로 나누고, 크기 순 합치기는 110의 상자로 둔다."
+   },
+   {
+    "at": "69,70,71,72",
+    "type": "not-mentally-replayable",
+    "severity": "high",
+    "problem": "크루스칼 5노드 7간선은 숫자 21개, 벨만-포드 4노드 5간선은 검사 15회다. 플로이드는 3노드만 해도 검사 27회, 4노드 64회인데 '높음'으로 표시됐다. 71장은 '가까운 것부터 확정'과 '낡은 항목 건너뛰기' 두 개념을 묶었다.",
+    "fix": "120(완화 한 번) → 121(3노드 3간선, 검사 6회) → 122(스캔 버전) → 123(heapq: 3노드에서 (4,B)가 낡은 항목, 실행 확인) → 124(needs-paper). 크루스칼은 4노드 5간선(가중치 1~5)으로 줄인다."
+   },
+   {
+    "at": "73",
+    "type": "too-many-new-ideas",
+    "severity": "low",
+    "problem": "단조 스택과 단조 덱이 한 장이다. 덱은 인덱스를 담아 값으로 다시 찾아야 해서 부하가 더 크다.",
+    "fix": "131(다음 큰 원소: 사건 9개)과 132(창 최솟값: head-with-effort)로 나눈다."
+   },
+   {
+    "at": "76->77",
+    "type": "difficulty-spike",
+    "severity": "high",
+    "problem": "롤링 해시 장은 매칭 문제 + 다항 해시 + mod를 한꺼번에 도입하고, 선수인 21·27장은 49~55장 전이다. KMP 장은 π 정의 + 빠른 구성 + 매칭을 9자 패턴으로 묶어 난이도 8이다.",
+    "fix": "119(모듈러) → 125(호너) → 126(단순 매칭) → 127(B=10이면 창이 그대로 숫자: 31, 14, 41 mod 7 = 3, 0, 6) → 128(π 정의) → 129(빠른 구성) → 130(매칭), 패턴은 'AABAA'."
+   },
+   {
+    "at": "78",
+    "type": "not-mentally-replayable",
+    "severity": "medium",
+    "problem": "TSP 비트마스크 DP는 16줄·중첩 4·62자로 한 함수에 담을 수 없고(측정), 3도시만 해도 상태가 24칸이다.",
+    "fix": "맨 끝(137)에 needs-paper로 두고 helper 분해를 전제로 한다. 암송용 가벼운 과제는 상태 정의 한 줄만 쓴다."
+   },
+   {
+    "at": "73->79",
+    "type": "difficulty-spike",
+    "severity": "medium",
+    "problem": "난이도 7~8이 7장 연속이고 전부 무거운 추적이다. 원안 전체에서 쉬어 가는 장은 6·27·48뿐인데 27·48은 실제로는 묶음 장이다.",
+    "fix": "숫자 몇 개로 재생되는 숨 고르기 14장(6, 16, 22, 29, 41, 49, 57, 58, 78, 85, 95, 112, 119, 133)을 급경사 앞뒤에 둔다. 2D DP 사이에는 유니온 파인드·MST를 끼워 무거운 구간을 쪼갠다."
+   },
+   {
+    "at": "15->22",
+    "type": "other",
+    "severity": "low",
+    "problem": "정렬 4장 연속(15~18) 뒤에 재생 재료가 약한 내부 이론 2장(21, 22)이 재귀 직전에 몰려 있어 단조롭다.",
+    "fix": "정렬 사이에 이분 탐색을 끼우고(10, 11 → 13, 14 → 16), 내부 이론(37~40) 앞에 BFS 맛보기와 요세푸스를, 뒤에 이진수 읽기를 둔다."
+   }
+  ],
+  "revisedSequence": [
+   {
+    "n": 1,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "추적표 — 한 줄씩 손으로 돌리기",
+    "newIdea": "줄마다 변수 값을 고정 슬롯 순서로 갱신하는 추적 규약",
+    "prerequisites": [],
+    "difficulty": 1,
+    "formula": "`for x in a: s += x` → 매 줄 (x, s) 순서로 읽는다; range(n) == 0..n-1",
+    "canonicalInput": "a=[3,1,2], s=0 → s: 3, 4, 6 (답 6)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 2,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "인덱스와 반열림 구간 [l, r)",
+    "newIdea": "끝을 포함하지 않는 구간 표기",
+    "prerequisites": [
+     1
+    ],
+    "difficulty": 1,
+    "formula": "len(a[l:r]) == r - l; 마지막 원소 a[r-1]; a[-1] == a[len(a)-1]",
+    "canonicalInput": "a=[5,6,7,8,9]; a[1:4] → [6,7,8] (길이 3), a[-1] → 9",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 3,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "동시 대입 — 오른쪽 먼저, 그다음 왼쪽",
+    "newIdea": "우변을 전부 계산한 뒤 좌변에 왼쪽부터 대입한다",
+    "prerequisites": [
+     1
+    ],
+    "difficulty": 1,
+    "formula": "`a, b = b, a + b` ; `x[i], x[j] = x[j], x[i]`",
+    "canonicalInput": "(a,b)=(1,2) → (2,3) → (3,5) → (5,8)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 4,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "유클리드 호제법 — gcd",
+    "newIdea": "같은 모양의 더 작은 문제로 바꾸는 while 루프",
+    "prerequisites": [
+     3
+    ],
+    "difficulty": 2,
+    "formula": "`while b: a, b = b, a % b` ; gcd(a, 0) == a",
+    "canonicalInput": "(48,18) → (18,12) → (12,6) → (6,0) → 6",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 5,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "불변식 — 지금까지 본 것 중 최대",
+    "newIdea": "루프 불변식(반복마다 참인 한 문장)",
+    "prerequisites": [
+     1,
+     2
+    ],
+    "difficulty": 2,
+    "formula": "i번째 반복 직전(i >= 1) best == max(a[:i])",
+    "canonicalInput": "a=[3,1,4,1,5] → best: 3,3,4,4,5 (비교 4번)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 6,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "거스름돈 — 큰 동전부터",
+    "newIdea": "탐욕 선택(지금 가장 큰 것부터)",
+    "prerequisites": [
+     1
+    ],
+    "difficulty": 2,
+    "formula": "`for c in coins: cnt += n // c; n %= c`",
+    "canonicalInput": "n=1260, coins=[500,100,50,10] → 2+2+1+1 = 6개",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 7,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "이름표와 별칭 — b = a 는 복사가 아니다",
+    "newIdea": "변수는 객체에 붙은 이름이고 a[:]가 새 리스트를 만든다",
+    "prerequisites": [
+     2
+    ],
+    "difficulty": 2,
+    "formula": "`b = a` 같은 객체 / `c = a[:]` 새 객체(O(n) 복사)",
+    "canonicalInput": "a=[1,2]; b=a; c=a[:]; b.append(3) → a==[1,2,3], c==[1,2]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 8,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "함수와 호출 스택",
+    "newIdea": "호출마다 지역 변수 프레임이 쌓이고 return에서 사라진다",
+    "prerequisites": [
+     1,
+     7
+    ],
+    "difficulty": 2,
+    "formula": "호출 = 프레임 push, return = pop; 인자로 받은 list는 호출자와 같은 객체",
+    "canonicalInput": "g(x)=x+1, f(x)=g(x)*2; f(g(2)) → g(2)=3 → f(3): g(3)=4 → 8 (최대 깊이 2)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 9,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "횟수 세기 1 — 한 겹 n번, 두 겹 n(n-1)/2번",
+    "newIdea": "연산 횟수를 입력 크기 n의 식으로 센다(Big-O 직관)",
+    "prerequisites": [
+     1
+    ],
+    "difficulty": 2,
+    "formula": "`for i in range(n): for j in range(i+1, n)` → n*(n-1)//2번",
+    "canonicalInput": "n=4 → 3+2+1 = 6번; n=5 → 10번",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 10,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "선택 정렬",
+    "newIdea": "남은 것 중 최솟값을 맨 앞과 바꾼다",
+    "prerequisites": [
+     3,
+     5,
+     9
+    ],
+    "difficulty": 3,
+    "formula": "i회전 뒤 a[:i]는 가장 작은 i개가 최종 위치에 있다",
+    "canonicalInput": "[3,1,4,2] → 비교 6번, swap 3번 → [1,2,3,4]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 11,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "삽입 정렬",
+    "newIdea": "정렬된 앞부분에 새 원소를 밀어 넣는다",
+    "prerequisites": [
+     10
+    ],
+    "difficulty": 3,
+    "formula": "i회전 직전 a[:i]는 정렬되어 있다(최종 위치는 아님)",
+    "canonicalInput": "[3,1,4,2] → 비교 5번, 밀기 3번 → [1,2,3,4]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 12,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "횟수 세기 2 — 절반씩 줄면 log n번",
+    "newIdea": "반으로 줄이는 루프의 반복 수는 log2(n)",
+    "prerequisites": [
+     9
+    ],
+    "difficulty": 2,
+    "formula": "`while n > 1: n //= 2` → log2(n)번; 2**10 == 1024",
+    "canonicalInput": "n=16 → 8, 4, 2, 1 (4번)",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 13,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "이분 탐색 — 절반 버리기",
+    "newIdea": "정렬된 배열의 가운데를 보고 한쪽 절반을 버린다",
+    "prerequisites": [
+     2,
+     12
+    ],
+    "difficulty": 3,
+    "formula": "답이 있다면 [lo, hi) 안; mid = (lo + hi) // 2",
+    "canonicalInput": "a=[1,3,5,7,9], t=7 → (lo,hi,mid): (0,5,2) → (3,5,4) → (3,4,3) 찾음",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 14,
+    "part": "A. 추적 기초와 첫 알고리즘 (V1)",
+    "chapter": "이분 탐색 경계 — 첫 True 찾기",
+    "newIdea": "'찾았다' 분기 없는 2갈래 템플릿으로 경계를 구한다",
+    "prerequisites": [
+     13
+    ],
+    "difficulty": 4,
+    "formula": "`if a[mid] < t: lo = mid + 1` / `else: hi = mid` → 끝나면 lo가 첫 a[i] >= t",
+    "canonicalInput": "a=[1,2,2,2,3], t=2 → mid 2, 1, 0 → lo=1",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 15,
+    "part": "B. 정렬 마무리와 Python 정렬",
+    "chapter": "bisect — 왼쪽 경계와 오른쪽 경계",
+    "newIdea": "`<`를 `<=`로 바꾸면 오른쪽 경계(표준 라이브러리 bisect)",
+    "prerequisites": [
+     14
+    ],
+    "difficulty": 4,
+    "formula": "개수 == bisect_right(a, x) - bisect_left(a, x)",
+    "canonicalInput": "a=[1,2,2,2,3], x=2 → 1, 4 → 3개",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 16,
+    "part": "B. 정렬 마무리와 Python 정렬",
+    "chapter": "버블 정렬 — 이웃끼리만 바꾸기",
+    "newIdea": "인접 교환만으로 정렬(swap 수 = 역전 쌍 수)",
+    "prerequisites": [
+     10
+    ],
+    "difficulty": 3,
+    "formula": "한 회전 뒤 가장 큰 값이 맨 뒤에 고정된다",
+    "canonicalInput": "[3,1,4,2] → 비교 6번, swap 3번 (역전 쌍 3-1, 3-2, 4-2)",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 17,
+    "part": "B. 정렬 마무리와 Python 정렬",
+    "chapter": "안정 정렬 — 같은 값의 순서",
+    "newIdea": "안정성(같은 키끼리 원래 순서 보존)",
+    "prerequisites": [
+     10,
+     11
+    ],
+    "difficulty": 3,
+    "formula": "삽입·버블은 안정, 선택은 불안정, sorted는 안정",
+    "canonicalInput": "[2a, 2b, 1] → 선택 정렬 [1, 2b, 2a] / 삽입 정렬 [1, 2a, 2b]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 18,
+    "part": "B. 정렬 마무리와 Python 정렬",
+    "chapter": "sorted와 key — 무엇을 기준으로",
+    "newIdea": "key 함수(lambda)로 비교 기준을 준다",
+    "prerequisites": [
+     17
+    ],
+    "difficulty": 3,
+    "formula": "`sorted(a, key=len)` 새 리스트 / `a.sort()` 제자리, None 반환",
+    "canonicalInput": "['ccc','a','bb'], key=len → ['a','bb','ccc']",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 19,
+    "part": "B. 정렬 마무리와 Python 정렬",
+    "chapter": "튜플 비교 — 앞에서부터, 동점이면 다음",
+    "newIdea": "튜플 사전식 비교로 2차 기준 정렬",
+    "prerequisites": [
+     18
+    ],
+    "difficulty": 3,
+    "formula": "(1, 'b') < (2, 'a'); `key=lambda p: (-p[1], p[0])`",
+    "canonicalInput": "[('a',2),('b',3),('c',2)] 점수 내림·이름 오름 → b, a, c",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 20,
+    "part": "C. 한 번 훑기: set·dict·누적합·두 포인터",
+    "chapter": "set — 본 적 있나",
+    "newIdea": "평균 O(1) 멤버십 검사(해시는 블랙박스)",
+    "prerequisites": [
+     9
+    ],
+    "difficulty": 2,
+    "formula": "`if x in seen: return x` / `seen.add(x)`",
+    "canonicalInput": "[3,1,4,1,5] → 4번째 원소에서 첫 중복 1",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 21,
+    "part": "C. 한 번 훑기: set·dict·누적합·두 포인터",
+    "chapter": "dict — 세기",
+    "newIdea": "키 → 값 대응으로 빈도를 센다",
+    "prerequisites": [
+     20
+    ],
+    "difficulty": 3,
+    "formula": "`cnt[x] = cnt.get(x, 0) + 1`",
+    "canonicalInput": "[2,3,2,2,3] → {2: 3, 3: 2}",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 22,
+    "part": "C. 한 번 훑기: set·dict·누적합·두 포인터",
+    "chapter": "과반수 투표 — 변수 두 개로 다수 찾기",
+    "newIdea": "서로 다른 둘을 짝지어 지우면 과반수만 남는다",
+    "prerequisites": [
+     21
+    ],
+    "difficulty": 3,
+    "formula": "`if cnt == 0: cand = x` ; `cnt += 1 if x == cand else -1`",
+    "canonicalInput": "[2,3,2,2,3] → (cand,cnt): (2,1),(2,0),(2,1),(2,2),(2,1) → 2",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 23,
+    "part": "C. 한 번 훑기: set·dict·누적합·두 포인터",
+    "chapter": "two-sum — 필요한 짝을 dict에서 찾기",
+    "newIdea": "보수(t - x)를 묻는 역방향 질문",
+    "prerequisites": [
+     21
+    ],
+    "difficulty": 3,
+    "formula": "`if t - x in pos: return pos[t - x], i` ; `pos[x] = i`",
+    "canonicalInput": "a=[2,7,4,1], t=5 → i=3에서 4가 pos에 있음 → (2, 3)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 24,
+    "part": "C. 한 번 훑기: set·dict·누적합·두 포인터",
+    "chapter": "누적합",
+    "newIdea": "전처리 한 번으로 구간 합을 뺄셈 한 번에",
+    "prerequisites": [
+     2,
+     5
+    ],
+    "difficulty": 3,
+    "formula": "P[0] = 0, P[i+1] = P[i] + a[i]; sum(a[l:r]) == P[r] - P[l]",
+    "canonicalInput": "a=[3,1,4,2] → P=[0,3,4,8,10]; sum(a[1:3]) = 8 - 3 = 5",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 25,
+    "part": "C. 한 번 훑기: set·dict·누적합·두 포인터",
+    "chapter": "투 포인터 — 양끝에서 좁히기",
+    "newIdea": "두 인덱스가 마주 보며 움직이고 버린 쪽에는 답이 없다",
+    "prerequisites": [
+     5,
+     13
+    ],
+    "difficulty": 3,
+    "formula": "정렬된 a: 합 > t면 r -= 1, 합 < t면 l += 1",
+    "canonicalInput": "a=[1,2,4,7,11], t=9 → (0,4)=12 → (0,3)=8 → (1,3)=9 찾음",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 26,
+    "part": "C. 한 번 훑기: set·dict·누적합·두 포인터",
+    "chapter": "고정 길이 윈도우",
+    "newIdea": "겹치는 부분은 두고 들어온 값만 더하고 나간 값만 뺀다",
+    "prerequisites": [
+     24
+    ],
+    "difficulty": 3,
+    "formula": "`s += a[i] - a[i - k]`",
+    "canonicalInput": "a=[1,3,2,5,4], k=3 → 6, 10, 11 → 최대 11",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 27,
+    "part": "C. 한 번 훑기: set·dict·누적합·두 포인터",
+    "chapter": "가변 길이 윈도우 — 넘치면 왼쪽을 당긴다",
+    "newIdea": "조건이 깨질 때만 left를 전진시키는 같은 방향 두 포인터",
+    "prerequisites": [
+     25,
+     26
+    ],
+    "difficulty": 4,
+    "formula": "`while total > limit: total -= a[left]; left += 1`",
+    "canonicalInput": "a=[1,2,1,3,1], limit=4 → (left,right,total): (0,0,1),(0,1,3),(0,2,4),(2,3,4),(3,4,4) → 최장 3",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 28,
+    "part": "C. 한 번 훑기: set·dict·누적합·두 포인터",
+    "chapter": "답을 이분 탐색 — 정수 제곱근",
+    "newIdea": "배열 대신 판정 함수 ok(x)의 F…F T…T 경계를 찾는다",
+    "prerequisites": [
+     14
+    ],
+    "difficulty": 4,
+    "formula": "`if ok(mid): hi = mid` / `else: lo = mid + 1` (ok(x) = x*x >= n)",
+    "canonicalInput": "n=30 → (lo,hi): (0,30) → (0,15) → (0,7) → (4,7) → (6,7) → 6",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 29,
+    "part": "C. 한 번 훑기: set·dict·누적합·두 포인터",
+    "chapter": "숫자 뒤집기 — % 10 과 // 10",
+    "newIdea": "끝자리 떼기와 붙이기",
+    "prerequisites": [
+     4
+    ],
+    "difficulty": 3,
+    "formula": "`r = r * 10 + n % 10; n //= 10`",
+    "canonicalInput": "123 → (n,r): (12,3) → (1,32) → (0,321)",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 30,
+    "part": "C. 한 번 훑기: set·dict·누적합·두 포인터",
+    "chapter": "계수 정렬 — 세어서 다시 쓰기",
+    "newIdea": "값을 리스트 인덱스로 써서 비교 없이 정렬",
+    "prerequisites": [
+     21
+    ],
+    "difficulty": 3,
+    "formula": "`cnt[v] += 1` → `out += [v] * cnt[v]`",
+    "canonicalInput": "a=[2,0,2,1,0] → cnt=[2,1,2] → [0,0,1,2,2]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 31,
+    "part": "D. 선형 구조와 그 속",
+    "chapter": "리스트의 비용 — 뒤는 싸고 앞은 비싸다",
+    "newIdea": "list는 연속 배열이라 앞쪽 삽입·삭제가 뒤 원소를 민다",
+    "prerequisites": [
+     7,
+     9
+    ],
+    "difficulty": 3,
+    "formula": "append/pop() O(1); insert(0, x)/pop(0)/`x in a` O(n)",
+    "canonicalInput": "a=[1,2,3,4]: insert(0, 9) → 4칸 이동, append(9) → 0칸",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 32,
+    "part": "D. 선형 구조와 그 속",
+    "chapter": "스택 — 괄호 짝 맞추기",
+    "newIdea": "LIFO: 마지막에 넣은 것이 먼저 나온다(list의 append/pop)",
+    "prerequisites": [
+     31
+    ],
+    "difficulty": 3,
+    "formula": "스택에는 아직 안 닫힌 여는 괄호만 있다",
+    "canonicalInput": "'([])' → True (최대 깊이 2); '([)]' → 3번째 글자에서 False",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 33,
+    "part": "D. 선형 구조와 그 속",
+    "chapter": "큐 — deque와 요세푸스",
+    "newIdea": "FIFO: 먼저 넣은 것이 먼저 나온다(collections.deque)",
+    "prerequisites": [
+     32
+    ],
+    "difficulty": 3,
+    "formula": "`q.append(q.popleft())`를 k-1번, 다음 popleft가 탈락",
+    "canonicalInput": "n=5, k=2 → 탈락 2,4,1,5 → 생존 3 (연산 10번)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 34,
+    "part": "D. 선형 구조와 그 속",
+    "chapter": "dict 안의 list — 이웃 목록",
+    "newIdea": "값이 리스트인 dict로 '누구 옆에 누구'를 적는다",
+    "prerequisites": [
+     21
+    ],
+    "difficulty": 3,
+    "formula": "`g.setdefault(u, []).append(v)` ; `for v in g[u]`",
+    "canonicalInput": "쌍 (1,2),(1,3),(2,4) → {1: [2,3], 2: [4]}",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 35,
+    "part": "D. 선형 구조와 그 속",
+    "chapter": "큐로 층별 순회 — BFS 맛보기",
+    "newIdea": "꺼낸 것의 이웃을 뒤에 넣으면 가까운 층부터 나온다",
+    "prerequisites": [
+     33,
+     34
+    ],
+    "difficulty": 4,
+    "formula": "`u = q.popleft(); q.extend(kids[u])`",
+    "canonicalInput": "kids={1:[2,3], 2:[4,5], 3:[], 4:[], 5:[]} → 큐: [1] → [2,3] → [3,4,5] → [4,5] → [5] → []",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 36,
+    "part": "D. 선형 구조와 그 속",
+    "chapter": "BFS 거리 — dist가 곧 방문 표시",
+    "newIdea": "처음 발견할 때만 기록하면 그 값이 최단 거리",
+    "prerequisites": [
+     35
+    ],
+    "difficulty": 4,
+    "formula": "`if v not in dist: dist[v] = dist[u] + 1; q.append(v)`",
+    "canonicalInput": "G5={A:[B,C], B:[A,D], C:[A,D], D:[B,C,E], E:[D]} → A0 B1 C1 D2 E3",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 37,
+    "part": "D. 선형 구조와 그 속",
+    "chapter": "동적 배열 — append가 평균 O(1)인 이유",
+    "newIdea": "꽉 차면 2배로 늘려 복사해도 총 복사 < 2n (분할상환)",
+    "prerequisites": [
+     31
+    ],
+    "difficulty": 4,
+    "formula": "1 + 2 + 4 + ... + n/2 < n",
+    "canonicalInput": "장난감 DynArray(용량 1)에 5번 append → 복사 1+2+4 = 7, 용량 1→2→4→8 (실제 CPython list는 4→8→16→24)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 38,
+    "part": "D. 선형 구조와 그 속",
+    "chapter": "리스트의 리스트 — 행은 따로 만든다",
+    "newIdea": "리스트 컴프리헨션과 `[[0] * m] * n` 별칭 함정",
+    "prerequisites": [
+     7
+    ],
+    "difficulty": 3,
+    "formula": "`[[0] * m for _ in range(n)]` 맞음 / `[[0] * m] * n` 같은 행을 n번 가리킴",
+    "canonicalInput": "g=[[0]*2]*2; g[0][0]=1 → [[1,0],[1,0]]",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 39,
+    "part": "D. 선형 구조와 그 속",
+    "chapter": "해시 테이블 속 — hash % m 과 체이닝",
+    "newIdea": "키를 버킷 번호로 바꾸고 충돌은 같은 버킷에 모은다",
+    "prerequisites": [
+     21,
+     38
+    ],
+    "difficulty": 4,
+    "formula": "`i = hash(k) % m; buckets[i].append(k)`",
+    "canonicalInput": "m=4, 키 3,7,4,11 → 버킷 0:[4], 3:[3,7,11] (교재 모델; CPython dict는 개방 주소법)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 40,
+    "part": "D. 선형 구조와 그 속",
+    "chapter": "재해싱 — 꽉 차면 늘려서 다시 넣기",
+    "newIdea": "새 개념 없음: 37장의 2배 확장을 39장 버킷에 적용",
+    "prerequisites": [
+     37,
+     39
+    ],
+    "difficulty": 4,
+    "formula": "n / m > 1이면 m *= 2 하고 모든 키를 다시 hash(k) % m",
+    "canonicalInput": "m=2, 키 1,3,5 → 전부 버킷 1 → m=4: 1:[1,5], 3:[3]",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 41,
+    "part": "D. 선형 구조와 그 속",
+    "chapter": "이진수 읽기 — 13 = 8 + 4 + 1",
+    "newIdea": "2로 나눈 나머지를 거꾸로 읽으면 이진수",
+    "prerequisites": [
+     4
+    ],
+    "difficulty": 3,
+    "formula": "`while n: bits.append(n % 2); n //= 2` → 뒤집기",
+    "canonicalInput": "13 → 나머지 1,0,1,1 → '1101' (bin(13) == '0b1101')",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 42,
+    "part": "E. 재귀와 DP 맛보기",
+    "chapter": "재귀 1 — 자기 호출과 기저 조건",
+    "newIdea": "함수가 더 작은 입력으로 자기 자신을 부른다(프레임으로 읽기)",
+    "prerequisites": [
+     8,
+     32
+    ],
+    "difficulty": 4,
+    "formula": "`def fact(n): return 1 if n <= 1 else n * fact(n - 1)`",
+    "canonicalInput": "fact(3) → 프레임 3, 2, 1 쌓임 → 돌아오며 1, 2, 6 (깊이 3; 재귀 한도 1000)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 43,
+    "part": "E. 재귀와 DP 맛보기",
+    "chapter": "재귀 2 — 정의 카드로 쓰기",
+    "newIdea": "호출을 따라가지 않고 계약 + 기저 + 한 줄로 생각한다",
+    "prerequisites": [
+     42
+    ],
+    "difficulty": 4,
+    "formula": "계약 total(a, i) == sum(a[i:]) / 기저 i == len(a) → 0 / 한 줄 a[i] + total(a, i + 1)",
+    "canonicalInput": "a=[3,1,2]: total(a,1)이 3이라고 믿으면 total(a,0) = 3 + 3 = 6 (a[1:] 복사 대신 인덱스)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 44,
+    "part": "E. 재귀와 DP 맛보기",
+    "chapter": "재귀 트리 — 가지가 둘 (피보나치)",
+    "newIdea": "한 호출이 두 번 부르면 호출이 나무처럼 불어난다",
+    "prerequisites": [
+     43
+    ],
+    "difficulty": 5,
+    "formula": "fib(n) = fib(n-1) + fib(n-2); 호출 수 c(n) = c(n-1) + c(n-2) + 1 → 1,1,3,5,9,15",
+    "canonicalInput": "fib(4) → 값 3, 호출 9번, fib(2)는 2번 계산",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 45,
+    "part": "E. 재귀와 DP 맛보기",
+    "chapter": "하노이 탑",
+    "newIdea": "n-1개 옮기기가 된다고 믿고 세 줄로 조립한다",
+    "prerequisites": [
+     44
+    ],
+    "difficulty": 5,
+    "formula": "move(n, a, c, b) = move(n-1, a, b, c); a→c; move(n-1, b, c, a) → 2**n - 1번",
+    "canonicalInput": "n=2 → A→B, A→C, B→C (3번); n=3 → 7번",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 46,
+    "part": "E. 재귀와 DP 맛보기",
+    "chapter": "메모이제이션 — 본 답은 dict에",
+    "newIdea": "같은 인자의 결과를 저장해 재계산을 없앤다",
+    "prerequisites": [
+     44,
+     21
+    ],
+    "difficulty": 5,
+    "formula": "`if n in memo: return memo[n]` … `memo[n] = 값` (기본 인자 memo={}는 호출 사이에 공유됨)",
+    "canonicalInput": "fib(5): 호출 15번 → 9번, memo에 2,3,4,5 순으로 기록",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 47,
+    "part": "E. 재귀와 DP 맛보기",
+    "chapter": "메모에서 표로 — 아래에서 위로",
+    "newIdea": "재귀 없이 작은 칸부터 표를 채운다(표 카드: 뜻 → 점화식 → 초기값 → 순서)",
+    "prerequisites": [
+     46
+    ],
+    "difficulty": 5,
+    "formula": "dp[i] = dp[i-1] + dp[i-2]; dp[0] = 0, dp[1] = 1; i는 2부터 (i=1이면 dp[-1]을 조용히 읽음)",
+    "canonicalInput": "n=5 → dp=[0,1,1,2,3,5]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 48,
+    "part": "E. 재귀와 DP 맛보기",
+    "chapter": "변수 두 개로 줄이기",
+    "newIdea": "직전 두 칸만 쓰면 표 대신 변수 두 개로 충분하다",
+    "prerequisites": [
+     47,
+     3
+    ],
+    "difficulty": 4,
+    "formula": "`a, b = b, a + b`",
+    "canonicalInput": "(0,1) → (1,1) → (1,2) → (2,3) → (3,5): 4번 뒤 b=5",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 49,
+    "part": "E. 재귀와 DP 맛보기",
+    "chapter": "러시아 농부 곱셈 — 절반과 두 배",
+    "newIdea": "한쪽은 절반, 한쪽은 두 배, 홀수일 때만 더한다",
+    "prerequisites": [
+     41
+    ],
+    "difficulty": 4,
+    "formula": "`if a % 2: s += b` ; `a //= 2; b *= 2`",
+    "canonicalInput": "13 × 3 → a: 13,6,3,1 / b: 3,6,12,24 → 3+12+24 = 39",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 50,
+    "part": "E. 재귀와 DP 맛보기",
+    "chapter": "빠른 거듭제곱 — 절반으로 나누는 재귀",
+    "newIdea": "문제를 절반 크기 하나로 줄이는 분할 정복",
+    "prerequisites": [
+     43,
+     12
+    ],
+    "difficulty": 5,
+    "formula": "power(x, n) = power(x, n // 2) ** 2 * (x if n % 2 else 1); power(x, 0) = 1",
+    "canonicalInput": "2**10 → n: 10,5,2,1,0 → 돌아오며 1,2,4,32,1024",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 51,
+    "part": "F. 분할 정복 정렬",
+    "chapter": "두 정렬 리스트 병합",
+    "newIdea": "두 리스트의 앞머리만 비교해 작은 쪽을 꺼낸다",
+    "prerequisites": [
+     25
+    ],
+    "difficulty": 4,
+    "formula": "out은 항상 정렬; `if x[i] <= y[j]` (<=가 안정성을 지킨다)",
+    "canonicalInput": "[1,4,6] + [2,3] → 비교 3번 → [1,2,3,4,6]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 52,
+    "part": "F. 분할 정복 정렬",
+    "chapter": "병합 정렬",
+    "newIdea": "반으로 나눠 각각 정렬됐다고 믿고 병합한다(정의 카드)",
+    "prerequisites": [
+     51,
+     44
+    ],
+    "difficulty": 5,
+    "formula": "sort(a) = merge(sort(a[:mid]), sort(a[mid:])); len(a) <= 1이면 a",
+    "canonicalInput": "[3,1,4,2] → [1,3] + [2,4] → [1,2,3,4] (비교 총 5번)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 53,
+    "part": "F. 분할 정복 정렬",
+    "chapter": "분할 (partition)",
+    "newIdea": "피벗보다 작은 것을 경계 i 앞쪽으로 모으는 한 번 훑기",
+    "prerequisites": [
+     25,
+     5
+    ],
+    "difficulty": 5,
+    "formula": "a[lo:i] < p <= a[i:j] (Lomuto, p = 마지막 원소)",
+    "canonicalInput": "[2,5,1,4,3], p=3 → 비교 4번 → [2,1,3,4,5], 피벗 위치 2",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 54,
+    "part": "F. 분할 정복 정렬",
+    "chapter": "퀵 정렬",
+    "newIdea": "분할 뒤 피벗은 제자리, 양쪽을 재귀한다(정의 카드)",
+    "prerequisites": [
+     53,
+     52
+    ],
+    "difficulty": 5,
+    "formula": "k = partition(a, lo, hi); sort(a, lo, k); sort(a, k + 1, hi)",
+    "canonicalInput": "[2,5,1,4,3] → [2,1 | 3 | 4,5] → 왼쪽 [1,2], 오른쪽 그대로 (정렬된 입력 1000개면 RecursionError)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 55,
+    "part": "F. 분할 정복 정렬",
+    "chapter": "퀵 셀렉트 — 한쪽만 따라가기",
+    "newIdea": "k번째만 필요하면 피벗 위치와 비교해 한쪽만 본다",
+    "prerequisites": [
+     54
+    ],
+    "difficulty": 5,
+    "formula": "p == k면 끝; k < p면 hi = p; 아니면 lo = p + 1",
+    "canonicalInput": "[2,5,1,4,3], k=1 → p=2 → [2,1]에서 p=0 → 오른쪽 → 답 2",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 56,
+    "part": "F. 분할 정복 정렬",
+    "chapter": "점화식 읽기 — 층수 × 층당 비용",
+    "newIdea": "새 개념 없음: 재귀 모양에서 비용을 읽는 정리 장",
+    "prerequisites": [
+     50,
+     52,
+     54
+    ],
+    "difficulty": 5,
+    "formula": "T(n/2)+1 → log n / 2T(n/2)+n → n log n / T(n-1)+n → n² / 2T(n-1)+1 → 2ⁿ",
+    "canonicalInput": "n=8 병합 정렬: 3층 × 8 = 24; 하노이 n=3: 7",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 57,
+    "part": "F. 분할 정복 정렬",
+    "chapter": "비트 연산 — &, |, ^, <<, >>",
+    "newIdea": "이진수의 같은 자리끼리 하는 연산",
+    "prerequisites": [
+     41
+    ],
+    "difficulty": 4,
+    "formula": "`x >> k & 1` k번째 비트; `1 << k` == 2**k",
+    "canonicalInput": "12, 10 (1100, 1010) → & 8, | 14, ^ 6",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 58,
+    "part": "F. 분할 정복 정렬",
+    "chapter": "홀로 남은 수 — XOR로 짝 지우기",
+    "newIdea": "같은 수를 두 번 XOR하면 사라진다",
+    "prerequisites": [
+     57
+    ],
+    "difficulty": 4,
+    "formula": "`r ^= x` (a ^ a == 0, a ^ 0 == a)",
+    "canonicalInput": "[5,3,5] → r: 5, 6, 3 → 답 3",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 59,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "class로 노드 만들기",
+    "newIdea": "class로 값과 다음 노드 참조를 한 묶음으로 만든다",
+    "prerequisites": [
+     7
+    ],
+    "difficulty": 4,
+    "formula": "`class Node: def __init__(self, val, next=None)` ; a.next = b는 화살표 하나",
+    "canonicalInput": "c=Node(3); b=Node(2, c); a=Node(1, b) → a.next.next.val == 3",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 60,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "연결 리스트 순회",
+    "newIdea": "`cur = cur.next`로 화살표를 따라 걷는다",
+    "prerequisites": [
+     59
+    ],
+    "difficulty": 4,
+    "formula": "`while cur: n += 1; cur = cur.next`",
+    "canonicalInput": "1→2→3 → cur: 1, 2, 3, None → 길이 3",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 61,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "끼워 넣기와 빼기 — 순서가 생명",
+    "newIdea": "화살표를 바꾸는 순서(새 노드부터 연결)",
+    "prerequisites": [
+     60
+    ],
+    "difficulty": 4,
+    "formula": "삽입 `new.next = cur.next; cur.next = new` / 삭제 `cur.next = cur.next.next`",
+    "canonicalInput": "1→3 사이에 2 → 1→2→3; 두 줄 순서를 바꾸면 2가 자기 자신을 가리킴",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 62,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "연결 리스트 뒤집기",
+    "newIdea": "세 이름(prev, cur, nxt)으로 화살표를 하나씩 뒤집는다",
+    "prerequisites": [
+     61,
+     3
+    ],
+    "difficulty": 5,
+    "formula": "`nxt = cur.next; cur.next = prev; prev = cur; cur = nxt`",
+    "canonicalInput": "1→2→3 → (prev,cur): (None,1) → (1,2) → (2,3) → (3,None) → 3→2→1",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 63,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "빠른/느린 포인터",
+    "newIdea": "속도가 다른 두 포인터로 중간·사이클을 찾는다",
+    "prerequisites": [
+     60,
+     25
+    ],
+    "difficulty": 5,
+    "formula": "`slow = slow.next; fast = fast.next.next` ; fast가 끝이면 slow가 중간",
+    "canonicalInput": "1→2→3→4→5 → (slow,fast): (1,1) → (2,3) → (3,5) → 중간 3",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 64,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "이진 트리 — 높이와 노드 수",
+    "newIdea": "왼쪽·오른쪽 자식 = 두 갈래 재귀가 자료구조가 된 것",
+    "prerequisites": [
+     59,
+     44
+    ],
+    "difficulty": 5,
+    "formula": "height(t) = 0 if t is None else 1 + max(height(t.left), height(t.right))",
+    "canonicalInput": "T5 (1의 자식 2,3 / 2의 자식 4,5) → 높이 3, 노드 5",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 65,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "트리 순회 — 전위/중위/후위",
+    "newIdea": "방문 위치(앞·가운데·뒤)만 다른 세 순서",
+    "prerequisites": [
+     64
+    ],
+    "difficulty": 5,
+    "formula": "전위 N L R / 중위 L N R / 후위 L R N",
+    "canonicalInput": "T5 → 전위 1 2 4 5 3 / 중위 4 2 5 1 3 / 후위 4 5 2 3 1",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 66,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "층별 순회 다시 — Node 버전",
+    "newIdea": "새 개념 없음: 35장 큐 순회를 Node 트리에 적용",
+    "prerequisites": [
+     35,
+     64
+    ],
+    "difficulty": 4,
+    "formula": "`q = deque([root])`; popleft 뒤 left, right가 있으면 append",
+    "canonicalInput": "T5 → 1 2 3 4 5 (큐 변화는 35장과 같다)",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 67,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "이진 탐색 트리 — 탐색과 삽입",
+    "newIdea": "왼쪽 < 노드 < 오른쪽 규칙으로 이분 탐색이 트리 모양이 된다",
+    "prerequisites": [
+     65,
+     13
+    ],
+    "difficulty": 5,
+    "formula": "왼쪽 서브트리 < 노드 < 오른쪽 서브트리; 중위 순회 == 정렬 순서",
+    "canonicalInput": "5,3,8,1,4 삽입 → 비교 0+1+1+2+2 = 6번; 중위 1 3 4 5 8",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 68,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "BST가 쏠릴 때 — 정렬된 입력",
+    "newIdea": "삽입 순서가 높이를 결정한다(최악 높이 n)",
+    "prerequisites": [
+     67
+    ],
+    "difficulty": 5,
+    "formula": "정렬된 순서로 넣으면 높이 n → 탐색 O(n); 표준 라이브러리에 균형 BST 없음(bisect·heapq·dict로 대체)",
+    "canonicalInput": "1,2,3,4 삽입 → 높이 4, 비교 0+1+2+3 = 6번",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 69,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "BST 삭제 — 세 경우",
+    "newIdea": "자식 둘인 노드는 오른쪽 서브트리의 최솟값(후속자)으로 대체한다",
+    "prerequisites": [
+     67
+    ],
+    "difficulty": 6,
+    "formula": "리프 → 뗀다 / 자식 1 → 자식을 올린다 / 자식 2 → 후속자 값 복사 후 그 노드 삭제",
+    "canonicalInput": "5,3,8,1,4 삽입 뒤 3 삭제 → 후속자 4 → 중위 1 4 5 8",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 70,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "heapq — 가장 작은 것이 먼저",
+    "newIdea": "우선순위 큐를 블랙박스로 쓴다",
+    "prerequisites": [
+     33,
+     19
+    ],
+    "difficulty": 5,
+    "formula": "`heappush(h, x)` ; `heappop(h)` → 항상 최솟값; h[0]이 최솟값",
+    "canonicalInput": "5,3,8,1 push → pop 순서 1,3,5,8",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 71,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "최대 힙 — 부호 뒤집기",
+    "newIdea": "-x를 넣고 꺼낼 때 다시 뒤집는다(3.13에는 max 전용 함수 없음)",
+    "prerequisites": [
+     70
+    ],
+    "difficulty": 5,
+    "formula": "`heappush(h, -x)` ; `-heappop(h)`",
+    "canonicalInput": "[5,1,4] → 꺼내면 5, 4, 1",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 72,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "top-k — 크기 k짜리 최소 힙",
+    "newIdea": "가장 큰 k개를 지키려면 그중 가장 작은 것을 문지기로 둔다",
+    "prerequisites": [
+     70
+    ],
+    "difficulty": 5,
+    "formula": "push 뒤 `if len(h) > k: heappop(h)` → h는 지금까지 가장 큰 k개",
+    "canonicalInput": "[5,1,4,2,3], k=2 → 힙: {5} → {1,5} → {4,5} → {4,5} → {4,5}",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 73,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "배열 속 트리 — 인덱스 공식",
+    "newIdea": "완전 이진 트리를 리스트 하나로 표현한다",
+    "prerequisites": [
+     64,
+     70
+    ],
+    "difficulty": 5,
+    "formula": "parent = (i - 1) // 2; 자식 = 2*i + 1, 2*i + 2; h[parent] <= h[i]",
+    "canonicalInput": "h=[1,3,2,5,4] → 인덱스 1(값 3)의 자식은 5, 4; 인덱스 4의 부모는 1",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 74,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "sift-up — push의 속",
+    "newIdea": "끝에 붙이고 부모보다 작으면 올라간다",
+    "prerequisites": [
+     73
+    ],
+    "difficulty": 5,
+    "formula": "`while i > 0 and h[p] > h[i]: swap; i = p` (p = (i - 1) // 2)",
+    "canonicalInput": "[2,4,3,5]에 1 push → 인덱스 4 → 1 → 0, swap 2번 → [1,2,3,5,4]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 75,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "sift-down — pop의 속",
+    "newIdea": "끝 원소를 루트로 올리고 더 작은 자식과 바꾸며 내려간다",
+    "prerequisites": [
+     74
+    ],
+    "difficulty": 6,
+    "formula": "두 자식 중 작은 쪽이 나보다 작으면 swap, 아니면 멈춤 (heapq 내부 이름 _siftup/_siftdown은 방향이 반대)",
+    "canonicalInput": "[1,2,3,5,4] pop → [4,2,3,5] → 4↔2 → [2,4,3,5]",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 76,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "heapify — 뒤 절반은 이미 힙",
+    "newIdea": "마지막 부모부터 거꾸로 sift-down하면 O(n)",
+    "prerequisites": [
+     75
+    ],
+    "difficulty": 6,
+    "formula": "`for i in range(n // 2 - 1, -1, -1): sift_down(h, i)`",
+    "canonicalInput": "[5,3,8,1,4] → i=1: [5,1,8,3,4] → i=0: [1,3,8,5,4]",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 77,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "트라이",
+    "newIdea": "글자마다 한 칸 내려가는 dict의 dict",
+    "prerequisites": [
+     34,
+     64
+    ],
+    "difficulty": 5,
+    "formula": "`node = node.setdefault(ch, {})` ; 단어 끝에 node['$'] = True",
+    "canonicalInput": "'tea','ten','to' → 노드 5개(t,e,a,n,o); 'te'는 접두사 O, 단어 X",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 78,
+    "part": "G. 노드 구조: 연결 리스트·트리·힙",
+    "chapter": "소수 판별 — √n까지만",
+    "newIdea": "약수는 짝을 이루므로 i*i <= n까지만 나눠 본다",
+    "prerequisites": [
+     4,
+     9
+    ],
+    "difficulty": 4,
+    "formula": "`i = 2` ; `while i * i <= n: if n % i == 0: return False; i += 1`",
+    "canonicalInput": "37 → 2,3,4,5,6으로 나눠 봄(5번) → 소수; 35 → 5에서 False",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 79,
+    "part": "H. 완전 탐색과 백트래킹",
+    "chapter": "부분집합 — 고른다/안 고른다",
+    "newIdea": "원소마다 두 갈래로 갈라 모든 경우를 만든다",
+    "prerequisites": [
+     44
+    ],
+    "difficulty": 5,
+    "formula": "go(i, path): i == n이면 기록; go(i+1, path); go(i+1, path + [a[i]])",
+    "canonicalInput": "[1,2] → [], [2], [1], [1,2] (호출 7번); [1,2,3]이면 8개",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 80,
+    "part": "H. 완전 탐색과 백트래킹",
+    "chapter": "되돌리기 — append, 재귀, pop",
+    "newIdea": "path 하나를 공유하며 선택을 되돌린다; 기록은 path[:]",
+    "prerequisites": [
+     79,
+     7
+    ],
+    "difficulty": 6,
+    "formula": "`path.append(x); go(i + 1); path.pop()` ; `out.append(path[:])`",
+    "canonicalInput": "[1,2] → [[],[2],[1],[1,2]]; path[:] 없이 넣으면 [[],[],[],[]]",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 81,
+    "part": "H. 완전 탐색과 백트래킹",
+    "chapter": "순열 — for 안의 재귀",
+    "newIdea": "가지 수가 2에서 '남은 후보 수'로 늘어난다(used 표시)",
+    "prerequisites": [
+     80
+    ],
+    "difficulty": 6,
+    "formula": "`for i in range(n): if not used[i]:` 선택 → go() → 되돌리기",
+    "canonicalInput": "[1,2,3] → 123, 132, 213, 231, 312, 321",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 82,
+    "part": "H. 완전 탐색과 백트래킹",
+    "chapter": "조합 — 시작 인덱스로 중복 막기",
+    "newIdea": "다음 후보를 start부터만 보아 순서만 다른 중복을 없앤다",
+    "prerequisites": [
+     81
+    ],
+    "difficulty": 6,
+    "formula": "`for j in range(start, n): path.append(a[j]); go(j + 1); path.pop()`",
+    "canonicalInput": "[1,2,3]에서 2개 → 12, 13, 23 (실전은 itertools.combinations)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 83,
+    "part": "H. 완전 탐색과 백트래킹",
+    "chapter": "가지치기 — 넘으면 그만",
+    "newIdea": "답이 될 수 없는 가지를 일찍 끊는다",
+    "prerequisites": [
+     80
+    ],
+    "difficulty": 6,
+    "formula": "`if total > target: return`",
+    "canonicalInput": "[3,2,1], target=3 → 해 [3], [2,1]; 호출 15번 → 13번",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 84,
+    "part": "H. 완전 탐색과 백트래킹",
+    "chapter": "N-Queens (n=4)",
+    "newIdea": "대각선을 r - c, r + c 값으로 식별하는 제약 검사",
+    "prerequisites": [
+     81,
+     83
+    ],
+    "difficulty": 6,
+    "formula": "같은 열 c, 같은 r - c, 같은 r + c 금지",
+    "canonicalInput": "n=4 → 해 [1,3,0,2], [2,0,3,1] (호출 17번; 공식 암송만 머릿속으로)",
+    "replay": "needs-paper",
+    "kind": "core"
+   },
+   {
+    "n": 85,
+    "part": "H. 완전 탐색과 백트래킹",
+    "chapter": "비트마스크로 집합 표현",
+    "newIdea": "정수 하나의 비트로 부분집합을 나타낸다",
+    "prerequisites": [
+     57,
+     79
+    ],
+    "difficulty": 5,
+    "formula": "i 포함 ⇔ `mask >> i & 1` ; 추가 `mask | 1 << i` ; 전부 range(1 << n)",
+    "canonicalInput": "n=3, mask=5 (101) → {0, 2}; 0..7이 79장의 8개 부분집합",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 86,
+    "part": "I. 그리디",
+    "chapter": "활동 선택 — 끝나는 시간 순",
+    "newIdea": "정렬 후 한 번 훑으며 겹치지 않으면 고른다",
+    "prerequisites": [
+     19,
+     6
+    ],
+    "difficulty": 5,
+    "formula": "끝 시간 오름차순; `if s >= last: cnt += 1; last = e`",
+    "canonicalInput": "(1,3),(2,5),(4,6),(6,8) → (2,5)만 건너뛰고 3개",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 87,
+    "part": "I. 그리디",
+    "chapter": "왜 맞는가 — 바꿔치기 논증",
+    "newIdea": "최적해의 첫 선택을 그리디 선택으로 바꿔도 나빠지지 않는다",
+    "prerequisites": [
+     86
+    ],
+    "difficulty": 6,
+    "formula": "가장 일찍 끝나는 것을 고르면 남는 시간이 가장 많다",
+    "canonicalInput": "'짧은 것부터' 규칙의 반례: (1,5),(4,6),(5,9) → 1개 (최적 2개)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 88,
+    "part": "I. 그리디",
+    "chapter": "구간 병합",
+    "newIdea": "시작 순 정렬 뒤 현재 구간의 끝을 늘려 간다",
+    "prerequisites": [
+     86
+    ],
+    "difficulty": 5,
+    "formula": "`if s <= end: end = max(end, e)` 아니면 새 구간 시작",
+    "canonicalInput": "(1,3),(2,4),(6,7),(7,9) → (1,4),(6,9)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 89,
+    "part": "I. 그리디",
+    "chapter": "판정이 그리디인 이분 탐색 — 적재 용량",
+    "newIdea": "새 개념 없음: 28장 템플릿 + 그리디 판정 함수",
+    "prerequisites": [
+     28,
+     86
+    ],
+    "difficulty": 6,
+    "formula": "ok(cap) = 순서대로 실어 days 이하인가 → F…F T…T의 첫 T",
+    "canonicalInput": "무게 [3,2,4,1], 2일 → (lo,hi): (4,10) → (4,7) → (4,5) → 5",
+    "replay": "head-with-effort",
+    "kind": "review"
+   },
+   {
+    "n": 90,
+    "part": "J. 그래프 탐색",
+    "chapter": "간선 목록에서 인접 리스트로",
+    "newIdea": "무방향 간선은 양쪽에, 방향 간선은 한쪽에만 적는다",
+    "prerequisites": [
+     34,
+     38
+    ],
+    "difficulty": 5,
+    "formula": "`g[u].append(v); g[v].append(u)`",
+    "canonicalInput": "n=4, 간선 (0,1),(0,2),(1,3) → [[1,2],[0,3],[0],[1]]",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 91,
+    "part": "J. 그래프 탐색",
+    "chapter": "격자의 이웃 — 네 방향",
+    "newIdea": "격자 칸은 좌표, 이웃은 (r+dr, c+dc)에 범위 검사",
+    "prerequisites": [
+     38
+    ],
+    "difficulty": 5,
+    "formula": "`for dr, dc in ((1,0),(-1,0),(0,1),(0,-1))` ; 0 <= nr < n and 0 <= nc < m",
+    "canonicalInput": "3×3 격자: (1,1) → 이웃 4개, (0,0) → 2개",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 92,
+    "part": "J. 그래프 탐색",
+    "chapter": "격자 BFS — 최단 칸 수",
+    "newIdea": "36장 BFS를 암묵적 그래프(격자)에 적용한다",
+    "prerequisites": [
+     36,
+     91
+    ],
+    "difficulty": 6,
+    "formula": "`for cell in near(r, c): if cell not in dist:` 거리 + 1",
+    "canonicalInput": "3×3, 벽 (1,0),(1,1), 시작 (0,0) → (2,0)까지 6칸",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 93,
+    "part": "J. 그래프 탐색",
+    "chapter": "섬의 개수 — flood fill",
+    "newIdea": "아직 안 본 땅을 만날 때마다 한 번씩 퍼뜨린다",
+    "prerequisites": [
+     92
+    ],
+    "difficulty": 6,
+    "formula": "안 본 땅이면 count += 1 하고 BFS로 이어진 칸을 모두 표시",
+    "canonicalInput": "[[1,1,0],[0,0,0],[1,0,1]] → 3",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 94,
+    "part": "J. 그래프 탐색",
+    "chapter": "경로 복원 — prev를 거꾸로",
+    "newIdea": "어디서 왔는지 적어 두고 도착점에서 거슬러 올라간다",
+    "prerequisites": [
+     36
+    ],
+    "difficulty": 6,
+    "formula": "`prev[v] = u` ; `while u is not None: path.append(u); u = prev[u]` → 뒤집기",
+    "canonicalInput": "G5: E ← D ← B ← A → 경로 A B D E",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 95,
+    "part": "J. 그래프 탐색",
+    "chapter": "1의 개수 세기 — x &= x - 1",
+    "newIdea": "x & (x - 1)은 가장 낮은 1 하나를 지운다",
+    "prerequisites": [
+     57
+    ],
+    "difficulty": 5,
+    "formula": "`while x: x &= x - 1; cnt += 1`",
+    "canonicalInput": "13 (1101) → 12 → 8 → 0 → 3개",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 96,
+    "part": "J. 그래프 탐색",
+    "chapter": "재귀 DFS",
+    "newIdea": "갈 수 있는 데까지 깊이 들어갔다 돌아온다(정의 카드)",
+    "prerequisites": [
+     90,
+     65
+    ],
+    "difficulty": 6,
+    "formula": "dfs(u): seen.add(u); `for v in g[u]: if v not in seen: dfs(v)`",
+    "canonicalInput": "G5, A에서 시작 → A B D C E",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 97,
+    "part": "J. 그래프 탐색",
+    "chapter": "스택 DFS — 재귀 한도 피하기",
+    "newIdea": "호출 스택을 명시적 list 스택으로 바꾼다(꺼낼 때 방문 표시)",
+    "prerequisites": [
+     96,
+     32
+    ],
+    "difficulty": 6,
+    "formula": "`u = stack.pop(); if u in seen: continue` ; 이웃은 reversed로 push",
+    "canonicalInput": "G5 → 스택: [C,B] → [C,D] → [C,E,C] → [C,E] → [C] → 순서 A B D C E",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 98,
+    "part": "J. 그래프 탐색",
+    "chapter": "방향 그래프 사이클 — 3색",
+    "newIdea": "방문 중(회색) 노드를 다시 만나면 사이클",
+    "prerequisites": [
+     96
+    ],
+    "difficulty": 6,
+    "formula": "color: 0 안 봄 / 1 방문 중 / 2 끝; 1을 다시 만나면 True",
+    "canonicalInput": "A→B→C→A → C에서 회색 A를 만남 → 사이클; C→A를 지우면 없음",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 99,
+    "part": "J. 그래프 탐색",
+    "chapter": "이분 그래프 — 2색 칠하기",
+    "newIdea": "BFS로 이웃에 반대 색을 칠하다 같은 색이 만나면 실패",
+    "prerequisites": [
+     36,
+     90
+    ],
+    "difficulty": 6,
+    "formula": "`color[v] = 1 - color[u]` ; color[v] == color[u]면 False",
+    "canonicalInput": "사각형 A-B-C-D-A → 0,1,0,1 성공; 삼각형 → 실패",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 100,
+    "part": "J. 그래프 탐색",
+    "chapter": "위상 정렬 — Kahn",
+    "newIdea": "진입 차수 0인 노드부터 꺼내며 이웃의 차수를 깎는다",
+    "prerequisites": [
+     98,
+     36
+    ],
+    "difficulty": 6,
+    "formula": "`indeg[v] -= 1; if indeg[v] == 0: q.append(v)`",
+    "canonicalInput": "{A:[B,C], B:[D], C:[D], D:[]} → 차수 0,1,1,2 → A B C D",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 101,
+    "part": "K. 1차원 DP",
+    "chapter": "계단 오르기 — 표 카드 다시",
+    "newIdea": "새 개념 없음: 47장 표 채우기를 '경우의 수'로 복습",
+    "prerequisites": [
+     47
+    ],
+    "difficulty": 5,
+    "formula": "dp[i] = dp[i-1] + dp[i-2]; dp[0] = dp[1] = 1",
+    "canonicalInput": "n=5 → dp=[1,1,2,3,5,8] → 8가지",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 102,
+    "part": "K. 1차원 DP",
+    "chapter": "집 털기 — 고른다/건너뛴다",
+    "newIdea": "점화식에 max가 들어간다(세기 → 최적화)",
+    "prerequisites": [
+     101,
+     79
+    ],
+    "difficulty": 6,
+    "formula": "dp[i] = max(dp[i-1], dp[i-2] + a[i])",
+    "canonicalInput": "[2,7,9,3,1] → dp=[2,7,11,11,12] → 12",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 103,
+    "part": "K. 1차원 DP",
+    "chapter": "카데인 — i에서 끝나는 최대 합",
+    "newIdea": "'여기서 끝난다'를 상태로 두고 답은 전체 최댓값",
+    "prerequisites": [
+     102
+    ],
+    "difficulty": 6,
+    "formula": "`cur = max(x, cur + x); best = max(best, cur)`",
+    "canonicalInput": "[2,-3,4,-1,3] → cur: 2,-1,4,3,6 → best 6",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 104,
+    "part": "K. 1차원 DP",
+    "chapter": "LIS — 앞의 모든 칸을 본다",
+    "newIdea": "전이가 직전 칸이 아니라 앞의 모든 j를 훑는다",
+    "prerequisites": [
+     103
+    ],
+    "difficulty": 6,
+    "formula": "dp[i] = 1 + max(dp[j] for j < i if a[j] < a[i]) (없으면 1)",
+    "canonicalInput": "[3,1,4,2,5] → dp=[1,1,2,2,3] → 3 (비교 10번)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 105,
+    "part": "K. 1차원 DP",
+    "chapter": "그리디가 틀리는 동전",
+    "newIdea": "탐욕 선택이 최적이 아닌 반례",
+    "prerequisites": [
+     6,
+     87
+    ],
+    "difficulty": 5,
+    "formula": "큰 동전부터 고르면 {1,3,4}에서 6은 4+1+1",
+    "canonicalInput": "coins={1,3,4}, 6 → 그리디 3개, 최적 3+3 = 2개",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 106,
+    "part": "K. 1차원 DP",
+    "chapter": "동전 교환 DP",
+    "newIdea": "전이 후보가 동전 종류만큼(min over coins)",
+    "prerequisites": [
+     105,
+     102
+    ],
+    "difficulty": 6,
+    "formula": "dp[x] = 1 + min(dp[x - c] for c in coins if c <= x); dp[0] = 0",
+    "canonicalInput": "coins={1,3,4}, x=6 → dp=[0,1,2,1,1,2,2] → 2 (참조 13번)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 107,
+    "part": "K. 1차원 DP",
+    "chapter": "DP 역추적 — 어떤 선택이었나",
+    "newIdea": "칸마다 고른 선택을 적어 두고 거꾸로 따라간다",
+    "prerequisites": [
+     106,
+     94
+    ],
+    "difficulty": 6,
+    "formula": "`choice[x] = c` ; `while x: out.append(choice[x]); x -= choice[x]`",
+    "canonicalInput": "coins={1,3,4}, x=6 → choice[6]=3, choice[3]=3 → [3,3]",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 108,
+    "part": "K. 1차원 DP",
+    "chapter": "표 카드 4줄 — DP 레시피",
+    "newIdea": "새 개념 없음: 101~107장을 한 틀로 정리",
+    "prerequisites": [
+     106,
+     100
+    ],
+    "difficulty": 6,
+    "formula": "칸의 뜻 → 점화식 → 초기값 → 채우는 순서(= 의존 관계의 위상 순서)",
+    "canonicalInput": "106장을 4줄로: 금액 x의 최소 개수 / 1 + min / dp[0] = 0 / x 오름차순",
+    "replay": "head",
+    "kind": "review"
+   },
+   {
+    "n": 109,
+    "part": "L. 서로소 집합과 MST",
+    "chapter": "유니온 파인드 — 대표 찾기",
+    "newIdea": "parent 배열 하나로 여러 묶음(숲)을 표현한다",
+    "prerequisites": [
+     90
+    ],
+    "difficulty": 6,
+    "formula": "`while parent[x] != x: x = parent[x]` ; union: parent[find(a)] = find(b)",
+    "canonicalInput": "n=4: union(0,1), union(2,3), union(1,3) → parent=[1,3,3,3], find(0) == find(2)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 110,
+    "part": "L. 서로소 집합과 MST",
+    "chapter": "경로 압축",
+    "newIdea": "찾는 길에 만난 노드를 루트에 바로 붙인다",
+    "prerequisites": [
+     109,
+     43
+    ],
+    "difficulty": 6,
+    "formula": "`if parent[x] != x: parent[x] = find(parent[x])` ; `return parent[x]`",
+    "canonicalInput": "parent=[1,2,3,3]; find(0) → [3,3,3,3]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 111,
+    "part": "L. 서로소 집합과 MST",
+    "chapter": "크루스칼 — 가벼운 간선부터",
+    "newIdea": "가중치 순으로 보며 다른 묶음을 잇는 간선만 채택한다",
+    "prerequisites": [
+     110,
+     86
+    ],
+    "difficulty": 6,
+    "formula": "`for w, u, v in sorted(edges):` find(u) != find(v)면 union 하고 total += w",
+    "canonicalInput": "간선 (1,A,B),(2,B,C),(3,A,C),(4,C,D),(5,A,D) → 1, 2, 4 채택 → 7",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 112,
+    "part": "M. 2차원 DP와 트리 DP",
+    "chapter": "파스칼 삼각형 — 한 줄씩",
+    "newIdea": "윗줄의 이웃 두 칸을 더해 다음 줄을 만든다",
+    "prerequisites": [
+     48
+    ],
+    "difficulty": 5,
+    "formula": "row[j] = prev[j-1] + prev[j] (양 끝은 1)",
+    "canonicalInput": "[1] → [1,1] → [1,2,1] → [1,3,3,1] → [1,4,6,4,1]",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 113,
+    "part": "M. 2차원 DP와 트리 DP",
+    "chapter": "격자 경로 — 2차원 표",
+    "newIdea": "표가 2차원이 된다(위 + 왼쪽)",
+    "prerequisites": [
+     108,
+     112,
+     38
+    ],
+    "difficulty": 6,
+    "formula": "dp[r][c] = dp[r-1][c] + dp[r][c-1]; 첫 행·첫 열 = 1",
+    "canonicalInput": "3×3 → [[1,1,1],[1,2,3],[1,3,6]] → 6",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 114,
+    "part": "M. 2차원 DP와 트리 DP",
+    "chapter": "0/1 배낭 — 표의 한 축이 용량",
+    "newIdea": "값(용량)이 표의 인덱스가 된다",
+    "prerequisites": [
+     113,
+     102
+    ],
+    "difficulty": 7,
+    "formula": "dp[i][c] = max(dp[i-1][c], dp[i-1][c - w] + v) (c >= w일 때)",
+    "canonicalInput": "(w,v) = (2,3),(3,4),(4,5), 용량 5 → 7 (18칸; 점화식 암송만 머릿속으로)",
+    "replay": "needs-paper",
+    "kind": "core"
+   },
+   {
+    "n": 115,
+    "part": "M. 2차원 DP와 트리 DP",
+    "chapter": "배낭 1차원 — 거꾸로 채우기",
+    "newIdea": "한 줄로 줄이면 채우는 방향이 의미를 바꾼다",
+    "prerequisites": [
+     114,
+     106
+    ],
+    "difficulty": 7,
+    "formula": "`for c in range(cap, w - 1, -1): dp[c] = max(dp[c], dp[c - w] + v)`",
+    "canonicalInput": "물건 (2,3) 하나, 용량 4 → 거꾸로 [0,0,3,3,3] / 앞으로 [0,0,3,3,6] (두 번 씀)",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 116,
+    "part": "M. 2차원 DP와 트리 DP",
+    "chapter": "LCS — 두 문자열이 축",
+    "newIdea": "두 수열의 인덱스가 표의 두 축이 된다",
+    "prerequisites": [
+     113
+    ],
+    "difficulty": 7,
+    "formula": "같으면 대각선 + 1, 다르면 max(위, 왼쪽)",
+    "canonicalInput": "'ABC', 'AC' → 표 [[1,1],[1,1],[1,2]] → 2",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 117,
+    "part": "M. 2차원 DP와 트리 DP",
+    "chapter": "편집 거리",
+    "newIdea": "전이 후보가 셋(바꾸기·지우기·넣기)",
+    "prerequisites": [
+     116
+    ],
+    "difficulty": 7,
+    "formula": "dp[i][j] = min(대각 + (a[i-1] != b[j-1]), 위 + 1, 왼쪽 + 1); 테두리는 0,1,2,…",
+    "canonicalInput": "'ab' → 'ba' → 안쪽 표 [[1,1],[1,2]] → 2 (3×3 이상은 종이)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 118,
+    "part": "M. 2차원 DP와 트리 DP",
+    "chapter": "트리 DP — 고른다/건너뛴다를 트리에서",
+    "newIdea": "자식의 (take, skip) 쌍을 받아 부모에서 합친다(후위 순회)",
+    "prerequisites": [
+     102,
+     65
+    ],
+    "difficulty": 7,
+    "formula": "take[u] = w[u] + Σ skip[c]; skip[u] = Σ max(take[c], skip[c])",
+    "canonicalInput": "T5, w = 노드 번호 → 노드 2: (2, 9), 루트: (10, 12) → 12",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 119,
+    "part": "N. 가중치 최단 경로",
+    "chapter": "모듈러 연산 — 시계 산수",
+    "newIdea": "중간마다 나머지를 취해도 결과가 같다",
+    "prerequisites": [
+     4
+    ],
+    "difficulty": 5,
+    "formula": "(a * b) % m == ((a % m) * (b % m)) % m; Python의 %는 음수에도 0..m-1",
+    "canonicalInput": "7 * 8 % 5 → (2 * 3) % 5 = 1; (3 - 10) % 7 == 0",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 120,
+    "part": "N. 가중치 최단 경로",
+    "chapter": "간선 완화 — 한 번",
+    "newIdea": "가중치 간선 (u, v, w)로 더 짧은 길이 생기면 dist를 줄인다",
+    "prerequisites": [
+     36,
+     90
+    ],
+    "difficulty": 6,
+    "formula": "`if dist[u] + w < dist[v]: dist[v] = dist[u] + w`",
+    "canonicalInput": "dist A=0, B=4, C=1에서 간선 (C,B,2) → B: 4 → 3",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 121,
+    "part": "N. 가중치 최단 경로",
+    "chapter": "벨만-포드 — 모든 간선을 V-1번",
+    "newIdea": "완화 순서를 몰라도 V-1번 반복하면 충분하다",
+    "prerequisites": [
+     120
+    ],
+    "difficulty": 7,
+    "formula": "`for _ in range(n - 1): for u, v, w in edges:` 완화 (V번째에도 줄면 음수 사이클)",
+    "canonicalInput": "간선 순서 (B,C,1),(A,B,2),(A,C,5) → 1회전 뒤 B=2, C=5 → 2회전 뒤 C=3 (검사 6번)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 122,
+    "part": "N. 가중치 최단 경로",
+    "chapter": "다익스트라 — 가까운 것부터 확정",
+    "newIdea": "미확정 중 가장 가까운 노드부터 완화하면 노드당 한 번이면 된다",
+    "prerequisites": [
+     121
+    ],
+    "difficulty": 7,
+    "formula": "미확정 중 dist 최소인 u 선택 → 확정 → u의 간선 완화 (음수 간선 금지)",
+    "canonicalInput": "A→B 4, A→C 1, C→B 2 → 확정 순서 A(0), C(1), B(3)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 123,
+    "part": "N. 가중치 최단 경로",
+    "chapter": "다익스트라 + heapq — 낡은 항목 건너뛰기",
+    "newIdea": "힙에 (거리, 노드)를 중복으로 넣고 낡은 것은 버린다(decrease-key 없음)",
+    "prerequisites": [
+     122,
+     70
+    ],
+    "difficulty": 7,
+    "formula": "`d, u = heappop(h)` ; `if d > dist[u]: continue`",
+    "canonicalInput": "같은 그래프 → pop (0,A), (1,C), (3,B), 마지막 (4,B)는 낡아서 버림",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 124,
+    "part": "N. 가중치 최단 경로",
+    "chapter": "플로이드-워셜",
+    "newIdea": "'k번까지만 경유'를 상태로 한 모든 쌍 최단 경로",
+    "prerequisites": [
+     120,
+     113
+    ],
+    "difficulty": 7,
+    "formula": "`for k: for i: for j: d[i][j] = min(d[i][j], d[i][k] + d[k][j])` (k가 가장 바깥)",
+    "canonicalInput": "3노드 d[0]=[0,4,1], d[2][1]=2 → k=2에서 d[0][1]: 4 → 3 (검사 27번 중 갱신 1번)",
+    "replay": "needs-paper",
+    "kind": "core"
+   },
+   {
+    "n": 125,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "호너의 방법 — 자릿수에서 수로",
+    "newIdea": "앞에서부터 '곱하고 더하기'로 값을 만든다",
+    "prerequisites": [
+     41,
+     29
+    ],
+    "difficulty": 5,
+    "formula": "`x = x * base + d`",
+    "canonicalInput": "'1011' (base 2) → 1, 2, 5, 11",
+    "replay": "head",
+    "kind": "bridge"
+   },
+   {
+    "n": 126,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "단순 문자열 매칭",
+    "newIdea": "모든 시작 위치에서 한 글자씩 비교한다",
+    "prerequisites": [
+     9
+    ],
+    "difficulty": 5,
+    "formula": "`for i in range(n - m + 1):` t[i + j] == p[j]를 j = 0부터, 틀리면 다음 i",
+    "canonicalInput": "t='ABABC', p='ABC' → 비교 3+1+3 = 7번 → 위치 2",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 127,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "롤링 해시",
+    "newIdea": "창을 한 칸 밀 때 해시를 O(1)에 갱신한다",
+    "prerequisites": [
+     125,
+     119,
+     26
+    ],
+    "difficulty": 6,
+    "formula": "`h = ((h - out * B**(m-1)) * B + new) % M`",
+    "canonicalInput": "'3141', m=2, B=10, M=7 → 창 31, 14, 41 → 3, 0, 6",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 128,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "π 표 — 정의대로 손으로",
+    "newIdea": "π[i] = p[:i+1]의 접두사이자 접미사인 가장 긴 길이(자기 자신 제외)",
+    "prerequisites": [
+     126
+    ],
+    "difficulty": 6,
+    "formula": "π[i] = max k <= i with p[:k] == p[i+1-k:i+1]",
+    "canonicalInput": "'AABAA' → [0,1,0,1,2]",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 129,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "π 표 빠르게 만들기",
+    "newIdea": "안 맞으면 j = π[j-1]로 물러난다(이미 맞춘 부분 재사용)",
+    "prerequisites": [
+     128
+    ],
+    "difficulty": 7,
+    "formula": "`while j and p[i] != p[j]: j = pi[j - 1]` ; 맞으면 j += 1; pi[i] = j",
+    "canonicalInput": "'AABAA' → i=2에서 j: 1 → 0, 결과 [0,1,0,1,2]",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 130,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "KMP 매칭",
+    "newIdea": "텍스트 포인터는 절대 뒤로 가지 않는다",
+    "prerequisites": [
+     129
+    ],
+    "difficulty": 7,
+    "formula": "129장과 같은 루프를 t와 p 사이에: 안 맞으면 `j = pi[j - 1]`",
+    "canonicalInput": "t='AAAB', p='AAB' (π=[0,1,0]) → (i,j): (0,1),(1,2),(2,2),(3,3) → 위치 1",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 131,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "단조 스택 — 다음 큰 원소",
+    "newIdea": "스택 안을 항상 단조 감소로 유지한다",
+    "prerequisites": [
+     32,
+     37
+    ],
+    "difficulty": 7,
+    "formula": "`while st and a[st[-1]] < x: res[st.pop()] = x` ; `st.append(i)`",
+    "canonicalInput": "[2,1,5,3,6] → [5,5,6,6,-1] (push 5 + pop 4 = 9)",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 132,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "단조 덱 — 창의 최솟값",
+    "newIdea": "뒤에서는 단조 유지, 앞에서는 창 밖을 버린다",
+    "prerequisites": [
+     131,
+     33,
+     27
+    ],
+    "difficulty": 7,
+    "formula": "뒤 `while dq and a[dq[-1]] >= x: dq.pop()` / 앞 `if dq[0] <= i - k: dq.popleft()`",
+    "canonicalInput": "[3,1,2,5,4], k=3 → [1,1,2]",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 133,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "x & -x — 가장 낮은 1",
+    "newIdea": "-x는 ~x + 1이라 x & -x가 가장 낮은 1만 남긴다",
+    "prerequisites": [
+     95
+    ],
+    "difficulty": 5,
+    "formula": "`x & -x`",
+    "canonicalInput": "12 (1100) → 4; 6 (110) → 2; 8 → 8",
+    "replay": "head",
+    "kind": "breather"
+   },
+   {
+    "n": 134,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "펜윅 트리",
+    "newIdea": "tree[i]는 i에서 끝나는 길이 (i & -i) 구간의 합",
+    "prerequisites": [
+     133,
+     24
+    ],
+    "difficulty": 6,
+    "formula": "갱신 `i += i & -i` / 질의 `i -= i & -i` (1-인덱스)",
+    "canonicalInput": "n=8: 갱신 3 → 4 → 8; 질의 7 → 6 → 4 → 0",
+    "replay": "head",
+    "kind": "core"
+   },
+   {
+    "n": 135,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "세그먼트 트리 — 점 갱신",
+    "newIdea": "리프를 n..2n-1에 두고 부모 = 두 자식의 합",
+    "prerequisites": [
+     134,
+     73
+    ],
+    "difficulty": 7,
+    "formula": "`t[i] = t[2*i] + t[2*i+1]` ; 갱신 뒤 `i //= 2`로 올라간다",
+    "canonicalInput": "a=[3,1,4,2] → t=[_,10,4,6,3,1,4,2]; a[1]=5 → t[5]=5, t[2]=8, t[1]=14",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 136,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "세그먼트 트리 — 구간 질의",
+    "newIdea": "양 끝에서 올라가며 홀수 경계만 답에 더한다",
+    "prerequisites": [
+     135
+    ],
+    "difficulty": 8,
+    "formula": "`if l & 1: s += t[l]; l += 1` / `if r & 1: r -= 1; s += t[r]` / `l //= 2; r //= 2`",
+    "canonicalInput": "위 트리(갱신 전), 구간 [1,3) → l=5, r=7 → t[5] + t[6] = 1 + 4 = 5",
+    "replay": "head-with-effort",
+    "kind": "core"
+   },
+   {
+    "n": 137,
+    "part": "O. 문자열과 구간 자료구조",
+    "chapter": "비트마스크 DP — 집합이 상태",
+    "newIdea": "방문한 집합(mask)과 마지막 위치를 상태로 둔다",
+    "prerequisites": [
+     85,
+     114
+    ],
+    "difficulty": 8,
+    "formula": "dp[mask | 1 << j][j] = min(…, dp[mask][i] + cost[i][j])",
+    "canonicalInput": "3도시 cost=[[0,1,4],[1,0,2],[4,2,0]] → 7 (상태 24칸; 코드는 helper로 분해)",
+    "replay": "needs-paper",
+    "kind": "core"
+   },
+   {
+    "n": 138,
+    "part": "P. 부록",
+    "chapter": "[부록] 순서 제약 없는 참고 주제",
+    "newIdea": "본편 밖: Python 비용표 누적 카드, 안정 계수 정렬·기수 정렬, 제자리 힙 정렬, 에라토스테네스의 체, 프림, LIS O(n log n), 위상 정렬 DFS판, 균형 트리, 플로우, FFT, 접미사 배열, SCC, LCA, lazy 세그먼트 트리, 구간·digit DP, 마스터 정리 증명",
+    "prerequisites": [],
+    "difficulty": 9,
+    "formula": "(주제마다 다름 — 한 줄 공식으로 줄지 않는 것이 대부분)",
+    "canonicalInput": "(없음 — 난이도 연속성 검사와 머릿속 재생 대상에서 제외)",
+    "replay": "reference-only",
+    "kind": "appendix"
+   }
+  ],
+  "difficultyRules": [
+   {
+    "rule": "G1 난이도 계단: 인접 장의 상승은 +1 이하, 하강은 -2 이하. 새 최고 난이도는 직전 최고 + 1까지만 허용하고, 그 바로 다음 장은 그 값 이하여야 한다.",
+    "threshold": "d[i] - d[i-1] <= 1; d[i-1] - d[i] <= 2; 새 최고가 연속 두 장에서 나오면 실패",
+    "howToCheck": "ordering 파일의 difficulty 열을 순서대로 읽어 차이를 계산한다(부록 제외). 수정안 138장은 통과한다."
+   },
+   {
+    "rule": "G2 새 개념 수: introduces는 정확히 1개(복습 장은 0개). uses는 모두 앞 장의 introduces에 있어야 한다.",
+    "threshold": "len(introduces) == 1 (kind == review면 0); 미정의 uses 0개",
+    "howToCheck": "frontmatter의 introduces/uses를 누적 집합과 대조한다. 제목에 '+', '·', '와/과'로 개념 둘이 묶이면 경고한다."
+   },
+   {
+    "rule": "G3 머릿속 재생 예산: 대표 입력을 계측 코드로 실제 실행해 사건(비교 + swap + 쓰기 + 호출) 수와 동시에 살아 있는 값의 수를 세고, 그 결과로 replay 등급을 기계적으로 정한다.",
+    "threshold": "head: 원소 <= 5, 살아 있는 변수 <= 3, 사건 <= 12 / head-with-effort: 칸 <= 9, 변수 <= 5, 사건 <= 20 / 그 밖은 needs-paper",
+    "howToCheck": "장마다 계측 함수(count_events.py 방식)를 돌려 trace JSON을 만들고 사건 수를 센다. frontmatter의 replay 값이 계산값보다 낙관적이면 실패한다."
+   },
+   {
+    "rule": "G4 추적 상태 증가: 인접한 core 장 사이에 새로 추적해야 하는 변수와 보조 구조는 각각 1개까지만 늘어난다.",
+    "threshold": "스칼라 변수 수 증가 <= +1; 보조 자료구조(스택·큐·dict·표) 수 증가 <= +1",
+    "howToCheck": "trace JSON의 열 이름 집합을 직전 core 장과 비교한다."
+   },
+   {
+    "rule": "G5 코드 규격: 핵심 함수는 15줄·40자·중첩 3단 이하다. 넘으면 장을 쪼개거나 helper를 앞 장으로 분리한다.",
+    "threshold": "LOC <= 15(def 줄 포함, 빈 줄 제외), 줄 폭 <= 40, 중첩 깊이 <= 3(elif는 같은 단), 인접 core 장 LOC 증가 <= +5",
+    "howToCheck": "ast.parse로 FunctionDef마다 줄 수·최대 폭·for/while/if 중첩을 계산한다(candidates.py 방식). 2D 표 갱신 줄은 prev/cur 행 변수로 줄였는지 폭으로 확인한다."
+   },
+   {
+    "rule": "G6 제어 구조 단계: 0 직선 / 1 단일 루프 / 2 이중 루프·두 포인터 / 3 선형 재귀 / 4 갈래 재귀 / 5 재귀 + 되돌리기 / 6 우선순위 큐 루프·2D 표 채우기.",
+    "threshold": "인접 장 단계 증가 <= 1",
+    "howToCheck": "ast로 루프 중첩, 자기 호출 횟수, 호출 뒤 pop/remove 유무, heappop 루프, 2중 인덱스 대입을 검출해 단계를 매긴다."
+   },
+   {
+    "rule": "G7 장당 새 Python 기능 1개: 새 문법·내장 함수·메서드·import는 한 장에 하나만 처음 등장한다.",
+    "threshold": "누적 집합에 없는 기능 <= 1개 (예: lambda, class, 컴프리헨션, setdefault, deque, heapq, bisect)",
+    "howToCheck": "ast에서 노드 타입(Lambda, ClassDef, ListComp 등), Import 이름, Attribute 호출 이름을 뽑아 앞 장까지의 누적 집합과 차집합을 구한다."
+   },
+   {
+    "rule": "G8 선수 지식 최근성: 선수 장은 3개 이하이고, 가장 가까운 선수 장이 10장보다 멀면 30초 복습 상자(선수 장의 공식 + 고정 입력)를 장 맨 앞에 넣는다.",
+    "threshold": "len(prerequisites) <= 3; n - max(prerequisites) > 10이면 reviewBox 필수",
+    "howToCheck": "ordering에서 계산한다. 수정안에서는 34개 장이 복습 상자 대상이다(20, 24, 25, 28, 29, 31, 34, 38, 41, 51, 53, 57, 59, 70, 71, 78, 79, 86, 90, 91, 94, 95, 101, 105, 109, 112, 118, 119, 120, 125, 126, 131, 133, 137)."
+   },
+   {
+    "rule": "G9 숨 고르기 간격: core 장이 쉬지 않고 이어지는 길이와, 머릿속 재생이 안 되는 장이 이어지는 길이를 제한한다.",
+    "threshold": "breather/bridge/review 없이 연속 core <= 7장; replay != head 연속 <= 5장",
+    "howToCheck": "ordering의 kind, replay 열에서 연속 길이를 센다. 수정안은 통과한다."
+   },
+   {
+    "rule": "G10 숨 고르기 장의 자격: breather는 직전 장보다 어렵지 않고, 숫자 몇 개로 재생되며, 다음 장으로 돌아갈 때 +1을 넘지 않는다.",
+    "threshold": "d[breather] <= d[prev]; replay == head; d[next] - d[breather] <= 1",
+    "howToCheck": "kind == breather인 행에 대해 앞뒤 difficulty와 replay를 검사한다."
+   },
+   {
+    "rule": "G11 재귀 장 규격: 재귀 장은 정의 카드(계약 한 문장 + 기저 + 귀납 한 줄)를 갖고, 프레임 추적은 다리 장에서 깊이 3까지만 한다.",
+    "threshold": "스택 추적의 최대 깊이 <= 3; 대표 입력의 총 호출 수 <= 12 (넘으면 호출 추적 대신 정의 카드 + 횟수 공식)",
+    "howToCheck": "sys.settrace 또는 깊이 인자 계측으로 최대 깊이와 호출 수를 센다(fib(4) 9, fib(5) 15, 4-Queens 17)."
+   },
+   {
+    "rule": "G12 표 카드 규격: DP 장은 '칸의 뜻 → 점화식 → 초기값 → 채우는 순서' 4줄과 작은 표를 갖는다.",
+    "threshold": "1차원 n <= 5 (칸 <= 7); 2차원 안쪽 칸 <= 6이면 head-with-effort, 넘으면 needs-paper; 루프 시작 인덱스가 음수 인덱스를 읽지 않을 것",
+    "howToCheck": "실행으로 표를 뽑아 칸 수를 센다. dp[i - k] 형태의 첨자가 음수가 되는 반복이 있는지 실행 중 assert로 검사한다."
+   },
+   {
+    "rule": "G13 증명 부담: 0 자명 / 1 불변식 한 줄 / 2 교환 논증·귀납 / 3 분할상환·확률. 제어 구조 단계(G6)와 같은 장에서 동시에 오르지 않는다.",
+    "threshold": "인접 장 증가 <= 1; G6 증가와 G13 증가가 같은 장에 있으면 실패",
+    "howToCheck": "frontmatter의 proofBurden 수동 값과 G6 계산값의 차분을 비교한다."
+   },
+   {
+    "rule": "G14 가벼운 과제와 확인 가능한 답: 모든 장에 30~60초 안에 끊을 수 있는 가벼운 과제(공식 암송)와, 1분 안에 대조할 수 있는 답 하나가 있다.",
+    "threshold": "formula <= 90자; 답은 숫자 1개 또는 원소 <= 6개의 리스트; 무거운 과제에는 heavy 표시",
+    "howToCheck": "frontmatter의 formula 길이, answer의 타입과 길이, load 필드(light/heavy) 유무를 검사한다."
+   },
+   {
+    "rule": "G15 추적의 결정성: 고정 추적표는 실행할 때마다 같아야 한다.",
+    "threshold": "set 순회 0회, str·음수 int를 해시 버킷 예제에 쓰지 않음, random 미사용, 실행 2회의 trace가 동일",
+    "howToCheck": "ast로 set에 대한 for/정렬 없는 순회와 random import를 금지하고, PYTHONHASHSEED를 바꿔 두 번 실행한 trace JSON을 비교한다."
+   }
+  ]
+ }
+}

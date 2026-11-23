@@ -1,0 +1,1939 @@
+{
+ "key": "curriculum-sequence",
+ "angle": "curriculum-sequence",
+ "summary": "교재·대학 강의·면접 로드맵·경쟁 프로그래밍 사다리 등 27개 커리큘럼의 실제 목차를 모아 비교했다(대부분 1차 출처를 직접 내려받아 확인, 일부는 기억·2차 출처로 표시). 거의 모든 출처가 '복잡도 직관 → 배열/스택/큐 → 재귀 → 정렬 → 해시/트리/힙 → 그래프 탐색 → 최단경로·MST → DP/그리디 → 문자열·고급' 이라는 큰 뼈대에는 동의하지만, 재귀의 위치, 연결 리스트의 위치, DP와 그래프의 선후, 그리디와 DP의 선후는 출처마다 갈린다. 난이도 급경사는 일관되게 같은 곳에서 나온다: 반복→재귀, 재귀→백트래킹, 재귀→DP, 1차원 DP→2차원→비트마스크/트리 DP, BST→균형 트리, BFS/DFS→가중치 최단경로→플로우, 해시 내부(수학), 분할상환, 그리디 증명. 완만한 교재들은 이 지점에 공통된 다리를 놓는다: 호출 스택을 재귀보다 먼저, 메모이제이션 피보나치를 DP보다 먼저, 누적합·투 포인터를 슬라이딩 윈도우·단조 스택보다 먼저, 인덱스 이분 탐색을 답 이분 탐색보다 먼저, 트리 순회·격자 flood fill을 일반 그래프보다 먼저, 완화(벨만-포드)를 다익스트라보다 먼저. 이를 바탕으로 Python 추적 기초(참조·슬라이싱·추적표·호출 스택)에서 시작해 세그먼트 트리·KMP·비트마스크 DP·트리 DP까지 가는 79개 소챕터(각 장 새 개념 1개, 인접 장 난이도 차 ≤ 1, 장마다 암기용 한 줄 공식/불변식)와 부록 1개를 제안했다. 균형 트리 회전·네트워크 플로우·FFT·접미사 배열 등은 완만하게 도달할 수 없고 머릿속 재생도 어려워 선택 부록으로 뺐다. AI 에이전트가 장을 생성할 때 자동 검사할 수 있도록 난이도 점프 측정 규칙(새 개념 수, 선수 최근성, 추적 상태 크기, 코드 줄 수·중첩 깊이, 제어 구조 단계, 증명 부담, 추상화 플래그)도 정리했다. Python 전용 함정(list는 동적 배열, 재귀 한도, heapq는 최소 힙이며 3.14부터 max 함수 추가, decrease-key 부재, 슬라이싱 비용, 별칭 버그 등)은 Java/C++ 교재가 가려 주지 않으므로 초반 '비용표' 장과 각 장의 주의 상자로 흡수해야 한다. 원본 다운로드는 scratchpad:cur 에 있다(임시 디렉터리, 저장소 밖).",
+ "curricula": [
+  {
+   "source": "CLRS — Introduction to Algorithms 4판 (2022)",
+   "url": "https://mitp-content-server.mit.edu/books/content/sectbyfn/books_pres_0/3923/11599-transition-guide.pdf",
+   "order": [
+    "I Foundations: 1 The Role of Algorithms in Computing",
+    "2 Getting Started (insertion sort, merge sort)",
+    "3 Characterizing Running Times",
+    "4 Divide-and-Conquer",
+    "5 Probabilistic Analysis and Randomized Algorithms",
+    "II Sorting: 6 Heapsort",
+    "7 Quicksort",
+    "8 Sorting in Linear Time",
+    "9 Medians and Order Statistics",
+    "III Data Structures: 10 Elementary Data Structures",
+    "11 Hash Tables",
+    "12 Binary Search Trees",
+    "13 Red-Black Trees",
+    "IV: 14 Dynamic Programming",
+    "15 Greedy Algorithms",
+    "16 Amortized Analysis",
+    "V: 17 Augmenting Data Structures",
+    "18 B-Trees",
+    "19 Data Structures for Disjoint Sets",
+    "VI Graphs: 20 Elementary Graph Algorithms",
+    "21 Minimum Spanning Trees",
+    "22 Single-Source Shortest Paths",
+    "23 All-Pairs Shortest Paths",
+    "24 Maximum Flow",
+    "25 Matchings in Bipartite Graphs",
+    "VII Selected: 26 Parallel",
+    "27 Online",
+    "28 Matrix Operations",
+    "29 Linear Programming",
+    "30 Polynomials and the FFT",
+    "31 Number-Theoretic",
+    "32 String Matching",
+    "33 Machine-Learning",
+    "34 NP-Completeness",
+    "35 Approximation"
+   ],
+   "notes": "전체 목차는 기억 기반. MIT Press 전환 가이드 PDF(직접 읽음)로 3·4·9·10·11·15·16·17·25·26·27·29·32·33·34장의 번호와 제목만 확인됨. mitpress.mit.edu 본문 페이지는 403. 정렬이 자료구조보다 앞, DP(14)가 그리디(15)와 그래프(20~)보다 앞. 증명 중심이라 난이도 경사가 가장 가파른 출처."
+  },
+  {
+   "source": "Sedgewick & Wayne — Algorithms 4판",
+   "url": "https://algs4.cs.princeton.edu/home/",
+   "order": [
+    "1.1 Programming Model",
+    "1.2 Data Abstraction",
+    "1.3 Stacks and Queues",
+    "1.4 Analysis of Algorithms",
+    "1.5 Case Study: Union-Find",
+    "2.1 Elementary Sorts",
+    "2.2 Mergesort",
+    "2.3 Quicksort",
+    "2.4 Priority Queues",
+    "2.5 Sorting Applications",
+    "3.1 Symbol Tables",
+    "3.2 Binary Search Trees",
+    "3.3 Balanced Search Trees",
+    "3.4 Hash Tables",
+    "3.5 Searching Applications",
+    "4.1 Undirected Graphs",
+    "4.2 Directed Graphs",
+    "4.3 Minimum Spanning Trees",
+    "4.4 Shortest Paths",
+    "5.1 String Sorts",
+    "5.2 Tries",
+    "5.3 Substring Search",
+    "5.4 Regular Expressions",
+    "5.5 Data Compression",
+    "6 Context: Event-Driven Simulation, B-trees, Suffix Arrays, Maxflow, Reductions, Intractability"
+   ],
+   "notes": "1차 출처 확인. 유니온 파인드를 1장 사례 연구로 매우 일찍 배치, DP 장이 없음, 균형 트리(3.3)가 해시(3.4)보다 앞. B-트리·접미사 배열·맥스플로우는 6장 'Context'로 격리."
+  },
+  {
+   "source": "Skiena — The Algorithm Design Manual 3판 (Part I)",
+   "url": "https://paulbatchelor.github.io/brain/TADM",
+   "order": [
+    "1 Introduction to Algorithm Design",
+    "2 Algorithm Analysis",
+    "3 Data Structures",
+    "4 Sorting",
+    "5 Divide and Conquer",
+    "6 Hashing and Randomized Algorithms",
+    "7 Graph Traversal",
+    "8 Weighted Graph Algorithms",
+    "9 Combinatorial Search",
+    "10 Dynamic Programming",
+    "11 NP-Completeness",
+    "12 Dealing with Hard Problems",
+    "13 How to Design Algorithms"
+   ],
+   "notes": "3판 목차는 2차 출처(개인 학습 노트)로 확인, Springer 페이지는 차단. 2판(toc.uni.li PDF 직접 확인)은 1 Intro, 2 Analysis, 3 Data Structures, 4 Sorting and Searching, 5 Graph Traversal, 6 Weighted Graph Algorithms, 7 Combinatorial Search, 8 DP, 9 Intractable Problems, 10 How to Design. 그래프 → 백트래킹(조합 탐색) → DP 순서이며 공식 증명을 강조하지 않음."
+  },
+  {
+   "source": "Grokking Algorithms 2판 (Bhargava)",
+   "url": "https://www.manning.com/books/grokking-algorithms-second-edition",
+   "order": [
+    "1 Introduction to algorithms (binary search, Big O)",
+    "2 Selection sort (how memory works, arrays vs linked lists)",
+    "3 Recursion (base case, the stack)",
+    "4 Quicksort (divide and conquer)",
+    "5 Hash tables",
+    "6 Breadth-first search (graphs 도입)",
+    "7 Trees (DFS, binary trees, Huffman coding)",
+    "8 Balanced trees (AVL, splay, B-trees — 개념만)",
+    "9 Dijkstra's algorithm",
+    "10 Greedy algorithms",
+    "11 Dynamic programming (knapsack, longest common substring)",
+    "12 k-nearest neighbors",
+    "13 Where to go next",
+    "Appendix A: Performance of AVL trees",
+    "Appendix B: NP-hard problems"
+   ],
+   "notes": "Manning의 목차 ajax(getTocHtml?id=2842)에서 직접 확인. 13장 이내의 가장 완만한 입문서. 재귀를 3장에 두되 'The stack' 절로 다리를 놓고, BFS(6장)를 트리(7장)보다 먼저 둠. 균형 트리는 구현 없이 개념만, 성능 분석은 부록."
+  },
+  {
+   "source": "Wengrow — A Common-Sense Guide to DS&A in Python, Vol. 1",
+   "url": "https://pragprog.com/titles/jwpython/a-common-sense-guide-to-data-structures-and-algorithms-in-python-volume-1/",
+   "order": [
+    "1 Why Data Structures Matter (array, set의 읽기/검색/삽입/삭제)",
+    "2 Why Algorithms Matter (ordered array, binary search)",
+    "3 O Yes! Big O Notation",
+    "4 Speeding Up Your Code with Big O (bubble sort)",
+    "5 Optimizing Code With and Without Big O (selection sort)",
+    "6 Optimizing for Optimistic Scenarios (insertion sort)",
+    "7 Big O in Everyday Code",
+    "8 Blazing Fast Lookup with Hash Tables",
+    "9 Crafting Elegant Code with Stacks and Queues",
+    "10 Recursively Recurse with Recursion",
+    "11 Learning to Write in Recursive",
+    "12 Dynamic Programming (memoization, bottom-up)",
+    "13 Recursive Algorithms for Speed (partition, quicksort, quickselect)",
+    "14 Node-Based Data Structures (linked lists)",
+    "15 Binary Search Trees",
+    "16 Heaps",
+    "17 Tries",
+    "18 Graphs (DFS, BFS, Dijkstra)",
+    "19 Dealing with Space Constraints",
+    "20 Techniques for Code Optimization (greedy 포함)"
+   ],
+   "notes": "출판사 페이지에서 세부 목차까지 직접 확인. 이 프로젝트와 가장 가까운 설계: 정렬 하나당 Big-O 개념 하나, 재귀를 2개 장으로 분할(읽기 → 쓰기), 재귀 직후 DP(메모이제이션), 연결 리스트를 14장으로 늦춰 트리의 다리로 사용, 균형 트리 없음."
+  },
+  {
+   "source": "pythonds — Problem Solving with Algorithms and Data Structures using Python (Miller & Ranum)",
+   "url": "https://raw.githubusercontent.com/RunestoneInteractive/pythonds/master/_sources/index.rst",
+   "order": [
+    "1 Introduction (Python 복습, 함수, 클래스)",
+    "2 Algorithm Analysis (Big-O, 애너그램 예제, Performance of Python Data Structures: Lists, Dictionaries)",
+    "3 Basic Data Structures (Stack → 괄호 검사 → 진법 변환 → 중위/후위식; Queue → Hot Potato·인쇄 시뮬레이션; Deque → 회문; Unordered/Ordered List = 연결 리스트)",
+    "4 Recursion (리스트 합, 재귀의 3법칙, 진법 변환, Stack Frames, 시각화, 시에르핀스키, 하노이, 미로, Dynamic Programming)",
+    "5 Searching and Sorting (순차·이분 탐색, Hashing; bubble, selection, insertion, shell, merge, quick)",
+    "6 Trees (리스트의 리스트 표현, 노드와 참조, 파스 트리, 순회, 이진 힙, BST, AVL)",
+    "7 Graphs (인접 행렬/리스트, 단어 사다리 BFS, 기사의 여행 DFS, 일반 DFS, 위상 정렬, SCC, Dijkstra, Prim)",
+    "8 Advanced Topics"
+   ],
+   "notes": "GitHub raw의 toctree.rst 파일들을 직접 확인(runestone.academy는 Cloudflare 차단). 스택 → 재귀 순서와 'Stack Frames: Implementing Recursion' 절이 다리. 재귀 장 안에 DP를 넣고, 해시를 탐색의 한 절로 처리."
+  },
+  {
+   "source": "Hello Algo (krahets/hello-algo, 영어판 mkdocs nav)",
+   "url": "https://raw.githubusercontent.com/krahets/hello-algo/main/en/mkdocs.yml",
+   "order": [
+    "0 Preface",
+    "1 Getting to know algorithms",
+    "2 Complexity analysis (2.2 Iteration and recursion, 2.3 Time, 2.4 Space)",
+    "3 Data structures (분류, 기본 자료형, 수/문자 인코딩*)",
+    "4 Arrays and linked lists (array, linked list, list, memory and cache*)",
+    "5 Stacks and queues (stack, queue, deque)",
+    "6 Hash tables (hash map, collisions, hash algorithms)",
+    "7 Trees (binary tree, traversal, array representation, BST, AVL*)",
+    "8 Heaps (heap, build heap, top-k)",
+    "9 Graphs (graph, operations, traversal)",
+    "10 Searching (binary search, insertion point, boundaries, hashing으로 최적화, revisited)",
+    "11 Sorting (selection, bubble, insertion, quick, merge, heap, bucket, counting, radix)",
+    "12 Divide and conquer (D&C, binary search, build binary tree, Tower of Hanoi)",
+    "13 Backtracking (algorithm, permutations, subset sum, N-queens)",
+    "14 Dynamic programming (intro, properties, pipeline, 0-1 knapsack, unbounded knapsack, edit distance)",
+    "15 Greedy (greedy, fractional knapsack, max capacity, max product cutting)",
+    "16 Appendix"
+   ],
+   "notes": "mkdocs.yml 직접 확인. 자료구조 전부(2~9장) → 알고리즘 전부(10~15장)의 2부 구조. 어려운 절에 * 표시(AVL, 인코딩, 캐시). 재귀는 2.2에서 call stack → tail recursion → recursion trees 순으로 조기 도입. DP 장은 매 문제를 brute-force search → memoized search → DP → space optimization 4단으로 전개. 최단경로·MST·유니온 파인드·트라이·세그먼트 트리는 없음."
+  },
+  {
+   "source": "Goodrich, Tamassia, Goldwasser — Data Structures and Algorithms in Python",
+   "url": "https://www.zybooks.com/catalog/data-structures-algorithms-python/",
+   "order": [
+    "1 Python Primer",
+    "2 Object-Oriented Programming",
+    "3 Algorithm Analysis",
+    "4 Recursion",
+    "5 Array-Based Sequences (low-level arrays, dynamic arrays and amortization, efficiency of Python's sequence types, insertion sort)",
+    "6 Stacks, Queues, and Deques",
+    "7 Linked Lists",
+    "8 Trees",
+    "9 Priority Queues (heaps)",
+    "10 Maps, Hash Tables, and Skip Lists",
+    "11 Search Trees (BST, AVL, splay, (2,4), red-black)",
+    "12 Sorting and Selection (merge, quick, selection)",
+    "13 Text Processing (pattern matching, tries, greedy 압축, DP)",
+    "14 Graph Algorithms (traversal, transitive closure, DAG, shortest paths, MST, union-find)",
+    "15 Memory Management and B-Trees"
+   ],
+   "notes": "zyBooks 판 목차를 직접 확인(wiley.com·oreilly.com은 403). Python 교재답게 5장에서 list가 동적 배열임과 분할상환을 정면으로 다룸. 재귀(4장)가 모든 자료구조보다 앞. DP·그리디는 독립 장이 아니라 13장 텍스트 처리 안의 절."
+  },
+  {
+   "source": "MIT 6.006 Introduction to Algorithms (OCW Spring 2020)",
+   "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/calendar/",
+   "order": [
+    "L1 Introduction",
+    "L2 Data Structures",
+    "L3 Sorting",
+    "L4 Hashing",
+    "L5 Linear Sorting",
+    "L6 Binary Trees, Part 1",
+    "L7 Binary Trees, Part 2: AVL",
+    "L8 Binary Heaps",
+    "L9 Breadth-First Search",
+    "L10 Depth-First Search",
+    "L11 Weighted Shortest Paths",
+    "L12 Bellman-Ford",
+    "L13 Dijkstra's Algorithm",
+    "L14 Johnson's Algorithm",
+    "L15 DP 1: Recursive Algorithms",
+    "L16 DP 2: Subproblems",
+    "L17 DP 3: APSP, Parens, Piano",
+    "L18 DP 4: Pseudopolynomials",
+    "L19 Complexity",
+    "L20 Course Review",
+    "L21 Algorithms—Next Steps"
+   ],
+   "notes": "캘린더 페이지 직접 확인. 자료구조 → 그래프 → DP의 3단. 벨만-포드가 다익스트라보다 앞. DP는 SRTBOT(Subproblems, Relate, Topological order, Base, Original, Time) 틀로 4강에 걸쳐 전개(검색 스니펫으로 확인). Python 사용 강의."
+  },
+  {
+   "source": "Stanford CS106B Programming Abstractions (Autumn 2026 사이트)",
+   "url": "https://web.stanford.edu/class/cs106b/",
+   "order": [
+    "L1 Welcome",
+    "L2 From Python to C++",
+    "L3 Parameters, Testing",
+    "L4 Vectors and Grids",
+    "L5 Stacks and Queues",
+    "L6 Sets and Maps",
+    "L7 Big O and Asymptotic Analysis",
+    "L8 Introduction to Recursion",
+    "L9 Recursion 2",
+    "L10 Recursion Sequences",
+    "L11 Backtracking 1",
+    "L12 Backtracking 2",
+    "L13 C++ Classes",
+    "L14 StackInt and C/C++ Arrays",
+    "L15 Pointers",
+    "L16 Pointers II",
+    "L17 Heaps",
+    "L18 Pointers II",
+    "L19 Linked Lists 1",
+    "L20 Linked Lists 2",
+    "L21 Binary Search Trees",
+    "L22 More BSTs",
+    "L23 Sorting",
+    "L24 Huffman Coding",
+    "L25 Hashing",
+    "L26 Graphs"
+   ],
+   "notes": "직접 확인. '컬렉션을 도구로 먼저 사용(L4~6) → Big-O → 재귀 3강 → 백트래킹 2강 → 그다음에야 포인터·연결 리스트·구현'이라는 사용-먼저 설계의 대표. 재귀에 3강, 백트래킹에 2강을 따로 배정."
+  },
+  {
+   "source": "Stanford CS161 Design and Analysis of Algorithms (Winter 2025)",
+   "url": "https://stanford-cs161.github.io/winter2025/lectures/",
+   "order": [
+    "L1 Why are you here?",
+    "L2 Asymptotics, Worst-Case Analysis, MergeSort",
+    "L3 Solving Recurrences and the Master Theorem",
+    "L4 Median and Selection",
+    "L5 Randomized Algorithms and QuickSort",
+    "L6 BucketSort and Lower Bounds for Sorting",
+    "L7 Binary Search Trees and Red-Black Trees",
+    "L8 Hashing",
+    "L9 Graphs and BFS and DFS",
+    "L10 Strongly Connected Components",
+    "L11 Dijkstra and Bellman-Ford",
+    "L12 DP: Bellman-Ford and Floyd-Warshall",
+    "L13 More DP: LCS, Knapsack, Independent Set",
+    "L14 Greedy Algorithms",
+    "L15 Minimum Spanning Trees",
+    "L16 Max-Flow and Ford-Fulkerson",
+    "L17 Stable Matchings and Gale-Shapley",
+    "L18 What's next?"
+   ],
+   "notes": "직접 확인. 증명 중심 2학년 과정이라 2~3강에 바로 마스터 정리가 나옴(완만한 경사의 반례). 벨만-포드를 최단경로와 DP 사이의 다리로 두 번 다루고, DP → 그리디 → MST → 플로우 순."
+  },
+  {
+   "source": "Princeton COS226 Algorithms and Data Structures (Fall 2024)",
+   "url": "https://www.cs.princeton.edu/courses/archive/fall24/cos226/lectures.php",
+   "order": [
+    "1 Introduction, Union-Find",
+    "2 Analysis of Algorithms",
+    "3 Stacks and Queues",
+    "4 Advanced Java",
+    "5 Elementary Sorts",
+    "6 Mergesort",
+    "7 Quicksort",
+    "8 Priority Queues",
+    "9 Elementary Symbol Tables, BSTs",
+    "10 Balanced Search Trees",
+    "11 Midterm",
+    "12 Guest Lecture",
+    "13 Geometric Applications of BSTs",
+    "14 Hash Tables",
+    "15 Graphs and Digraphs I",
+    "16 Graphs and Digraphs II",
+    "17 Minimum Spanning Trees",
+    "18 Shortest Paths",
+    "19 Dynamic Programming",
+    "20 Maxflows and Mincuts",
+    "21 Multiplicative Weights",
+    "22 Randomness",
+    "23 Intractability",
+    "24 Algorithm Design"
+   ],
+   "notes": "직접 확인. algs4 순서를 따르며 DP는 1강뿐. 강의별 학습 가이드가 연습 문제를 C(알고리즘을 기계적으로 수행), B(이해), A(깊은 이해) 3등급으로 나눔 — C등급이 곧 '머릿속 재생' 수준."
+  },
+  {
+   "source": "UC Berkeley CS61B Data Structures (Spring 2025)",
+   "url": "https://sp25.datastructur.es/",
+   "order": [
+    "1 Intro",
+    "2 Classes, Lists, Sets, Maps",
+    "3 References, Recursion, IntLists",
+    "4 SLLists, Sentinel Nodes",
+    "5 DLLists, Arrays",
+    "6 Testing",
+    "7 ArrayLists, Resizing",
+    "8~10 상속·다형성·이터레이터",
+    "11, 13, 14 Asymptotics I~III",
+    "15 Disjoint Sets",
+    "16 Sets, Maps, BSTs",
+    "17 B-Trees (2-3, 2-3-4)",
+    "18 Red Black Trees",
+    "19~20 Hashing I, II",
+    "21 Heaps and Priority Queues",
+    "22 Tree and Graph Traversals",
+    "23 Graph Traversals and Implementations",
+    "24 Shortest Paths",
+    "25 Minimum Spanning Trees",
+    "26 Directed Acyclic Graphs",
+    "27 Tries",
+    "28 Basic Sorts",
+    "30 Merge, Insertion, Quick Sort",
+    "33 More Quicksort, Quick Select, Stability",
+    "34 Sorting and Algorithmic Bounds",
+    "36 Radix Sorts",
+    "37 Sorting Conclusion"
+   ],
+   "notes": "직접 확인. 정렬을 맨 끝에 두는 드문 순서. 3강에서 참조 → 재귀 → 연결 리스트(IntList)를 한 묶음으로 가르치고, 22강에서 트리 순회와 그래프 순회를 한 강의로 잇는다. DP 강의 없음."
+  },
+  {
+   "source": "NeetCode 로드맵 / NeetCode 150 카테고리",
+   "url": "https://neetcode.io/roadmap",
+   "order": [
+    "Arrays & Hashing",
+    "Two Pointers",
+    "Sliding Window",
+    "Binary Search",
+    "Linked List",
+    "Stack",
+    "Trees",
+    "Tries",
+    "Backtracking",
+    "Heap / Priority Queue",
+    "Graphs",
+    "Advanced Graphs",
+    "1-D Dynamic Programming",
+    "2-D Dynamic Programming",
+    "Greedy",
+    "Intervals",
+    "Bit Manipulation",
+    "Math & Geometry"
+   ],
+   "notes": "순서는 neetcode.io의 JS 번들(main.*.js) 안의 카테고리 상수 배열에서 직접 확인. 실제 로드맵은 선형이 아닌 DAG인데 렌더링된 그래프는 가져오지 못했고, 간선은 기억 기반(낮은 신뢰): Arrays&Hashing → {Two Pointers, Stack}; Two Pointers → {Binary Search, Sliding Window, Linked List} → Trees → {Tries, Heap, Backtracking}; Backtracking → {Graphs, 1-D DP}; Heap → {Intervals, Greedy, Advanced Graphs}; Graphs → {Advanced Graphs, 2-D DP, Math&Geometry}; 1-D DP → {2-D DP, Bit Manipulation}. 제3자 글마다 선형 순서가 다르게 적혀 있음."
+  },
+  {
+   "source": "roadmap.sh — Data Structures & Algorithms",
+   "url": "https://roadmap.sh/pdfs/roadmaps/datastructures-and-algorithms.pdf",
+   "order": [
+    "Pick a Language",
+    "Programming Fundamentals (Language Syntax, Control Structures, Pseudo Code, Functions, OOP Basics)",
+    "What are / Why Data Structures",
+    "Basic Data Structures (Array, Linked Lists, Stacks, Queues, Hash Tables)",
+    "Algorithmic Complexity (Time vs Space, Common Runtimes, Big-O/Θ/Ω)",
+    "Sorting Algorithms (Bubble, Insertion, Selection, Merge, Quick, Heap)",
+    "Search Algorithms (Linear, Binary)",
+    "Tree Data Structures (Binary Trees, BST, AVL, B-Trees, Heap; In/Pre/Post-Order; BFS, DFS)",
+    "Graph Data Structures (Directed/Undirected; BFS, DFS; Dijkstra, Bellman-Ford, A*; Prim, Kruskal)",
+    "Advanced Data Structures (Trie, Segment Trees, Fenwick Trees, Disjoint Set, Suffix Trees and Arrays)",
+    "Complex Data Structures (B/B+ Trees, Skip List, ISAM, 2-3 Trees)",
+    "Indexing",
+    "Problem Solving Techniques (Brute Force, Backtracking, Greedy, Randomised, Divide and Conquer, Recursion, DP, Two Pointer, Sliding Window, Fast and Slow Pointers, Merge Intervals, Two Heaps, Kth Element, Cyclic Sort, Island traversal)",
+    "Platforms to Practice"
+   ],
+   "notes": "공식 PDF를 pdftotext로 직접 확인(2차원 배치라 가지 안의 순서는 근사). 인터랙티브 페이지는 JS 렌더링이라 미확인. 재귀·DP 같은 '기법'을 맨 끝에 몰아 두는 구조라 학습 순서로 그대로 쓰기엔 부적합."
+  },
+  {
+   "source": "Tech Interview Handbook — 학습 계획 (1~4주 주제 순)",
+   "url": "https://www.techinterviewhandbook.org/coding-interview-study-plan/",
+   "order": [
+    "Week 1: Array, String, Hash Table, Recursion",
+    "Week 2: Sorting and searching, Matrix, Linked List, Queue, Stack",
+    "Week 3: Tree, Graph, Heap, Trie",
+    "Week 4: Interval, Dynamic programming, Binary, Math, Geometry"
+   ],
+   "notes": "직접 확인. 우선순위(High/Mid/Low)와 소요 시간이 붙은 빈도 기준 순서. DP는 Low 우선순위로 맨 끝이며 'DP 문제는 건너뛰어도 된다, 재귀/백트래킹으로도 풀린다'고 명시."
+  },
+  {
+   "source": "LeetCode Explore 'Learn' 카드",
+   "url": "https://leetcode.com/explore/learn/",
+   "order": [
+    "Arrays 101",
+    "Hash Table",
+    "Array and String",
+    "Linked List",
+    "Recursion I",
+    "Binary Search",
+    "Binary Tree",
+    "Heap",
+    "Binary Search Tree",
+    "Trie",
+    "Queue & Stack",
+    "Recursion II",
+    "Graph",
+    "(Dynamic Programming)"
+   ],
+   "notes": "leetcode.com은 403. 공식 권장 순서는 없고, 위는 검색 스니펫에 나온 커뮤니티(Notion) 제안 순서라 신뢰도 낮음. 카드 이름 자체(Recursion I/II 분리 등)는 기억과 일치."
+  },
+  {
+   "source": "USACO Guide (Bronze → Silver → Gold → Platinum → Advanced)",
+   "url": "https://raw.githubusercontent.com/cpinitiative/usaco-guide/master/content/ordering.ts",
+   "order": [
+    "Bronze: time-comp, intro-ds, simulation",
+    "Bronze: intro-complete, complete-rec",
+    "Bronze: intro-sorting, intro-sets",
+    "Bronze: casework, intro-greedy, intro-graphs, rect-geo, ad-hoc",
+    "Silver: prefix-sums, more-prefix-sums",
+    "Silver: two-pointers, binary-search-sorted-array, binary-search, sorting-custom, greedy-sorting, priority-queues",
+    "Silver: graph-traversal, flood-fill, intro-tree, func-graphs",
+    "Silver: intro-bitwise",
+    "Gold Math: divisibility, modular, combo",
+    "Gold DP: intro-dp, knapsack, paths-grids, lis, dp-bitmasks, dp-ranges, digit-dp",
+    "Gold Graphs: unweighted-shortest-paths, dsu, toposort, shortest-paths, mst",
+    "Gold DS: intro-sorted-sets, custom-cpp-stl, stacks, sliding-window, PURS",
+    "Gold Trees: dp-trees, all-roots, tree-euler, lca-euler",
+    "Gold Additional: ternary-search, hashing, hashmaps, meet-in-the-middle",
+    "Platinum: segtree-ext, range-sweep, RURQ, sparse-segtree, 2DRQ, DC-SRQ, sqrt / binary-jump, merging, hld, centroid / 기하 / PIE, matrix-expo, bitsets, DC-DP, dp-sos",
+    "Advanced: treaps, persistent, SCC, BCC, max-flow, min-cut, fft, suffix-array, …"
+   ],
+   "notes": "ordering.ts 직접 확인. 가장 명시적인 난이도 사다리. 각 모듈 MDX frontmatter에 prerequisites와 frequency 필드가 있음(예: intro-dp의 선수 = complete-rec, modular; binary-search의 선수 = binary-search-sorted-array; unweighted-shortest-paths의 선수 = graph-traversal, flood-fill). 단조 스택('stacks')과 슬라이딩 윈도우 최솟값이 DP·유니온 파인드와 같은 Gold 등급."
+  },
+  {
+   "source": "CSES Problem Set + Competitive Programmer's Handbook (Laaksonen)",
+   "url": "https://cses.fi/book/book.pdf",
+   "order": [
+    "CSES 섹션: Introductory Problems → Sorting and Searching → Dynamic Programming → Graph Algorithms → Range Queries → Tree Algorithms → Mathematics → String Algorithms → Geometry → Advanced Techniques → (Sliding Window, Interactive, Bitwise, Construction, Advanced Graph, Counting, Additional)",
+    "CPH 1 Introduction",
+    "2 Time complexity",
+    "3 Sorting (+ binary search)",
+    "4 Data structures",
+    "5 Complete search (subsets, permutations, backtracking, pruning, meet in the middle)",
+    "6 Greedy algorithms",
+    "7 Dynamic programming (coin problem, LIS, paths in a grid, knapsack, edit distance, counting tilings)",
+    "8 Amortized analysis (two pointers, nearest smaller elements, sliding window minimum)",
+    "9 Range queries (static, binary indexed tree, segment tree)",
+    "10 Bit manipulation (bit ops, representing sets, bit optimizations, DP)",
+    "11 Basics of graphs",
+    "12 Graph traversal (DFS, BFS)",
+    "13 Shortest paths (Bellman–Ford, Dijkstra, Floyd–Warshall)",
+    "14 Tree algorithms",
+    "15 Spanning trees (Kruskal, union-find, Prim)",
+    "16 Directed graphs",
+    "17 Strong connectivity",
+    "18 Tree queries",
+    "19 Paths and circuits",
+    "20 Flows and cuts",
+    "21~30 수론, 조합, 행렬, 확률, 게임, 문자열, 제곱근 분할, 세그먼트 트리 심화, 기하, 스위핑"
+   ],
+   "notes": "cses.fi/problemset 섹션 제목과 CPH PDF 목차(세부 절 포함)를 직접 확인. 완전 탐색 → 그리디 → DP 순서, DP 안의 예제 순서(동전 → LIS → 격자 → 배낭 → 편집 거리), 펜윅 → 세그먼트 트리, 벨만-포드 → 다익스트라 → 플로이드 순서가 제안 순서의 주요 근거."
+  },
+  {
+   "source": "CP-Algorithms (navigation.md)",
+   "url": "https://raw.githubusercontent.com/cp-algorithms/cp-algorithms/main/src/navigation.md",
+   "order": [
+    "Algebra",
+    "Data Structures",
+    "Dynamic Programming",
+    "String Processing",
+    "Linear Algebra",
+    "Combinatorics",
+    "Numerical Methods",
+    "Geometry",
+    "Graphs",
+    "Miscellaneous"
+   ],
+   "notes": "직접 확인. 난이도 순이 아닌 주제별 백과사전식 분류라 학습 순서의 근거로는 쓸 수 없고, 고급 부록의 참고 링크용으로만 적합."
+  },
+  {
+   "source": "Khan Academy — Algorithms (Cormen·Balkcom 협업)",
+   "url": "https://www.khanacademy.org/computing/computer-science/algorithms",
+   "order": [
+    "Intro to algorithms",
+    "Binary search",
+    "Asymptotic notation",
+    "Selection sort",
+    "Insertion sort",
+    "Recursive algorithms",
+    "Towers of Hanoi",
+    "Merge sort",
+    "Quick sort",
+    "Graph representation",
+    "Breadth-first search",
+    "Further learning"
+   ],
+   "notes": "사이트는 봇 차단으로 직접 확인 실패. 단원 순서는 기억 기반이며, 검색 스니펫(2014년 Khan CS 블로그: asymptotic notation, binary search, selection/insertion sort, recursion, merge/quick sort, graph representation, BFS)과 주제 집합은 일치. 이분 탐색을 점근 표기보다 먼저, 재귀와 하노이를 병합 정렬 직전에 배치."
+  },
+  {
+   "source": "freeCodeCamp — Coding Interview Prep",
+   "url": "https://raw.githubusercontent.com/freeCodeCamp/freeCodeCamp/main/curriculum/structure/superblocks/coding-interview-prep.json",
+   "order": [
+    "algorithms",
+    "data-structures",
+    "take-home-projects"
+   ],
+   "notes": "저장소의 superblock 구조 파일만 직접 확인(블록 3개). 블록 내부 챌린지 순서는 확인하지 못함. 난이도 사다리보다는 문제 모음에 가까워 순서 근거로는 약함."
+  },
+  {
+   "source": "Codecademy — Learn Data Structures and Algorithms with Python",
+   "url": "https://www.codecademy.com/learn/learn-data-structures-and-algorithms-with-python",
+   "order": [
+    "1 Introduction",
+    "2 Nodes",
+    "3 Linked Lists",
+    "4 Doubly Linked Lists",
+    "5 Queues",
+    "6 Stacks",
+    "7 Hash Maps",
+    "8 Recursion",
+    "9 Asymptotic Notation",
+    "10 Pattern Searching (naive)",
+    "11 Sorting (bubble, merge, quick)",
+    "12 Brute Force (linear search)",
+    "13 Trees",
+    "14 Tree Traversal: BFS and DFS",
+    "15 Divide and Conquer (binary search, BST)",
+    "16 Heaps and Heapsort",
+    "17 Graphs and Graph Search",
+    "18 Greedy Algorithms",
+    "19 Pathfinding (Dijkstra, A*)"
+   ],
+   "notes": "페이지에서 직접 확인(1~7, 13~19 모듈명은 원문, 8~12는 레슨 제목에서 추정). '노드'를 가장 먼저 가르치고 연결 리스트로 스택·큐를 구현하는 전통적 순서. 각 주제를 Conceptual 레슨 → Python 레슨 쌍으로 구성. DP 없음. Educative 경로는 확인하지 못함."
+  },
+  {
+   "source": "AlgoExpert 문제 카테고리",
+   "url": "https://www.algoexpert.io/questions",
+   "order": [
+    "Arrays",
+    "Binary Search Trees",
+    "Binary Trees",
+    "Dynamic Programming",
+    "Famous Algorithms",
+    "Graphs",
+    "Greedy Algorithms",
+    "Heaps",
+    "Linked Lists",
+    "Recursion",
+    "Searching",
+    "Sorting",
+    "Stacks",
+    "Strings",
+    "Tries"
+   ],
+   "notes": "사이트는 'Unsupported browser'로 확인 실패. 카테고리명은 기억 기반이고, 검색 스니펫은 '15개 카테고리, 4개 난이도'만 확인. 알파벳순 분류일 뿐 학습 순서가 아님."
+  },
+  {
+   "source": "BaaaaaaaarkingDog 실전 알고리즘 강좌 (encrypted-def/basic-algo-lecture)",
+   "url": "https://github.com/encrypted-def/basic-algo-lecture",
+   "order": [
+    "0x00 오리엔테이션",
+    "0x01~02 기초 코드 작성 요령 I, II",
+    "0x03 배열",
+    "0x04 연결 리스트",
+    "0x05 스택",
+    "0x06 큐",
+    "0x07 덱",
+    "0x08 스택의 활용(수식의 괄호 쌍)",
+    "0x09 BFS",
+    "0x0A DFS",
+    "0x0B 재귀",
+    "0x0C 백트래킹",
+    "0x0D 시뮬레이션",
+    "0x0E~0F 정렬 I, II",
+    "0x10 다이나믹 프로그래밍",
+    "0x11 그리디",
+    "0x12 수학",
+    "0x13 이분탐색",
+    "0x14 투 포인터",
+    "0x15 해시",
+    "0x16 이진 검색 트리",
+    "0x17 우선순위 큐",
+    "0x18 그래프",
+    "0x19 트리",
+    "0x1A 위상정렬",
+    "0x1B 최소 신장 트리",
+    "0x1C 플로이드",
+    "0x1D 다익스트라",
+    "0x1E KMP",
+    "0x1F 트라이"
+   ],
+   "notes": "README 직접 확인(한국어, C++ 기반). 격자 BFS(0x09)를 재귀(0x0B)보다 먼저 가르치는 독특한 순서 — 큐만 있으면 되는 격자 BFS가 재귀보다 쉽다는 판단. DP가 그래프 이론보다 앞, 플로이드가 다익스트라보다 앞."
+  },
+  {
+   "source": "이것이 취업을 위한 코딩 테스트다 with 파이썬 (ndb796)",
+   "url": "https://github.com/ndb796/python-for-coding-test",
+   "order": [
+    "1장 코딩 테스트 개요",
+    "2장 기출 유형 분석",
+    "3장 그리디",
+    "4장 구현",
+    "5장 DFS/BFS",
+    "6장 정렬",
+    "7장 이진 탐색",
+    "8장 다이나믹 프로그래밍",
+    "9장 최단 경로",
+    "10장 기타 그래프 이론",
+    "부록 A 코딩 테스트를 위한 파이썬 문법",
+    "부록 B 기타 알고리즘"
+   ],
+   "notes": "README 직접 확인(한국어, Python). 그리디를 첫 주제로, 자료구조 장 없이 유형 중심. DP → 최단 경로 → 기타 그래프(유니온 파인드, MST, 위상 정렬) 순."
+  }
+ ],
+ "proposedSequence": [
+  {
+   "n": 1,
+   "chapter": "이름·객체·참조 — 변수는 상자가 아니라 이름표",
+   "prerequisites": [],
+   "difficulty": 1,
+   "mentalReplayability": "매우 높음(상태 2개). 공식: `b = a`는 복사가 아니라 같은 객체에 이름 하나 더. `a=[1,2]; b=a; b.append(3)` 뒤의 a를 머릿속으로 답하기.",
+   "bridgeNote": "출발점. 연결 리스트·트리·백트래킹의 path 복사 버그가 전부 여기서 나오므로 첫 장에 둠(CS61B도 3강에서 References를 리스트 앞에 배치)."
+  },
+  {
+   "n": 2,
+   "chapter": "list 인덱싱·슬라이싱 — 반열림 구간 [l, r)",
+   "prerequisites": [
+    "1 참조"
+   ],
+   "difficulty": 1,
+   "mentalReplayability": "매우 높음. 공식: a[l:r]의 길이 = r-l, 마지막 원소 = a[r-1], a[-1] = a[len(a)-1]. 길이 6 리스트로 암산.",
+   "bridgeNote": "새 개념은 반열림 구간 하나. 이분 탐색·누적합·병합 정렬의 off-by-one을 미리 차단."
+  },
+  {
+   "n": 3,
+   "chapter": "루프 추적표 — for/while을 손으로 돌리기",
+   "prerequisites": [
+    "2 슬라이싱"
+   ],
+   "difficulty": 1,
+   "mentalReplayability": "이 책 전체의 머릿속 재생 기본기. 절차: (반복 번호, 변수 값) 표를 한 줄씩. range(n) = 0..n-1.",
+   "bridgeNote": "문법이 아니라 추적 기술 자체를 가르치는 장. 초보자의 약점으로 지목되는 tracing을 먼저 고정."
+  },
+  {
+   "n": 4,
+   "chapter": "함수와 호출 스택 — 프레임을 쌓고 꺼내기",
+   "prerequisites": [
+    "3 추적표"
+   ],
+   "difficulty": 2,
+   "mentalReplayability": "높음. 공식: 호출 = 프레임 push, return = pop, 지역변수는 프레임마다 따로. f(g(2)) 같은 2~3단 호출을 스택 그림으로.",
+   "bridgeNote": "재귀 없이 스택 프레임만 먼저 도입해, 23장에서 새 개념이 자기 호출 하나만 남게 하는 사전 포석(Grokking 3장 'The stack', pythonds 'Stack Frames')."
+  },
+  {
+   "n": 5,
+   "chapter": "루프 불변식 첫 만남 — 최댓값·합계",
+   "prerequisites": [
+    "3 추적표"
+   ],
+   "difficulty": 2,
+   "mentalReplayability": "매우 높음. 불변식: i번째 반복 직전 best = max(a[:i]) — '지금까지 본 것 중 최고'.",
+   "bridgeNote": "'불변식'이라는 단어 하나만 도입. 이후 모든 장의 외울 한 줄이 이 형식."
+  },
+  {
+   "n": 6,
+   "chapter": "유클리드 호제법 — gcd",
+   "prerequisites": [
+    "3 추적표",
+    "5 불변식"
+   ],
+   "difficulty": 2,
+   "mentalReplayability": "최상. 공식: gcd(a,b) = gcd(b, a%b), gcd(a,0) = a. `a, b = b, a % b`(우변 먼저 평가). 48,18 → 18,12 → 12,6 → 6,0. 숫자 두 개만 들고 암산 가능.",
+   "bridgeNote": "while 루프 + 불변식의 첫 진짜 알고리즘. 상태가 정수 2개뿐이라 난이도 상승 없음."
+  },
+  {
+   "n": 7,
+   "chapter": "연산 횟수 세기와 Big-O 직관",
+   "prerequisites": [
+    "3 추적표",
+    "5 불변식"
+   ],
+   "difficulty": 2,
+   "mentalReplayability": "높음. 공식: 단일 루프 n, 이중 루프 n², 절반씩 줄면 log n, 2^10 ≈ 10³, 2^20 ≈ 10⁶.",
+   "bridgeNote": "Θ·Ω 정의 없이 '몇 번 도는가'만. 거의 모든 교재가 1~3장에 배치(Wengrow 3장, Hello Algo 2장, pythonds 2장)."
+  },
+  {
+   "n": 8,
+   "chapter": "Python 내장 자료구조 비용표",
+   "prerequisites": [
+    "7 Big-O",
+    "2 슬라이싱"
+   ],
+   "difficulty": 2,
+   "mentalReplayability": "암기 카드형. list append/pop() O(1), insert(0)/pop(0)/in/슬라이스 O(n); dict·set 조회 평균 O(1); deque 양끝 O(1); sorted O(n log n).",
+   "bridgeNote": "새 알고리즘 없이 7장의 적용. Goodrich 5장과 pythonds 2장의 'Performance of Python Data Structures'가 같은 역할."
+  },
+  {
+   "n": 9,
+   "chapter": "dict/set으로 '본 적 있나' 묻기 — 빈도 세기, two-sum",
+   "prerequisites": [
+    "8 비용표"
+   ],
+   "difficulty": 2,
+   "mentalReplayability": "높음. 패턴: `if x in seen`, `cnt[x] = cnt.get(x, 0) + 1`. two-sum은 보수 target-x를 seen에서 찾기. 6원소 암산.",
+   "bridgeNote": "해시는 블랙박스로 사용만(내부는 21장). NeetCode·Tech Interview Handbook이 Arrays & Hashing을 첫 주제로 두는 것과 같은 사용-먼저 원칙."
+  },
+  {
+   "n": 10,
+   "chapter": "누적합 (prefix sum)",
+   "prerequisites": [
+    "2 슬라이싱",
+    "5 불변식"
+   ],
+   "difficulty": 3,
+   "mentalReplayability": "매우 높음. 공식: P[0]=0, P[i+1]=P[i]+a[i], sum(a[l:r]) = P[r]-P[l].",
+   "bridgeNote": "첫 '전처리 후 O(1) 질의' 아이디어. USACO Silver의 첫 모듈(선수지식 없음). DP·펜윅 트리의 복선."
+  },
+  {
+   "n": 11,
+   "chapter": "투 포인터 — 양끝에서 좁히기",
+   "prerequisites": [
+    "5 불변식",
+    "2 슬라이싱"
+   ],
+   "difficulty": 3,
+   "mentalReplayability": "높음. 불변식: 답은 항상 [l, r] 안. 정렬된 배열에서 합이 크면 r -= 1, 작으면 l += 1.",
+   "bridgeNote": "인덱스 변수가 1개 → 2개로 늘어나는 것만 새로움(정렬된 입력은 sorted()로 제공, 정렬 내부는 15장)."
+  },
+  {
+   "n": 12,
+   "chapter": "슬라이딩 윈도우 — 고정 길이 → 가변 길이",
+   "prerequisites": [
+    "11 투 포인터",
+    "9 dict/set"
+   ],
+   "difficulty": 4,
+   "mentalReplayability": "중상. 불변식: 윈도우 [l, r)는 항상 조건을 만족; r을 늘리고 깨지면 l을 당긴다. 각 포인터는 최대 n번 이동.",
+   "bridgeNote": "투 포인터가 같은 방향으로 움직이는 변형. 고정 길이(들어온 값 더하고 나간 값 빼기)를 먼저, 가변은 그다음. NeetCode도 Two Pointers → Sliding Window."
+  },
+  {
+   "n": 13,
+   "chapter": "이분 탐색 — 정확히 찾기",
+   "prerequisites": [
+    "5 불변식",
+    "7 Big-O",
+    "2 슬라이싱"
+   ],
+   "difficulty": 3,
+   "mentalReplayability": "높음. 불변식: 답이 있다면 [lo, hi) 안. mid = (lo+hi)//2. 원소 16개면 최대 4~5번.",
+   "bridgeNote": "투 포인터의 lo/hi를 재사용하고 새 아이디어는 '절반 버리기'뿐. Wengrow 2장·Grokking 1장·Khan 2단원처럼 이른 배치가 일반적."
+  },
+  {
+   "n": 14,
+   "chapter": "이분 탐색 경계 — 첫 True 찾기, bisect",
+   "prerequisites": [
+    "13 이분 탐색"
+   ],
+   "difficulty": 4,
+   "mentalReplayability": "높음. 공식: F F F T T T에서 첫 T. `while lo < hi: mid = (lo+hi)//2; if ok(mid): hi = mid else: lo = mid+1`.",
+   "bridgeNote": "13장과 코드 한 줄 차이. Hello Algo 10.1 → 10.2(삽입점) → 10.3(경계)의 분해를 따름. 53장의 직접 선수."
+  },
+  {
+   "n": 15,
+   "chapter": "선택 정렬",
+   "prerequisites": [
+    "5 불변식"
+   ],
+   "difficulty": 3,
+   "mentalReplayability": "매우 높음. 불변식: i회전 후 a[:i]는 가장 작은 i개가 최종 위치에. 5~6원소 완전 암산.",
+   "bridgeNote": "5장의 최솟값 찾기를 n번 반복할 뿐. Grokking 2장·Hello Algo 11.2가 첫 정렬로 선택."
+  },
+  {
+   "n": 16,
+   "chapter": "삽입 정렬",
+   "prerequisites": [
+    "15 선택 정렬"
+   ],
+   "difficulty": 3,
+   "mentalReplayability": "매우 높음. 불변식: a[:i]는 정렬되어 있다(최종 위치는 아님). 거의 정렬된 입력이면 O(n).",
+   "bridgeNote": "선택 정렬과 불변식이 한 단어 차이('최종 위치' 대 '정렬됨')임을 대비."
+  },
+  {
+   "n": 17,
+   "chapter": "안정성과 key 정렬 — 버블 정렬로 보는 stable",
+   "prerequisites": [
+    "16 삽입 정렬"
+   ],
+   "difficulty": 3,
+   "mentalReplayability": "높음. 정의: 같은 키의 상대 순서 보존. 버블은 인접 swap만 하므로 stable. Python sorted(key=)는 stable이라 2차 키로 먼저, 1차 키로 나중에 정렬.",
+   "bridgeNote": "새 개념은 안정성 하나. 이후 그리디(50장)·크루스칼(69장)이 sort(key=…)에 의존."
+  },
+  {
+   "n": 18,
+   "chapter": "계수 정렬 — 비교하지 않고 세기",
+   "prerequisites": [
+    "9 dict/set",
+    "10 누적합"
+   ],
+   "difficulty": 3,
+   "mentalReplayability": "높음. 공식: cnt[v] += 1 → 누적합 → 뒤에서부터 배치. 값 범위 0..9로 암산.",
+   "bridgeNote": "9장 빈도 세기 + 10장 누적합의 조합이라 새 부품이 없음. 비교 정렬 하한 n log n은 한 문단만."
+  },
+  {
+   "n": 19,
+   "chapter": "스택 — LIFO, 괄호 짝 맞추기",
+   "prerequisites": [
+    "8 비용표"
+   ],
+   "difficulty": 3,
+   "mentalReplayability": "높음. list의 append/pop. 불변식: 스택에는 아직 닫히지 않은 여는 괄호만. 8자 괄호열 암산.",
+   "bridgeNote": "4장 호출 스택과 같은 구조임을 연결. 자료구조 직후 응용 배치는 pythonds·BarkingDog(0x05 → 0x08) 공통."
+  },
+  {
+   "n": 20,
+   "chapter": "큐와 덱 — FIFO, collections.deque",
+   "prerequisites": [
+    "19 스택"
+   ],
+   "difficulty": 3,
+   "mentalReplayability": "높음. deque의 append/popleft. 요세푸스 n=7, k=3을 머릿속 큐로.",
+   "bridgeNote": "스택과 대칭 구조. 38장 레벨 순회·55장 BFS의 부품을 미리 준비."
+  },
+  {
+   "n": 21,
+   "chapter": "해시 테이블 내부 — 해시 함수·충돌·체이닝",
+   "prerequisites": [
+    "9 dict/set",
+    "8 비용표"
+   ],
+   "difficulty": 4,
+   "mentalReplayability": "중상. 공식: index = hash(key) % m, 충돌은 버킷 리스트에, 적재율 n/m이 커지면 2배 확장 후 재해싱. m=5, 키 6개 암산.",
+   "bridgeNote": "9장에서 블랙박스로 쓰던 것을 연다(사용 → 구현). 유니버설 해싱 등 해시 수학은 생략 — 교재들의 대표적 급경사 구간."
+  },
+  {
+   "n": 22,
+   "chapter": "동적 배열과 분할상환 — append가 평균 O(1)인 이유",
+   "prerequisites": [
+    "8 비용표",
+    "21 해시 내부"
+   ],
+   "difficulty": 4,
+   "mentalReplayability": "높음. 공식: 1+2+4+…+n < 2n → n번 append의 총 비용 O(n). 용량 1 → 2 → 4 → 8에서 복사 횟수 세기.",
+   "bridgeNote": "21장의 2배 확장을 재사용. 퍼텐셜 함수 없이 합계 세기만(CLRS 16장 수준은 부록). 단조 스택(73장)·유니온 파인드 분석의 기반."
+  },
+  {
+   "n": 23,
+   "chapter": "재귀 1 — 기저 조건과 스택 추적",
+   "prerequisites": [
+    "4 호출 스택",
+    "19 스택"
+   ],
+   "difficulty": 4,
+   "mentalReplayability": "높음. 틀: `if 기저: return …; return 조합(f(더 작은 입력))`. fact(4), sum_list([3,1,2])를 프레임 스택으로 내려갔다 올라오기.",
+   "bridgeNote": "4장 호출 스택과 19장 스택이 이미 있으므로 새 개념은 자기 호출 하나. 가지가 1개인 선형 재귀만."
+  },
+  {
+   "n": 24,
+   "chapter": "재귀 2 — 재귀 트리와 호출 수 세기 (피보나치)",
+   "prerequisites": [
+    "23 재귀 1"
+   ],
+   "difficulty": 4,
+   "mentalReplayability": "높음. fib(n) = fib(n-1) + fib(n-2). fib(5) 호출 트리에서 fib(2)가 3번 불리는 것 세기.",
+   "bridgeNote": "가지가 1개 → 2개. 코드는 같고 그림만 스택 → 트리로 확장(Hello Algo 2.2의 call stack → recursion trees 순)."
+  },
+  {
+   "n": 25,
+   "chapter": "재귀 3 — 믿음의 도약, 하노이 탑",
+   "prerequisites": [
+    "24 재귀 2"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음(n=3은 7회 이동으로 완전 암산). 공식: move(n, A→C) = move(n-1, A→B) + 1 + move(n-1, B→C), T(n) = 2T(n-1)+1 = 2ⁿ-1.",
+   "bridgeNote": "'작은 문제는 이미 풀렸다고 믿기'라는 사고 전환만 새로움. Khan·pythonds·Hello Algo 12.4가 같은 예제."
+  },
+  {
+   "n": 26,
+   "chapter": "메모이제이션 맛보기",
+   "prerequisites": [
+    "24 재귀 2",
+    "9 dict/set"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음. 틀: `if n in memo: return memo[n]`. fib(6) 트리에서 가지가 잘려 호출 수가 2ⁿ → n이 되는 것 상상.",
+   "bridgeNote": "24장의 중복 호출 관찰에서 바로 이어짐. Wengrow 12장·pythonds 4장이 재귀 직후 DP 맛보기를 두는 방식. 60장 본격 DP의 복선."
+  },
+  {
+   "n": 27,
+   "chapter": "빠른 거듭제곱 — 절반으로 나누는 재귀",
+   "prerequisites": [
+    "23 재귀 1",
+    "7 Big-O"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음. 공식: xⁿ = (x^(n//2))² × (n이 홀수면 x). 3^13에서 13 = 1101₂. T(n) = T(n/2)+1.",
+   "bridgeNote": "조합 단계가 곱셈 한 번뿐인 가장 작은 분할 정복. 모듈러 연산(pow(x, n, mod))을 여기서 한 절로 도입."
+  },
+  {
+   "n": 28,
+   "chapter": "두 정렬 리스트 병합",
+   "prerequisites": [
+    "11 투 포인터"
+   ],
+   "difficulty": 4,
+   "mentalReplayability": "매우 높음. 불변식: out은 두 리스트 앞부분을 합친 정렬 결과. [1,4,7] + [2,3,9] 암산.",
+   "bridgeNote": "투 포인터의 변형(리스트 2개에 포인터 하나씩). 병합 정렬의 유일한 비자명 부품을 먼저 분리."
+  },
+  {
+   "n": 29,
+   "chapter": "병합 정렬",
+   "prerequisites": [
+    "28 병합",
+    "24 재귀 2"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음(길이 4~8). 공식: sort(a) = merge(sort(왼쪽), sort(오른쪽)), T(n) = 2T(n/2)+n.",
+   "bridgeNote": "28장 merge + 24장 2갈래 재귀의 조립뿐."
+  },
+  {
+   "n": 30,
+   "chapter": "분할 (partition)",
+   "prerequisites": [
+    "11 투 포인터",
+    "5 불변식"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "중상. Lomuto 불변식: a[lo:i] < pivot ≤ a[i:j]. 6원소 암산.",
+   "bridgeNote": "재귀 없이 partition 루프만 단독으로. 퀵 정렬의 어려움 대부분이 여기 있으므로 분리(Wengrow 13장도 Partitioning 절을 먼저 둠)."
+  },
+  {
+   "n": 31,
+   "chapter": "퀵 정렬 (+ 퀵 셀렉트 맛보기)",
+   "prerequisites": [
+    "30 partition",
+    "29 병합 정렬"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "중상. 공식: partition 후 pivot은 최종 위치, 양쪽을 재귀. 평균 n log n, 최악 n²(정렬된 입력 + 끝 피벗).",
+   "bridgeNote": "30장 + 재귀. 병합 정렬과 대비: 합치기가 일인 정렬 대 나누기가 일인 정렬."
+  },
+  {
+   "n": 32,
+   "chapter": "재귀 트리로 점화식 읽기",
+   "prerequisites": [
+    "29 병합 정렬",
+    "27 빠른 거듭제곱"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음(공식 3개 암기). T(n)=T(n/2)+1 → log n; T(n)=2T(n/2)+n → n log n; T(n)=2T(n-1)+1 → 2ⁿ. 층수 × 층당 비용.",
+   "bridgeNote": "새 알고리즘 없이 25·27·29장을 정리. 마스터 정리의 일반형과 증명은 부록(CS161 3강 수준은 생략)."
+  },
+  {
+   "n": 33,
+   "chapter": "연결 리스트 — 노드와 참조",
+   "prerequisites": [
+    "1 참조"
+   ],
+   "difficulty": 4,
+   "mentalReplayability": "높음. `class Node: val, next`. 삽입 순서: new.next = cur.next; cur.next = new. 3노드 그림.",
+   "bridgeNote": "난이도를 한 칸 내려 쉬어 가는 장. Wengrow처럼 트리 직전에 노드 기반 구조로 배치해 트리로 가는 다리로 사용."
+  },
+  {
+   "n": 34,
+   "chapter": "연결 리스트 뒤집기",
+   "prerequisites": [
+    "33 연결 리스트"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "매우 높음. 본문 4줄: nxt = cur.next; cur.next = prev; prev = cur; cur = nxt. 1→2→3 뒤집기 암산.",
+   "bridgeNote": "추적 변수가 2개 → 3개(prev, cur, nxt)."
+  },
+  {
+   "n": 35,
+   "chapter": "빠른/느린 포인터 — 중간 찾기, 사이클 검출",
+   "prerequisites": [
+    "34 뒤집기",
+    "11 투 포인터"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음. slow 1칸, fast 2칸. fast가 끝나면 slow는 중간, 둘이 만나면 사이클.",
+   "bridgeNote": "투 포인터(11장)를 연결 리스트에 이식."
+  },
+  {
+   "n": 36,
+   "chapter": "이진 트리 — 재귀적 정의, 높이·노드 수",
+   "prerequisites": [
+    "33 연결 리스트",
+    "24 재귀 2"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음. 공식: height(t) = 0 if t is None else 1 + max(height(L), height(R)).",
+   "bridgeNote": "노드의 next가 left/right 2개로. 24장의 2갈래 재귀가 그대로 자료구조 모양이 됨."
+  },
+  {
+   "n": 37,
+   "chapter": "트리 순회 — 전위/중위/후위",
+   "prerequisites": [
+    "36 이진 트리"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "매우 높음. visit 위치만 다름: N L R / L N R / L R N. 7노드 트리 하나를 고정해 세 순서 암송.",
+   "bridgeNote": "36장 재귀 틀에서 처리 위치만 이동. 그래프 DFS(57장)의 직접 선수."
+  },
+  {
+   "n": 38,
+   "chapter": "레벨 순회 — BFS와 deque",
+   "prerequisites": [
+    "37 트리 순회",
+    "20 큐와 덱"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음. 틀: q = deque([root]); while q: node = q.popleft(); 자식 push. 큐 내용 변화를 한 줄씩.",
+   "bridgeNote": "재귀가 아닌 큐로 트리를 도는 첫 경험. 방문 표시가 필요 없는 BFS라서 55·56장 그래프 BFS로 가는 다리."
+  },
+  {
+   "n": 39,
+   "chapter": "이진 탐색 트리 — 탐색·삽입",
+   "prerequisites": [
+    "36 이진 트리",
+    "13 이분 탐색"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음. 불변식: 왼쪽 서브트리 < 노드 < 오른쪽 서브트리, 중위 순회 = 정렬 순서. [5,3,8,1,4] 삽입 암산.",
+   "bridgeNote": "이분 탐색의 절반 버리기가 트리 모양이 된 것."
+  },
+  {
+   "n": 40,
+   "chapter": "BST 삭제와 불균형 — 왜 균형이 필요한가",
+   "prerequisites": [
+    "39 BST"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "중간. 삭제 3경우: 리프 / 자식 1개 / 자식 2개(중위 후속자로 대체). 정렬된 순서로 삽입하면 높이 n.",
+   "bridgeNote": "여기서 멈춤: AVL 회전·레드-블랙은 부록. Python 대안(bisect, heapq, dict) 안내. Hello Algo(AVL에 * 표시)·Wengrow(균형 트리 없음)와 같은 선택."
+  },
+  {
+   "n": 41,
+   "chapter": "heapq 사용법 — 우선순위 큐, top-k",
+   "prerequisites": [
+    "8 비용표",
+    "20 큐와 덱"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "중상. heappush/heappop O(log n), heap[0]이 최솟값. 최대 힙은 부호 반전(Python 3.14부터 heappush_max 등).",
+   "bridgeNote": "난이도 한 칸 하강. 힙을 먼저 블랙박스로 사용(USACO도 Silver에서 priority-queues를 도구로 먼저 소개)."
+  },
+  {
+   "n": 42,
+   "chapter": "힙 내부 — 배열 속 완전 이진 트리",
+   "prerequisites": [
+    "41 heapq",
+    "36 이진 트리"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "높음(7원소). 공식(0-index): parent = (i-1)//2, 자식 = 2i+1, 2i+2. 불변식 heap[parent] ≤ heap[child]. push = 끝에 추가 + sift-up, pop = 끝을 루트로 + sift-down.",
+   "bridgeNote": "트리를 배열 인덱스로 표현하는 것만 새로움(Hello Algo가 7.3 'Array representation of a binary tree'를 힙 앞에 둔 이유)."
+  },
+  {
+   "n": 43,
+   "chapter": "heapify O(n)과 힙 정렬",
+   "prerequisites": [
+    "42 힙 내부",
+    "22 분할상환"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "중간. 공식: n//2-1부터 0까지 sift-down, 비용 = Σ높이 = O(n). 힙 정렬 = heapify 후 n번 pop.",
+   "bridgeNote": "42장의 sift-down 재사용. O(n)인 이유는 22장식 합계 세기."
+  },
+  {
+   "n": 44,
+   "chapter": "트라이",
+   "prerequisites": [
+    "36 이진 트리",
+    "9 dict/set"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음. 노드 = dict(문자 → 자식) + 끝 표시. 'tea', 'ten', 'to' 삽입 후 접두사 'te' 탐색을 그림으로.",
+   "bridgeNote": "자식이 2개 → 여러 개(dict)로 일반화된 트리. Wengrow 17장·CS61B 27강처럼 트리·힙 뒤에 배치."
+  },
+  {
+   "n": 45,
+   "chapter": "부분집합 생성 — 선택/비선택 재귀",
+   "prerequisites": [
+    "24 재귀 2"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음. 틀: go(i): i == n이면 기록; go(i+1); path.append(a[i]); go(i+1); path.pop(). [1,2,3]의 8개를 순서대로 암송.",
+   "bridgeNote": "24장의 2갈래 재귀 트리 + 경로를 들고 다니기. USACO Bronze complete-rec, CPH 5.1과 같은 첫 단계."
+  },
+  {
+   "n": 46,
+   "chapter": "순열·조합 생성 — 선택 → 재귀 → 되돌리기",
+   "prerequisites": [
+    "45 부분집합",
+    "1 참조"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "중상. 틀: for 후보: 선택(used[i] = True; path.append) → go() → 되돌리기(pop; used[i] = False). [1,2,3] 순열 6개 순서 암송.",
+   "bridgeNote": "가지 수가 2 → k개(for 안의 재귀). 결과 저장 시 path[:] 복사가 필요한 이유는 1장."
+  },
+  {
+   "n": 47,
+   "chapter": "가지치기 — N-Queens",
+   "prerequisites": [
+    "46 순열·조합"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "중간(4-Queens 한정). 제약: 열 c, 대각선 r-c, r+c 중복 금지. 4-Queens 해 2개([1,3,0,2], [2,0,3,1]) 직접 찾기.",
+   "bridgeNote": "46장 틀에 `if 불가능: continue` 한 줄 추가. Hello Algo 13장·CS106B 11~12강·CPH 5.3~5.4가 같은 순서."
+  },
+  {
+   "n": 48,
+   "chapter": "비트 연산 기초",
+   "prerequisites": [
+    "7 Big-O"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "최상(숫자 하나로 암산). 공식: x & (x-1)은 최하위 1 제거, x & -x는 최하위 1 추출, x >> k & 1은 k번째 비트, a ^ a = 0. 13 = 1101₂.",
+   "bridgeNote": "재귀에서 벗어나 난이도를 한 칸 내리는 장. USACO Silver 끝의 intro-bitwise에 해당."
+  },
+  {
+   "n": 49,
+   "chapter": "비트마스크로 집합 표현",
+   "prerequisites": [
+    "48 비트 연산",
+    "45 부분집합"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "높음(n=3이면 0..7). 공식: i 포함 ⇔ mask >> i & 1, 추가 mask | 1 << i, 모든 부분집합 = range(1 << n).",
+   "bridgeNote": "45장 부분집합을 정수 하나로 다시 표현(같은 내용, 다른 표현). CPH 10.3 'Representing sets'."
+  },
+  {
+   "n": 50,
+   "chapter": "그리디 1 — 정렬 후 선택 (활동 선택)",
+   "prerequisites": [
+    "17 key 정렬"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음. 규칙: 끝나는 시간이 빠른 순으로 정렬해 겹치지 않으면 선택. 구간 5개 암산.",
+   "bridgeNote": "코드는 정렬 + 루프 한 번. 정당성 논증은 다음 장으로 분리해 한 번에 한 가지만."
+  },
+  {
+   "n": 51,
+   "chapter": "그리디 2 — 반례와 교환 논증",
+   "prerequisites": [
+    "50 그리디 1"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "높음. 동전 {1,3,4}로 6: 그리디는 4+1+1(3개), 최적은 3+3(2개). 교환 논증: 최적해의 첫 선택을 그리디 선택으로 바꿔도 나빠지지 않는다.",
+   "bridgeNote": "책에서 처음으로 증명이 필요한 장이므로 코드 난이도는 올리지 않고 증명 부담만 +1. 실패 사례는 62장 동전 DP의 동기."
+  },
+  {
+   "n": 52,
+   "chapter": "구간 병합과 스위핑",
+   "prerequisites": [
+    "50 그리디 1",
+    "17 key 정렬"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "높음. 시작점 정렬 후 cur_end ≥ 다음 시작이면 cur_end = max(cur_end, 끝), 아니면 새 구간. 구간 5개 암산.",
+   "bridgeNote": "50장과 같은 '정렬 후 한 번 훑기'. NeetCode·Tech Interview Handbook이 Intervals를 독립 주제로 둠."
+  },
+  {
+   "n": 53,
+   "chapter": "답에 대한 이분 탐색 (parametric search)",
+   "prerequisites": [
+    "14 이분 탐색 경계",
+    "50 그리디 1"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "중상. 틀: 판정 함수 ok(x)가 F…F T…T로 단조이면 14장 코드 그대로. 나무 자르기: 높이 h가 커질수록 얻는 양은 줄어든다.",
+   "bridgeNote": "14장 코드를 그대로 쓰되 배열 대신 판정 함수. USACO가 binary-search-sorted-array → binary-search(임의의 단조 함수) 두 모듈로 나눈 것의 두 번째. 판정이 흔히 그리디라 50장 뒤에 배치."
+  },
+  {
+   "n": 54,
+   "chapter": "그래프 표현 — 인접 리스트, 격자는 암묵적 그래프",
+   "prerequisites": [
+    "9 dict/set",
+    "36 이진 트리"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "높음. adj = {u: [v, …]}; 격자의 이웃 = (r±1, c), (r, c±1).",
+   "bridgeNote": "알고리즘 없이 표현만. 트리 = 사이클 없는 연결 그래프임을 연결. 인접 행렬은 한 절로만."
+  },
+  {
+   "n": 55,
+   "chapter": "격자 flood fill — 섬의 개수 (BFS)",
+   "prerequisites": [
+    "54 그래프 표현",
+    "38 레벨 순회"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "중상(4×5 격자). 틀: 방문 안 한 땅을 만나면 count += 1 후 BFS로 이어진 칸을 전부 방문 처리.",
+   "bridgeNote": "38장 트리 BFS에 visited 하나 추가. 격자는 그림이 직관적이라 일반 그래프보다 먼저(USACO Silver: graph-traversal 직후 flood-fill; BarkingDog는 격자 BFS를 재귀보다도 앞에 둠)."
+  },
+  {
+   "n": 56,
+   "chapter": "BFS 최단 거리 — 무가중치 그래프",
+   "prerequisites": [
+    "55 flood fill"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "높음. 불변식: 큐에서 나오는 순서 = 거리 오름차순. dist[v] = dist[u] + 1(처음 발견 시에만). 경로 복원은 parent를 거꾸로.",
+   "bridgeNote": "55장 코드에 dist 배열만 추가. USACO Gold unweighted-shortest-paths의 선수가 graph-traversal + flood-fill인 것과 같은 순서."
+  },
+  {
+   "n": 57,
+   "chapter": "그래프 DFS — 연결 요소, 재귀와 명시적 스택",
+   "prerequisites": [
+    "54 그래프 표현",
+    "37 트리 순회",
+    "19 스택"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "높음. 틀: visited.add(u); for v in adj[u]: if v not in visited: dfs(v). 6노드 그래프의 방문 순서 암송.",
+   "bridgeNote": "37장 트리 순회 + visited. Python 재귀 한도 때문에 스택 기반 반복형을 같이 싣는 것은 Python 전용 보강."
+  },
+  {
+   "n": 58,
+   "chapter": "사이클 검출과 이분 그래프",
+   "prerequisites": [
+    "57 그래프 DFS",
+    "56 BFS 최단 거리"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "중상. 방향 그래프: 흰/회/검 3색, 회색을 다시 만나면 사이클. 이분 그래프: BFS로 2색을 칠하다 같은 색 이웃이면 실패.",
+   "bridgeNote": "DFS/BFS의 방문 여부 1비트를 색으로 확장. 59장 위상 정렬의 전제(DAG) 확인용."
+  },
+  {
+   "n": 59,
+   "chapter": "위상 정렬 — Kahn 알고리즘",
+   "prerequisites": [
+    "58 사이클 검출",
+    "20 큐와 덱"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "높음. 틀: 진입차수 0인 노드를 큐에; 꺼내며 이웃의 진입차수 -1, 0이 되면 큐에. 선수 관계 5개 암산.",
+   "bridgeNote": "BFS에서 방문 여부 대신 진입차수를 씀. DFS 후위 역순 방식은 선택 절. 64장 'DP = DAG의 위상 순서'의 선수."
+  },
+  {
+   "n": 60,
+   "chapter": "DP 1 — 메모에서 표로 (계단 오르기)",
+   "prerequisites": [
+    "26 메모이제이션"
+   ],
+   "difficulty": 5,
+   "mentalReplayability": "매우 높음. 공식: dp[i] = dp[i-1] + dp[i-2], dp[0] = dp[1] = 1 → 1,1,2,3,5,8,13. 변수 2개로 공간 압축.",
+   "bridgeNote": "26장 메모이제이션을 아래에서 위로 뒤집는 것만 새로움. 난이도 한 칸 하강. Hello Algo의 4단(완전 탐색 → 메모 → DP → 공간 최적화)을 모든 DP 장의 고정 틀로 사용."
+  },
+  {
+   "n": 61,
+   "chapter": "DP 2 — 선택/비선택 1차원 (집 털기, 카데인)",
+   "prerequisites": [
+    "60 DP 1",
+    "45 부분집합"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "높음. 공식: dp[i] = max(dp[i-1], dp[i-2] + a[i]). 카데인: cur = max(a[i], cur + a[i]); best = max(best, cur).",
+   "bridgeNote": "점화식에 max가 처음 등장(세기 → 최적화). 45장의 선택/비선택 재귀가 완전 탐색 버전."
+  },
+  {
+   "n": 62,
+   "chapter": "DP 3 — 동전 교환",
+   "prerequisites": [
+    "61 DP 2",
+    "51 그리디 2"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "높음. 공식: dp[x] = min(dp[x-c] for c in coins) + 1, dp[0] = 0. 동전 {1,3,4}, x=6 표 채우기.",
+   "bridgeNote": "전이 후보가 2개 → 동전 개수만큼(루프). 51장에서 그리디가 깨졌던 바로 그 예제. CPH 7.1의 DP 첫 예제."
+  },
+  {
+   "n": 63,
+   "chapter": "DP 4 — LIS O(n²)",
+   "prerequisites": [
+    "62 DP 3"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "중상. 공식: dp[i] = 1 + max(dp[j] for j < i if a[j] < a[i]). [3,1,4,1,5,9,2,6]으로 표 채우기.",
+   "bridgeNote": "전이가 이전의 모든 j를 보는 첫 DP. CPH 7.2·USACO Gold lis. O(n log n) 버전은 선택 절."
+  },
+  {
+   "n": 64,
+   "chapter": "DP 레시피 — 상태·전이·순서·기저 (DP = DAG)",
+   "prerequisites": [
+    "63 DP 4",
+    "59 위상 정렬"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "암기 카드형. 체크리스트 SRTBOT: Subproblem, Relate, Topological order, Base, Original, Time. 시간 = 부분문제 수 × 전이 비용.",
+   "bridgeNote": "새 문제 없이 60~63장을 한 틀로 정리(MIT 6.006의 SRTBOT). 59장 위상 정렬과 연결."
+  },
+  {
+   "n": 65,
+   "chapter": "DP 5 — 격자 경로 (2차원 첫 만남)",
+   "prerequisites": [
+    "64 DP 레시피",
+    "54 그래프 표현"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "높음(3×4 표 = 파스칼 삼각형). 공식: dp[r][c] = dp[r-1][c] + dp[r][c-1].",
+   "bridgeNote": "상태가 1차원 → 2차원이 되는 것만 새롭고 전이는 60장 수준으로 쉽게. CPH 7.3·USACO paths-grids."
+  },
+  {
+   "n": 66,
+   "chapter": "DP 6 — 0/1 배낭",
+   "prerequisites": [
+    "65 DP 5",
+    "61 DP 2"
+   ],
+   "difficulty": 7,
+   "mentalReplayability": "중간(물건 3개 × 용량 5 표). 공식: dp[i][w] = max(dp[i-1][w], dp[i-1][w-wᵢ] + vᵢ). 1차원 압축은 w를 역순으로.",
+   "bridgeNote": "표의 한 축이 인덱스가 아닌 용량이라는 추상화가 새로움. CPH 7.4·Hello Algo 14.4."
+  },
+  {
+   "n": 67,
+   "chapter": "DP 7 — LCS와 편집 거리",
+   "prerequisites": [
+    "66 DP 6"
+   ],
+   "difficulty": 7,
+   "mentalReplayability": "중간(4×4까지 암산). LCS: 같으면 대각+1, 다르면 max(위, 왼쪽). 편집 거리: 1 + min(위, 왼쪽, 대각).",
+   "bridgeNote": "두 수열의 인덱스가 축인 2D DP, 전이 후보 3개. CPH 7.5·Hello Algo 14.6·CS161 13강."
+  },
+  {
+   "n": 68,
+   "chapter": "유니온 파인드",
+   "prerequisites": [
+    "54 그래프 표현",
+    "23 재귀 1"
+   ],
+   "difficulty": 6,
+   "mentalReplayability": "높음. parent[i] = i로 시작; find는 루트까지 올라가며 경로 압축; union은 작은 쪽을 큰 쪽 아래로. 원소 6개, union 4번 암산.",
+   "bridgeNote": "난이도 한 칸 하강(코드 10줄). 배열 하나로 숲을 표현 — 42장 '배열 속 트리'의 재등장. 역아커만 분석은 결과만."
+  },
+  {
+   "n": 69,
+   "chapter": "최소 신장 트리 — 크루스칼",
+   "prerequisites": [
+    "68 유니온 파인드",
+    "50 그리디 1"
+   ],
+   "difficulty": 7,
+   "mentalReplayability": "높음(5노드 7간선). 규칙: 간선을 가중치 순으로 보며 find가 다르면 채택.",
+   "bridgeNote": "정렬 그리디 + 유니온 파인드의 조립. CPH 15장도 Kruskal → Union-find → Prim 순. 프림은 71장 뒤 선택 절."
+  },
+  {
+   "n": 70,
+   "chapter": "간선 완화와 벨만-포드",
+   "prerequisites": [
+    "56 BFS 최단 거리",
+    "64 DP 레시피"
+   ],
+   "difficulty": 7,
+   "mentalReplayability": "중상(4노드 5간선). 완화: if dist[u] + w < dist[v]: dist[v] = dist[u] + w. 모든 간선을 V-1번 반복, V번째에도 줄면 음수 사이클.",
+   "bridgeNote": "가중치 최단 경로의 유일한 새 연산인 완화만 도입하고 순서는 전부 반복. CPH 13.1·MIT 6.006 12강이 다익스트라보다 먼저 두는 이유. CS161처럼 DP 관점으로도 연결."
+  },
+  {
+   "n": 71,
+   "chapter": "다익스트라",
+   "prerequisites": [
+    "70 벨만-포드",
+    "41 heapq"
+   ],
+   "difficulty": 7,
+   "mentalReplayability": "중상(5노드). 불변식: 힙에서 꺼내 확정된 노드의 dist는 최단. 틀: pop (d, u); if d > dist[u]: continue; 이웃 완화 후 push.",
+   "bridgeNote": "70장의 완화를 가장 가까운 노드부터 하는 그리디 순서로 = BFS의 큐를 힙으로. heapq에는 decrease-key가 없어 lazy deletion 패턴 필수."
+  },
+  {
+   "n": 72,
+   "chapter": "플로이드-워셜",
+   "prerequisites": [
+    "70 벨만-포드",
+    "65 DP 5"
+   ],
+   "difficulty": 7,
+   "mentalReplayability": "높음(3~4노드 행렬). 3중 루프 k, i, j: d[i][j] = min(d[i][j], d[i][k] + d[k][j]). k가 가장 바깥.",
+   "bridgeNote": "코드는 5줄로 가장 짧음. 2D DP + 완화. 'k번 노드까지만 경유'라는 상태 정의가 유일한 새 생각."
+  },
+  {
+   "n": 73,
+   "chapter": "단조 스택과 단조 덱",
+   "prerequisites": [
+    "19 스택",
+    "20 큐와 덱",
+    "12 슬라이딩 윈도우",
+    "22 분할상환"
+   ],
+   "difficulty": 7,
+   "mentalReplayability": "중상. 불변식: 스택 안은 항상 단조 감소. 새 원소보다 작은 것들을 pop하며 '다음 큰 원소' 기록. 원소마다 push/pop 한 번 → O(n). [2,1,5,3,6] 암산.",
+   "bridgeNote": "코드는 짧지만 불변식 유지와 분할상환 논증이 필요. USACO가 Gold(stacks, sliding-window)에, CPH가 8장 Amortized analysis(DP 뒤)에 둔 것을 따라 후반 배치."
+  },
+  {
+   "n": 74,
+   "chapter": "펜윅 트리 (BIT)",
+   "prerequisites": [
+    "10 누적합",
+    "48 비트 연산"
+   ],
+   "difficulty": 7,
+   "mentalReplayability": "높음(n=8). 갱신: i += i & -i, 질의: i -= i & -i(1-index). 6의 갱신 경로 6 → 8, 질의 경로 6 → 4 → 0.",
+   "bridgeNote": "누적합에 갱신을 허용. 48장의 x & -x를 그대로 사용. CPH 9.2가 세그먼트 트리(9.3)보다 먼저 둠."
+  },
+  {
+   "n": 75,
+   "chapter": "세그먼트 트리 — 점 갱신·구간 질의",
+   "prerequisites": [
+    "74 펜윅 트리",
+    "42 힙 내부",
+    "29 병합 정렬"
+   ],
+   "difficulty": 8,
+   "mentalReplayability": "중간(n=4, 크기 8 배열까지). 반복형: 리프 n..2n-1, tree[i] = tree[2i] + tree[2i+1]; 질의는 l += n, r += n 후 홀짝에 따라 수집하며 //2.",
+   "bridgeNote": "힙의 배열 인덱싱 + 병합 정렬식 반분. lazy propagation은 부록. USACO는 PURS만 Gold, 나머지는 Platinum."
+  },
+  {
+   "n": 76,
+   "chapter": "롤링 해시 (라빈-카프)",
+   "prerequisites": [
+    "10 누적합",
+    "21 해시 내부",
+    "27 빠른 거듭제곱"
+   ],
+   "difficulty": 7,
+   "mentalReplayability": "중간. 공식: 새 해시 = (H·B − s[i]·Bᵐ + s[i+m]) mod M. 접두사 해시로 구간 해시를 O(1)에.",
+   "bridgeNote": "난이도 한 칸 하강. 누적합 + 해시 + 모듈러의 조합. KMP 전에 문자열 매칭 문제 자체를 쉬운 방법으로 먼저."
+  },
+  {
+   "n": 77,
+   "chapter": "KMP — 실패 함수",
+   "prerequisites": [
+    "76 롤링 해시",
+    "11 투 포인터"
+   ],
+   "difficulty": 8,
+   "mentalReplayability": "중상(패턴 6~9자). π[i] = p[:i+1]의 진접두사 = 진접미사 최대 길이. 'ABABCABAB' → [0,0,1,2,0,1,2,3,4]. 불일치 시 j = π[j-1].",
+   "bridgeNote": "텍스트 포인터가 되돌아가지 않는 이유를 π가 보장. π 표 암송은 좋은 공장용 연습. Z·아호코라식은 부록."
+  },
+  {
+   "n": 78,
+   "chapter": "비트마스크 DP",
+   "prerequisites": [
+    "49 비트마스크 집합",
+    "66 DP 6"
+   ],
+   "difficulty": 8,
+   "mentalReplayability": "낮음~중간(n=3~4 TSP만). 상태 dp[mask][last]; 전이 dp[mask | 1 << j][j] = min(…, dp[mask][i] + cost[i][j]).",
+   "bridgeNote": "집합을 상태로(49장) + 2D DP(66장). CPH 10.5·USACO Gold dp-bitmasks."
+  },
+  {
+   "n": 79,
+   "chapter": "트리 DP",
+   "prerequisites": [
+    "37 트리 순회",
+    "61 DP 2"
+   ],
+   "difficulty": 8,
+   "mentalReplayability": "중간(5노드 트리). 후위 순회로 자식 결과를 합침. 최대 독립 집합: take[u] = w[u] + Σskip[c], skip[u] = Σmax(take[c], skip[c]).",
+   "bridgeNote": "61장 집 털기(선택/비선택)를 트리로 옮긴 것. USACO Gold dp-trees. 리루팅·LCA는 부록."
+  },
+  {
+   "n": 80,
+   "chapter": "[선택 부록 — 본편 아님] 균형 트리(AVL 회전, 레드-블랙, B-트리, 스플레이, 스킵 리스트) / 네트워크 플로우·이분 매칭 / FFT / 접미사 배열·오토마톤·아호코라식·Z·Manacher / SCC·단절점 / LCA 이진 점프·HLD·센트로이드 / lazy·퍼시스턴트 세그먼트 트리 / CHT·digit DP·구간 DP / 계산 기하 / 행렬 거듭제곱 / NP-완전성 / 퍼텐셜 함수·마스터 정리 증명·확률 분석",
+   "prerequisites": [
+    "본편 1~79 전체"
+   ],
+   "difficulty": 9,
+   "mentalReplayability": "대체로 낮음. 상태가 작업 기억을 넘거나(레드-블랙 삽입 경우의 수, 플로우의 잔여 그래프) 한 줄 공식으로 줄지 않거나(FFT, 접미사 배열 구성) 증명이 본체임. 예외적으로 재생 가능한 것: AVL 회전 4패턴(LL, RR, LR, RL), SCC의 코사라주 2회 DFS.",
+   "bridgeNote": "완만한 경사로 도달할 수 없는 주제의 격리 구역. 출처들도 같은 처리: Hello Algo의 * 절, Grokking의 부록 A, algs4의 6장 Context, USACO의 Platinum/Advanced, roadmap.sh의 Complex Data Structures. 본편에서 링크만 걸고 순서 제약 없이 읽게 함."
+  }
+ ],
+ "findings": [
+  {
+   "claim": "거의 모든 출처가 동의하는 뼈대: 복잡도 직관 → 배열·스택·큐 → 재귀 → 기초 정렬 → 분할 정복 정렬 → 해시/트리/힙 → 그래프 탐색 → 최단경로·MST → DP/그리디 → 문자열·고급.",
+   "detail": "복잡도 분석은 Wengrow 3장, Hello Algo 2장, pythonds 2장, Goodrich 3장, CPH 2장, CS106B 7강, COS226 2강처럼 초반 3개 단원 안에 온다. 선형 구조(배열·스택·큐)가 트리보다, 트리가 그래프보다 먼저다. 쉬운 O(n²) 정렬(선택·삽입·버블)이 병합·퀵보다 먼저다(Wengrow 4~6장 → 13장, Hello Algo 11.2~11.6, Khan, COS226 5~7강). BFS/DFS가 가중치 알고리즘보다 먼저고 플로우는 항상 맨 끝이다(COS226 20강, CS161 16강, CLRS 24장, CPH 20장, USACO Advanced). 원본 다운로드는 scratchpad:cur 에 보관.",
+   "sources": [
+    "https://pragprog.com/titles/jwpython/a-common-sense-guide-to-data-structures-and-algorithms-in-python-volume-1/",
+    "https://raw.githubusercontent.com/krahets/hello-algo/main/en/mkdocs.yml",
+    "https://raw.githubusercontent.com/RunestoneInteractive/pythonds/master/_sources/index.rst",
+    "https://cses.fi/book/book.pdf",
+    "https://www.cs.princeton.edu/courses/archive/fall24/cos226/lectures.php"
+   ],
+   "confidence": "high",
+   "implication": "제안 순서의 대단원 배치(A 추적 기초 → B 배열 기법 → C 기초 정렬 → D 선형 구조·해시 → E 재귀 → F 분할 정복 → G 노드 구조 → H 완전 탐색 → I 그리디 → J 그래프 탐색 → K DP → L 가중치 그래프 → M 고급)는 이 합의를 그대로 따른다. 이 뼈대를 벗어나는 재배치는 에이전트에게 허용하지 않는 고정 제약으로 두는 것이 안전하다."
+  },
+  {
+   "claim": "출처들이 갈리는 지점은 네 군데다: 재귀의 위치, 연결 리스트의 위치, DP와 그래프의 선후, 그리디와 DP의 선후.",
+   "detail": "(1) 재귀: 초반(Grokking 3장, Goodrich 4장, Hello Algo 2.2), 중반(pythonds 4장, Wengrow 10~11장, CS106B 8강, Codecademy 8모듈), 후반(BarkingDog 0x0B — BFS/DFS 뒤). (2) 연결 리스트: 초반(CS61B 3~5강, Codecademy 2~4모듈, Hello Algo 4장, BarkingDog 0x04) 대 후반(Wengrow 14장, CS106B 19강). (3) DP 먼저: CLRS, CPH 7장, USACO Gold, BarkingDog 0x10, 이코테 8장 / 그래프 먼저: MIT 6.006, NeetCode, COS226, CS161. (4) 그리디 먼저: Grokking, CPH, USACO(Bronze intro-greedy), 이코테 / DP 먼저: CLRS, CS161, Hello Algo, BarkingDog.",
+   "sources": [
+    "https://www.manning.com/books/grokking-algorithms-second-edition",
+    "https://web.stanford.edu/class/cs106b/",
+    "https://sp25.datastructur.es/",
+    "https://raw.githubusercontent.com/cpinitiative/usaco-guide/master/content/ordering.ts",
+    "https://github.com/encrypted-def/basic-algo-lecture",
+    "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/calendar/"
+   ],
+   "confidence": "high",
+   "implication": "이 네 가지는 정답이 없으므로 이 프로젝트의 기준(완만한 경사, 머릿속 재생)으로 결정했다: 재귀는 스택 뒤·분할 정복 앞, 연결 리스트는 Wengrow식으로 트리 직전, 그래프 탐색(BFS/DFS) → DP → 가중치 그래프의 샌드위치 구조, 그리디는 DP 앞(그리디 실패 사례가 DP의 동기). 학습자가 원하면 바꿀 수 있는 선택지로 문서화해 둘 것."
+  },
+  {
+   "claim": "급경사 1: 반복 → 재귀. 완만한 교재는 모두 호출 스택을 다리로 쓰고 재귀를 2~3개 단원으로 쪼갠다.",
+   "detail": "Grokking 3장의 절 구성은 Recursion → Base case and recursive case → The stack. pythonds 4장은 리스트 합 → 재귀의 3법칙 → 'Stack Frames: Implementing Recursion' → 시각화 → 하노이 → 미로 → DP. Hello Algo 2.2는 Iteration(for, while, nested) → Recursion(The call stack → Tail recursion → Recursion trees). Wengrow는 10장 'Recursion in the Eyes of the Computer'(읽기)와 11장 'Learning to Write in Recursive'(쓰기)로 분리. CS106B는 재귀 3강 뒤에 백트래킹 2강. COS226은 스택 강의의 데모로 function-call stack을 사용.",
+   "sources": [
+    "https://www.manning.com/books/grokking-algorithms-second-edition",
+    "https://raw.githubusercontent.com/RunestoneInteractive/pythonds/master/_sources/index.rst",
+    "https://raw.githubusercontent.com/krahets/hello-algo/main/en/mkdocs.yml",
+    "https://pragprog.com/titles/jwpython/a-common-sense-guide-to-data-structures-and-algorithms-in-python-volume-1/",
+    "https://web.stanford.edu/class/cs106b/"
+   ],
+   "confidence": "high",
+   "implication": "제안 순서에서 4장(재귀 없는 호출 스택) → 19장(스택) → 23장(선형 재귀) → 24장(재귀 트리) → 25장(하노이) → 26장(메모이제이션)으로 5단 분해했다. 각 장에서 늘어나는 것은 하나뿐이다(프레임 → 자기 호출 → 가지 2개 → 믿음의 도약 → 캐시). 사이트의 재귀 시각화는 스택 프레임 뷰와 호출 트리 뷰 두 가지를 모두 제공해야 한다."
+  },
+  {
+   "claim": "급경사 2: 재귀 → 백트래킹 → DP. 공통 다리는 '완전 탐색 먼저'와 '메모이제이션 피보나치'이며, DP 내부에는 출처 간에 거의 같은 예제 사다리가 있다.",
+   "detail": "Hello Algo는 DP의 모든 문제를 Method 1 Brute-force search → Method 2 Memoized search → Method 3 Dynamic programming → Space optimization 4단으로 전개(intro_to_dynamic_programming.md, dp_solution_pipeline.md의 헤딩 직접 확인). USACO intro-dp의 선수는 complete-rec이고 설명문은 'Speeding up naive recursive solutions with memoization'. Wengrow 12장은 Unnecessary Recursive Calls → Memoization → Going Bottom-Up. DP 예제 순서: CPH 7장은 coin problem → LIS → paths in a grid → knapsack → edit distance → counting tilings, USACO Gold는 intro-dp → knapsack → paths-grids → lis → dp-bitmasks → dp-ranges → digit-dp, 트리 DP(dp-trees)는 별도 그룹. 백트래킹은 CPH 5장(subsets → permutations → backtracking → pruning), Hello Algo 13장(permutations → subset sum → N-queens)이 같은 사다리. MIT 6.006은 SRTBOT 암기 틀을 사용(검색 스니펫으로 확인).",
+   "sources": [
+    "https://raw.githubusercontent.com/krahets/hello-algo/main/en/docs/chapter_dynamic_programming/intro_to_dynamic_programming.md",
+    "https://raw.githubusercontent.com/cpinitiative/usaco-guide/master/content/4_Gold/Intro_DP.mdx",
+    "https://cses.fi/book/book.pdf",
+    "https://pragprog.com/titles/jwpython/a-common-sense-guide-to-data-structures-and-algorithms-in-python-volume-1/",
+    "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/calendar/"
+   ],
+   "confidence": "high",
+   "implication": "DP 단원(60~67장)은 계단 → 집 털기/카데인 → 동전 → LIS → 레시피(SRTBOT) → 격자 → 배낭 → LCS/편집 거리 순으로, 한 장에 '점화식 한 줄'씩만 늘린다. 모든 DP 장의 페이지 템플릿을 '완전 탐색 재귀 → 메모 → 표 → 공간 압축' 4단으로 고정하면 에이전트가 장을 생성할 때 난이도 편차가 줄어든다. 비트마스크 DP·트리 DP는 맨 뒤(78~79장), 구간·digit DP는 부록."
+  },
+  {
+   "claim": "급경사 3: 그래프. 다리는 '트리 순회 → 격자 flood fill → 일반 그래프 BFS/DFS'이고, 가중치 쪽은 '완화(벨만-포드) → 다익스트라 → 플로이드'가 개념 수 기준으로 가장 완만하다.",
+   "detail": "USACO Silver는 graph-traversal → flood-fill → intro-tree, Gold의 unweighted-shortest-paths는 선수가 graph-traversal과 flood-fill(MDX frontmatter 직접 확인). CS61B 22강은 'Tree and Graph Traversals'를 한 강의로 연결. Codecademy는 14모듈 트리 순회(BFS/DFS) 뒤 17모듈 그래프. BarkingDog는 격자 BFS(0x09)를 재귀(0x0B)보다 먼저 가르친다. 가중치: CPH 13장은 Bellman–Ford → Dijkstra → Floyd–Warshall, MIT 6.006은 L11 Weighted SP → L12 Bellman-Ford → L13 Dijkstra, CS161은 벨만-포드를 최단경로(L11)와 DP(L12)에서 두 번 다룸. MST와 최단경로의 선후는 갈림(COS226·CLRS는 MST 먼저, CS61B는 최단경로 먼저). 유니온 파인드는 크루스칼 직전이 다수(CPH 15장, USACO Gold dsu → … → mst)지만 algs4·COS226은 첫 강의 사례로 사용.",
+   "sources": [
+    "https://raw.githubusercontent.com/cpinitiative/usaco-guide/master/content/4_Gold/Unweighted_Shortest_Paths.mdx",
+    "https://sp25.datastructur.es/",
+    "https://github.com/encrypted-def/basic-algo-lecture",
+    "https://cses.fi/book/book.pdf",
+    "https://stanford-cs161.github.io/winter2025/lectures/"
+   ],
+   "confidence": "high",
+   "implication": "38장(트리 레벨 순회) → 55장(격자 flood fill) → 56장(BFS 최단 거리) → 57장(DFS) 순으로 visited·dist를 하나씩 추가한다. 다익스트라를 BFS에서 바로 가면 새 요소가 3개(힙, 완화, 낡은 항목 건너뛰기)이므로 벨만-포드로 완화만 먼저 떼어 가르친다. 모바일 화면에서는 6노드 이하 그래프, 4×5 이하 격자가 머릿속 재생의 상한."
+  },
+  {
+   "claim": "이분 탐색·투 포인터 계열은 출처들이 명시적으로 2~3단으로 나눈다. 단조 스택·슬라이딩 윈도우 최솟값은 보기보다 어려워 DP와 같은 등급에 놓인다.",
+   "detail": "USACO Silver: prefix-sums → two-pointers → binary-search-sorted-array → binary-search(설명: 'Binary searching on arbitrary monotonic functions', 선수: binary-search-sorted-array). Hello Algo 10장: binary search → insertion point → boundaries. NeetCode: Two Pointers → Sliding Window. 반면 USACO는 'stacks'(단조 스택)와 'sliding-window'(최솟값 덱)를 Gold의 Data Structures 그룹에, CPH는 8장 Amortized analysis(two pointers, nearest smaller elements, sliding window minimum)를 DP(7장) 뒤에 둔다.",
+   "sources": [
+    "https://raw.githubusercontent.com/cpinitiative/usaco-guide/master/content/ordering.ts",
+    "https://raw.githubusercontent.com/cpinitiative/usaco-guide/master/content/3_Silver/Binary_Search.mdx",
+    "https://raw.githubusercontent.com/krahets/hello-algo/main/en/mkdocs.yml",
+    "https://cses.fi/book/book.pdf"
+   ],
+   "confidence": "high",
+   "implication": "이분 탐색은 13장(정확히 찾기) → 14장(경계) → 53장(답에 대한 탐색) 3단으로, 그 사이에 39개 장을 두어 간격 복습 효과도 얻는다. 단조 스택은 스택 단원이 아니라 73장(분할상환과 슬라이딩 윈도우를 모두 배운 뒤)에 둔다. 코드 줄 수만 보고 단조 스택을 앞쪽에 배치하면 급경사가 생긴다."
+  },
+  {
+   "claim": "균형 트리·플로우·FFT·접미사 구조는 입문·실전 지향 출처 전부가 별표·부록·최상위 등급으로 격리한다.",
+   "detail": "Hello Algo는 AVL에 * 표시. Grokking 2판은 8장 Balanced trees를 구현 없이 개념으로만 다루고 AVL 성능은 부록 A. Wengrow 1권에는 균형 트리가 없다. algs4는 B-trees, Suffix Arrays, Maxflow를 6장 Context로 분리. USACO는 treaps, max-flow, fft, suffix-array, SCC를 Advanced('usually outside the scope')에, HLD·centroid·lazy 세그먼트 트리를 Platinum에 둔다. roadmap.sh는 B/B+ 트리, 스킵 리스트, 2-3 트리를 'Complex Data Structures'로 분리. CLRS 4판은 피보나치 힙·vEB 트리·계산 기하를 온라인으로 이동(전환 가이드 직접 확인). 반대로 대학 강의(COS226 10강, CS61B 17~18강, CS161 7강, MIT 7강)는 균형 트리를 본편에 넣는다.",
+   "sources": [
+    "https://raw.githubusercontent.com/krahets/hello-algo/main/en/mkdocs.yml",
+    "https://www.manning.com/books/grokking-algorithms-second-edition",
+    "https://algs4.cs.princeton.edu/home/",
+    "https://raw.githubusercontent.com/cpinitiative/usaco-guide/master/content/ordering.ts",
+    "https://mitp-content-server.mit.edu/books/content/sectbyfn/books_pres_0/3923/11599-transition-guide.pdf"
+   ],
+   "confidence": "high",
+   "implication": "본편은 40장 'BST 삭제와 불균형 — 왜 균형이 필요한가'에서 멈추고, 선택 부록으로 뺄 목록은: 레드-블랙·AVL 회전·B-트리·스플레이·스킵 리스트, 네트워크 플로우·이분 매칭, FFT, 접미사 배열/오토마톤·아호코라식·Z·Manacher, SCC·단절점, LCA·HLD·센트로이드, lazy/퍼시스턴트 세그먼트 트리, CHT·digit DP·구간 DP, 계산 기하, 행렬 거듭제곱, NP-완전성, 퍼텐셜 함수 분할상환·마스터 정리 증명·확률 분석. 부록은 난이도 연속성 검사 대상에서 제외한다."
+  },
+  {
+   "claim": "해시 내부·분할상환·증명은 '코드는 짧은데 어려운' 구간이라, 완만한 출처는 수학을 빼고 한 가지 논증만 남긴다.",
+   "detail": "해시: Grokking 5장은 hash functions → use cases → collisions → performance(적재율)까지만, Hello Algo 6장은 hash map(사용) → collisions → hash algorithms 3절 분리. 분할상환: Goodrich 5.3 'Dynamic arrays and amortization'과 CS61B 7강 'ArrayLists, Resizing'은 배열 2배 확장 하나로 설명하고, CLRS는 16장 전체(퍼텐셜 함수 포함)를 할애. 증명: Skiena는 요약 노트에 'Formal proofs will not be emphasized in this book', CS161은 2~3강부터 점화식·마스터 정리. Tech Interview Handbook은 DP를 Low 우선순위로 두고 건너뛰어도 된다고 명시.",
+   "sources": [
+    "https://www.manning.com/books/grokking-algorithms-second-edition",
+    "https://www.zybooks.com/catalog/data-structures-algorithms-python/",
+    "https://paulbatchelor.github.io/brain/TADM",
+    "https://stanford-cs161.github.io/winter2025/lectures/",
+    "https://www.techinterviewhandbook.org/coding-interview-study-plan/"
+   ],
+   "confidence": "medium",
+   "implication": "21장(체이닝 + 적재율 + 재해싱까지만), 22장(합계 세기 방식의 분할상환만), 51장(교환 논증을 반례와 함께 한 번만)으로 제한한다. 난이도 측정 시 코드 줄 수와 별개로 '증명 부담' 축을 두어야 그리디·분할상환 장이 과소평가되지 않는다."
+  },
+  {
+   "claim": "난이도 사다리를 기계가 읽을 수 있게 명시한 출처가 있다: USACO Guide의 모듈 frontmatter(prerequisites, frequency)와 COS226의 C/B/A 3등급.",
+   "detail": "USACO Guide의 각 모듈 MDX는 id, title, prerequisites(모듈 id 목록), description, frequency(0~4)를 YAML frontmatter로 갖고, ordering.ts가 등급(Bronze~Advanced) → 그룹 → 모듈 순서를 정의하며 그 순서에서 모듈 순위(moduleIDToRankMap)를 계산한다. COS226 학습 가이드는 연습을 C(알고리즘을 기계적으로 수행할 수 있어야 함), B(무슨 일이 일어나는지 이해), A(깊은 이해·기교)로 나눈다. NeetCode 로드맵은 선형 목록이 아닌 선수 관계 DAG다(간선은 기억 기반).",
+   "sources": [
+    "https://raw.githubusercontent.com/cpinitiative/usaco-guide/master/content/ordering.ts",
+    "https://raw.githubusercontent.com/cpinitiative/usaco-guide/master/content/4_Gold/Intro_DP.mdx",
+    "https://www.cs.princeton.edu/courses/archive/fall24/cos226/lectures.php"
+   ],
+   "confidence": "high",
+   "implication": "각 장 파일에 frontmatter(id, title, prerequisites, introduces(핵심 1개), uses, difficulty, formula(한 줄), traceInput)를 두고, 별도 ordering 파일 하나로 순서를 정의하면 에이전트가 장을 추가·삽입할 때 검사 스크립트가 선수 누락과 난이도 점프를 자동으로 잡을 수 있다. 장 번호를 파일명에 박지 말고 slug + ordering으로 관리해야 중간 삽입(다리 장 추가)이 쉽다. 각 장의 필수 연습은 COS226의 C등급(손으로 수행) 수준으로 고정한다."
+  },
+  {
+   "claim": "난이도 점프 측정 규칙 제안: 7개 축을 장마다 기록하고 인접 장 사이의 증가량을 자동 검사한다(축 선택은 출처 근거가 있고, 임계값은 검증되지 않은 초안).",
+   "detail": "R1 새 개념 수: frontmatter의 introduces에 핵심 개념은 정확히 1개(보조 용어 ≤ 2), uses는 모두 이전 장들의 introduces에 포함돼야 함. R2 선수 지식: prerequisites ≤ 3개, 전부 앞 장, 그중 1개 이상은 최근 10장 이내 — 아니면 '복습 상자' 삽입을 강제. R3 추적 상태 크기: 대표 예제의 trace에서 동시에 변하는 칸 수(스칼라 변수 + 자료구조 원소). 난이도 1~3은 스칼라 ≤ 3 + 길이 ≤ 6 배열 1개, 4~6은 스칼라 ≤ 5 + 길이 ≤ 8 배열 또는 스택/큐 1개, 7~8은 4×5 이하 표 또는 보조 구조 2개. trace 단계 ≤ 25, 인접 장 대비 +2칸 이내. R4 코드 크기: 핵심 함수 LOC(주석·빈 줄 제외) 난이도 1~3 ≤ 10, 4~6 ≤ 18, 7~8 ≤ 28, 인접 증가 ≤ +8, 중첩 깊이 ≤ 3 — Python ast 모듈로 자동 계산. R5 제어 구조 단계: 0 직선, 1 단일 루프, 2 이중 루프/두 포인터, 3 선형 재귀, 4 다중 재귀, 5 재귀 + 되돌리기, 6 우선순위 큐 기반 루프나 2D 표 채우기 — 인접 증가 ≤ 1. R6 증명 부담: 0 자명, 1 불변식 한 줄, 2 교환 논증·귀납, 3 분할상환·확률 — 인접 증가 ≤ 1, 그리고 R5와 R6이 같은 장에서 동시에 오르지 않을 것. R7 추상화 플래그(암묵적 그래프, 답 공간 탐색, 집합을 상태로, 값을 인덱스로)가 처음 등장하는 장은 다른 축의 증가가 0일 것. R8 장당 새 Python 기능 ≤ 1(import·문법을 ast로 검출). 종합: 수동 difficulty(1~10)에 대해 |d(i) − d(i−1)| ≤ 1, d(i) ≤ 지금까지의 최대 + 1, +1 상승 뒤에는 같은 수준의 장 2개 이상(안착 구간). 축의 이론적 근거는 인지 부하 이론의 요소 상호작용성(동시에 처리해야 하는 상호작용 요소 수가 내재적 부하를 결정)이며 이는 검색 스니펫으로만 확인했다.",
+   "sources": [
+    "https://link.springer.com/article/10.1007/s10648-023-09782-w",
+    "https://raw.githubusercontent.com/cpinitiative/usaco-guide/master/content/ordering.ts",
+    "https://www.cs.princeton.edu/courses/archive/fall24/cos226/lectures.php"
+   ],
+   "confidence": "low",
+   "implication": "저장소에 검사 스크립트(예: tools/check_gradient.py)를 두고 에이전트가 장을 생성할 때마다 실행하게 한다. 입력은 각 장의 frontmatter와 대표 코드 블록, 출력은 규칙 위반 목록. 임계값은 처음 10~15개 장을 실제로 읽어 본 뒤 학습자의 체감에 맞춰 보정해야 한다. 제안한 79개 장은 수동 difficulty 기준으로 인접 차 ≤ 1과 상한 규칙을 이미 만족한다."
+  },
+  {
+   "claim": "'머릿속 재생 가능성'은 난이도와 별개의 축이며, 상태가 작고 한 줄 불변식이 있는 장은 어려워도 재생이 쉽다.",
+   "detail": "재생이 잘 되는 것: gcd(정수 2개), 비트 트릭(정수 1개), 누적합, 삽입·선택 정렬(6원소), 연결 리스트 뒤집기(변수 3개), 트리 순회(7노드), 힙 인덱스 공식, 펜윅의 i & -i 경로, KMP의 π 표(패턴 6~9자), 플로이드(3×3 행렬), 하노이 n=3. 재생이 어려운 것: 2D DP 표가 4×5를 넘는 경우, 다익스트라 6노드 초과, 비트마스크 DP n ≥ 4, lazy 세그먼트 트리, 레드-블랙 삽입. COS226의 C등급 정의('알고리즘을 기계적으로 수행')가 이 수준에 해당한다. Lister 외(2004)의 다국적 연구는 초보자가 코드 추적(tracing, desk checking)에 취약함을 보고했다(검색 스니펫 수준 확인).",
+   "sources": [
+    "https://www.cs.princeton.edu/courses/archive/fall24/cos226/lectures.php",
+    "https://www.cs.auckland.ac.nz/~j-hamer/ITiCSE04-wg.pdf"
+   ],
+   "confidence": "medium",
+   "implication": "모든 장에 '재생 카드'를 고정 요소로 둔다: (1) 외울 한 줄(공식 또는 불변식), (2) 고정된 작은 입력(배열은 6원소 이하, 그래프는 6노드 이하, 표는 4×5 이하), (3) 15~25단계 이내의 정답 trace, (4) 화면 없이 풀 변형 질문 1~2개. 장 끝 과제는 반드시 화면 없이 수행 가능한 것으로. 1·3·4·5장을 추적 기술 자체에 할애한 이유이기도 하다."
+  },
+  {
+   "claim": "Python 교재는 Java/C++ 교재와 초반 순서가 다르다: 내장 list/dict의 비용과 동적 배열을 자료구조보다 먼저 다룬다.",
+   "detail": "Goodrich(Python)는 1장 Python Primer, 2장 OOP에 이어 5장 Array-Based Sequences에서 'Python's sequence types → Low-level arrays → Dynamic arrays and amortization → Efficiency of Python's sequence types'를 스택(6장)·연결 리스트(7장) 앞에 둔다. pythonds는 2장 Algorithm Analysis 안에 'Performance of Python Data Structures: Lists, Dictionaries'를 둔다. Wengrow Python판은 출판사 설명에 'all the algorithms have been optimized for use in Python'이라 명시. Python 공식 문서: deque 문서가 list의 pop(0)·insert(0, v)는 O(n) 메모리 이동 비용이 든다고 명시, dict는 3.7부터 삽입 순서 보장, 정렬은 stable 보장, heapq는 기본이 최소 힙이고 3.14에서 heapify_max·heappush_max·heappop_max 등이 추가됨(모두 docs.python.org에서 직접 확인).",
+   "sources": [
+    "https://www.zybooks.com/catalog/data-structures-algorithms-python/",
+    "https://raw.githubusercontent.com/RunestoneInteractive/pythonds/master/_sources/index.rst",
+    "https://docs.python.org/3/library/collections.html",
+    "https://docs.python.org/3/library/heapq.html",
+    "https://docs.python.org/3/library/stdtypes.html"
+   ],
+   "confidence": "high",
+   "implication": "8장 'Python 내장 자료구조 비용표'와 22장 '동적 배열과 분할상환'을 본편에 넣었다. '배열 대 연결 리스트' 비교는 Python에서 체감이 약하므로 연결 리스트 단원은 3개 장으로 짧게 두고, 큐는 처음부터 collections.deque로 가르친다. heapq 장은 대상 Python 버전을 명시하고 부호 반전과 3.14의 max 함수를 둘 다 설명한다."
+  },
+  {
+   "claim": "면접 로드맵(NeetCode, Tech Interview Handbook, AlgoExpert, LeetCode)은 개념 의존성이 아니라 출제 빈도·패턴 기준이라 난이도 사다리로 쓰기엔 구멍이 있다.",
+   "detail": "Tech Interview Handbook은 주제마다 Priority(High/Mid/Low)를 붙이고 1주차에 Array, String, Hash Table, Recursion을 한꺼번에 둔다. NeetCode는 Arrays & Hashing에서 시작해 Stack, Binary Search, Linked List, Trees로 가는데 Big-O·재귀·정렬 내부 같은 기초 단원이 없다(기초 지식을 전제). AlgoExpert 카테고리는 알파벳순 분류다. roadmap.sh는 재귀·DP 같은 기법을 맨 끝 'Problem Solving Techniques'에 몰아 둔다. 반면 해시를 블랙박스로 맨 처음 쓰게 하는 점과 패턴 단위로 쪼갠 주제명(Two Pointers, Sliding Window, Intervals, Fast and Slow Pointers)은 유용하다.",
+   "sources": [
+    "https://www.techinterviewhandbook.org/coding-interview-study-plan/",
+    "https://neetcode.io/roadmap",
+    "https://roadmap.sh/pdfs/roadmaps/datastructures-and-algorithms.pdf"
+   ],
+   "confidence": "medium",
+   "implication": "면접 로드맵에서는 패턴 이름과 '사용 먼저' 원칙만 가져오고(9장 dict/set, 11~12장, 35장, 52장), 순서의 뼈대는 교재와 경쟁 프로그래밍 사다리(USACO, CPH)에서 가져온다. 나중에 문제 풀이 링크를 붙일 때는 NeetCode 카테고리를 각 장에 매핑하면 된다."
+  },
+  {
+   "claim": "경쟁 프로그래밍 사다리와 한국어 커리큘럼은 '완전 탐색(브루트 포스)'과 '구현·시뮬레이션'을 초반 독립 단원으로 둔다 — 대학 교재에는 없는 단원이다.",
+   "detail": "USACO Bronze: simulation → intro-complete → complete-rec. CPH: 5장 Complete search가 그리디(6장)·DP(7장) 앞. CSES: Introductory Problems가 첫 섹션. BarkingDog: 0x0D 시뮬레이션. 이코테: 4장 구현이 그리디 바로 다음. roadmap.sh도 Problem Solving Techniques의 첫 항목이 Brute Force. 이 출처들에서 그리디와 DP는 완전 탐색을 줄이는 최적화로 소개된다.",
+   "sources": [
+    "https://raw.githubusercontent.com/cpinitiative/usaco-guide/master/content/ordering.ts",
+    "https://cses.fi/book/book.pdf",
+    "https://github.com/encrypted-def/basic-algo-lecture",
+    "https://github.com/ndb796/python-for-coding-test"
+   ],
+   "confidence": "high",
+   "implication": "제안 순서에서 45~47장(부분집합 → 순열 → 가지치기)을 그리디·DP 앞에 두고, 61·62장이 각각 45·51장의 완전 탐색/그리디 실패 사례를 다시 불러온다. 구현·시뮬레이션은 새 개념이 없어 본편 장으로 넣지 않았는데, 코딩 테스트가 목표라면 15~20장 사이에 연습 전용 장으로 끼울 수 있다(미결 질문 참조)."
+  },
+  {
+   "claim": "완만한 출처는 같은 아이디어를 간격을 두고 2~3번 다시 만나게 한다(나선형 재방문).",
+   "detail": "CS161은 벨만-포드를 L11(최단경로)과 L12(DP)에서 두 번 다룬다. Grokking은 배낭 문제를 10장(그리디)과 11장(DP)에서 두 번 다루고 4장에 'Big O notation revisited' 절을 둔다. Hello Algo는 10.5 'Search algorithms revisited'와 12.2(분할 정복 관점의 이분 탐색)·12.4(하노이)에서 앞 주제를 재방문한다. pythonds 8장은 'Python Lists Revisited, Recursion Revisited, Dictionaries Revisited, Trees Revisited, Graphs Revisited'. CPH는 동전 문제를 6.1(그리디)과 7.1(DP)에서, 세그먼트 트리를 9.3과 28장에서 재방문한다. Hello Algo 서문은 에빙하우스 망각 곡선에 따른 3~5회 반복 복습을 권장한다.",
+   "sources": [
+    "https://stanford-cs161.github.io/winter2025/lectures/",
+    "https://www.manning.com/books/grokking-algorithms-second-edition",
+    "https://raw.githubusercontent.com/krahets/hello-algo/main/en/docs/chapter_preface/suggestions.md",
+    "https://cses.fi/book/book.pdf"
+   ],
+   "confidence": "high",
+   "implication": "제안 순서에 의도적 재방문을 심었다: 스택(4 → 19 → 23 → 57 → 73), 이분 탐색(13 → 14 → 39 → 53), 누적합(10 → 18 → 74 → 76), 동전 문제(51 → 62), 선택/비선택(45 → 61 → 66 → 79), 배열 속 트리(42 → 68 → 75), BFS(38 → 55 → 56 → 59 → 71). 각 장 frontmatter의 prerequisites가 이 재방문 링크 역할을 하므로, 페이지 상단에 '이전에 본 곳' 링크를 자동 생성하면 공장에서의 회상 연습과 맞물린다."
+  }
+ ],
+ "commonFeatures": [
+  {
+   "feature": "복잡도 직관(Big-O)을 첫 3개 단원 안에, 수식 정의 없이 '몇 번 도는가'로 도입",
+   "seenIn": [
+    "Wengrow 3장",
+    "Hello Algo 2장",
+    "pythonds 2장",
+    "Goodrich 3장",
+    "CPH 2장",
+    "CS106B 7강",
+    "COS226 2강",
+    "Grokking 1장",
+    "roadmap.sh"
+   ],
+   "whyItMatters": "이후 모든 장이 '왜 이게 더 좋은가'를 같은 언어로 말할 수 있다. 정의를 엄밀하게 하면 첫 급경사가 생긴다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "선형 구조(배열·스택·큐) → 계층 구조(트리·힙) → 그래프의 순서",
+   "seenIn": [
+    "Hello Algo 4~9장",
+    "pythonds 3·6·7장",
+    "Goodrich 5~14장",
+    "Wengrow 9·14~18장",
+    "CS106B",
+    "CS61B",
+    "roadmap.sh",
+    "BarkingDog"
+   ],
+   "whyItMatters": "노드당 이웃 수가 1 → 2 → 임의로 늘어나는 자연스러운 일반화라 장마다 새 개념이 하나씩만 늘어난다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "재귀를 독립 단원으로, 호출 스택 설명과 함께 트리·분할 정복·백트래킹 앞에 배치",
+   "seenIn": [
+    "Grokking 3장",
+    "pythonds 4장",
+    "Wengrow 10~11장",
+    "Goodrich 4장",
+    "Hello Algo 2.2",
+    "CS106B 8~10강",
+    "Khan Recursive algorithms",
+    "Codecademy 8모듈"
+   ],
+   "whyItMatters": "가장 널리 인정되는 급경사라 2~3개 단원으로 쪼개고 스택 프레임 추적으로 다리를 놓는다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "쉬운 O(n²) 정렬(선택·삽입·버블) → 병합·퀵 정렬, 정렬 하나에 불변식 하나",
+   "seenIn": [
+    "Wengrow 4~6장·13장",
+    "Hello Algo 11장",
+    "pythonds 5장",
+    "Khan",
+    "COS226 5~7강",
+    "CS61B 28~33강",
+    "CLRS 2장",
+    "roadmap.sh"
+   ],
+   "whyItMatters": "기초 정렬은 6원소로 완전 암산이 가능한 최고의 머릿속 재생 재료이고, 루프 불변식 훈련장이다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "사용 먼저, 구현 나중 (자료구조를 블랙박스로 쓰다가 나중에 내부를 연다)",
+   "seenIn": [
+    "CS106B(Vectors/Stacks/Sets/Maps → 이후 포인터·구현)",
+    "NeetCode Arrays & Hashing 첫 주제",
+    "Tech Interview Handbook 1주차 Hash Table",
+    "USACO Bronze intro-sets·Silver priority-queues",
+    "Hello Algo 6.1 → 6.2~6.3",
+    "CPH 4장"
+   ],
+   "whyItMatters": "도구의 쓸모를 먼저 체감한 뒤 내부를 보면 한 장에 '무엇'과 '어떻게'가 동시에 나오지 않는다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "완전 탐색(브루트 포스) → 그리디/DP의 순서, DP는 메모이제이션 → 표 → 1차원 → 2차원 → 특수(비트마스크·트리) 순",
+   "seenIn": [
+    "CPH 5 → 6 → 7장",
+    "USACO Bronze complete-rec → Gold intro-dp → knapsack → paths-grids → lis → dp-bitmasks",
+    "Hello Algo 13 → 14장(4단 전개)",
+    "Wengrow 12장",
+    "pythonds 4장",
+    "MIT 6.006 L15~18"
+   ],
+   "whyItMatters": "DP를 '중복을 없앤 완전 탐색'으로 소개하면 새 개념이 캐시 하나로 줄어든다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "BFS/DFS → (위상 정렬) → 최단 경로 → MST, 플로우는 맨 끝 또는 제외",
+   "seenIn": [
+    "CPH 12~15·20장",
+    "MIT 6.006 L9~14",
+    "COS226 15~20강",
+    "CS161 L9~16",
+    "CS61B 22~26강",
+    "CLRS 20~24장",
+    "pythonds 7장",
+    "roadmap.sh",
+    "BarkingDog 0x18~0x1D"
+   ],
+   "whyItMatters": "모든 가중치 알고리즘이 탐색 틀 위에 한 가지씩 덧붙이는 구조라 순서를 바꾸면 선수 지식이 깨진다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "어려운 주제를 별표·부록·상위 등급으로 격리",
+   "seenIn": [
+    "Hello Algo의 * 절(AVL, 인코딩, 캐시)",
+    "Grokking 부록 A·B",
+    "algs4 6장 Context",
+    "USACO Platinum/Advanced",
+    "roadmap.sh Complex Data Structures",
+    "CLRS 4판의 온라인 이동 장"
+   ],
+   "whyItMatters": "본편의 난이도 연속성을 지키면서도 호기심이 생긴 주제의 입구는 남겨 둘 수 있다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "명시적 선수 지식 그래프와 난이도 등급",
+   "seenIn": [
+    "USACO Guide frontmatter(prerequisites, frequency)와 등급",
+    "NeetCode 로드맵 DAG",
+    "roadmap.sh 노드 그래프",
+    "COS226 C/B/A 등급",
+    "Tech Interview Handbook Priority"
+   ],
+   "whyItMatters": "선형 목차만으로는 '이 장에 왜 지금 오는가'를 설명할 수 없고, 기계 검사가 가능하려면 구조화된 메타데이터가 필요하다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "자료구조 직후에 작은 응용을 붙이는 배치",
+   "seenIn": [
+    "pythonds(스택 → 괄호·진법·후위식, 큐 → Hot Potato, 덱 → 회문)",
+    "BarkingDog(0x05 스택 → 0x08 괄호)",
+    "Hello Algo(힙 → top-k)",
+    "CPH(Kruskal → union-find)",
+    "Wengrow(해시 → thesaurus, 트라이 → autocomplete)",
+    "Codecademy 프로젝트(스택 → 하노이)"
+   ],
+   "whyItMatters": "구조만 외우면 재생할 내용이 없고, 응용의 trace가 곧 머릿속 재생의 소재가 된다.",
+   "fitForThisProject": "should"
+  },
+  {
+   "feature": "같은 아이디어의 나선형 재방문과 장 끝 요약",
+   "seenIn": [
+    "Hello Algo(각 장 Summary, 10.5 revisited)",
+    "Wengrow(각 장 Wrapping Up)",
+    "Grokking(각 장 Recap, 배낭 2회)",
+    "pythonds 8장 Revisited",
+    "CS161 벨만-포드 2회",
+    "CPH 동전 문제 2회"
+   ],
+   "whyItMatters": "화면을 못 보는 시간에 회상할 단서가 되고, 뒤 장의 새 개념 수를 줄인다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "이분 탐색·투 포인터 같은 기법을 쉬운 형태와 어려운 형태로 분리해 간격 배치",
+   "seenIn": [
+    "USACO(binary-search-sorted-array → binary-search)",
+    "Hello Algo 10.1 → 10.2 → 10.3",
+    "NeetCode(Two Pointers → Sliding Window)",
+    "LeetCode Explore(Recursion I/II)",
+    "CS61B(Asymptotics I~III, Hashing I/II)",
+    "Wengrow(재귀 2개 장)"
+   ],
+   "whyItMatters": "이름은 같아도 난이도가 2~3단 차이 나는 주제를 한 장에 넣으면 장 내부에 급경사가 생긴다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "Python 언어 준비 단원을 본편 앞에 배치",
+   "seenIn": [
+    "Goodrich 1~2장(Python Primer, OOP)",
+    "pythonds 1장(Review of Basic Python)",
+    "이코테 부록 A(코딩 테스트를 위한 파이썬 문법)",
+    "USACO General(data-types, input-output)",
+    "roadmap.sh(Programming Fundamentals)",
+    "BarkingDog 0x01~02"
+   ],
+   "whyItMatters": "추적에 필요한 언어 의미(참조, 슬라이싱, 동시 대입)를 모르면 알고리즘 장에서 두 가지를 동시에 배우게 된다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "개념 설명과 코드를 분리한 2단 레슨",
+   "seenIn": [
+    "Codecademy(주제마다 Conceptual 레슨 → Python 레슨)",
+    "Hello Algo(그림·애니메이션 → 다국어 코드 탭)",
+    "CS161(강의마다 개념 확인 문제와 Python 노트북)",
+    "Khan(글 → 인터랙티브 챌린지)"
+   ],
+   "whyItMatters": "머릿속 재생은 개념 단계의 그림과 trace로 하고, 코드는 확인용으로 따로 보는 편이 모바일 한 화면에 맞는다.",
+   "fitForThisProject": "should"
+  },
+  {
+   "feature": "증명·엄밀한 분석(마스터 정리, 퍼텐셜 함수, 유니버설 해싱)을 본편에 포함",
+   "seenIn": [
+    "CLRS 3~5·16장",
+    "CS161 L2~6",
+    "MIT 6.006 L4",
+    "Goodrich 3.4"
+   ],
+   "whyItMatters": "대학 과정의 목표에는 맞지만 혼자 머릿속으로 재생할 수 없고 경사가 가장 가파른 원인이다.",
+   "fitForThisProject": "skip"
+  }
+ ],
+ "blindSpots": [
+  "Python list는 동적 배열이다: insert(0, x)·pop(0)·`x in list`·슬라이싱은 O(n)이고 append는 분할상환 O(1). Java/C++ 교재의 '배열 대 연결 리스트' 비교표를 그대로 옮기면 틀린 직관이 생긴다. 큐는 처음부터 collections.deque로 가르쳐야 한다(deque도 중간 인덱싱은 O(n)).",
+  "포인터가 없고 전부 참조다: `grid = [[0]*m]*n`은 같은 행을 n번 가리키는 별칭 버그, 백트래킹에서 결과에 path를 그대로 append하면 나중에 전부 같은 리스트가 된다(path[:] 필요), 함수에 넘긴 리스트는 호출자 쪽도 바뀐다. trace 시각화에서 '이름 → 객체' 화살표를 보여 줘야 한다.",
+  "재귀 한도: CPython 기본 재귀 깊이 한도는 1000(기억 기반 수치, sys.getrecursionlimit으로 확인)이고 꼬리 재귀 최적화가 없다. 노드 10⁵개 그래프의 재귀 DFS나 깊은 연결 리스트 재귀는 RecursionError가 난다. sys.setrecursionlimit을 올리면 C 스택 오버플로 위험이 있다(공식 문서 경고). 그래서 DFS 장에 스택 기반 반복형을 반드시 같이 실어야 한다.",
+  "heapq는 기본이 최소 힙이고 0-인덱스다. 최대 힙은 부호 반전이 관용구였지만 Python 3.14부터 heapify_max·heappush_max·heappop_max가 추가됐다(공식 문서 확인) — 대상 Python 버전을 정해야 한다. (우선순위, 항목) 튜플은 동률일 때 둘째 원소를 비교하므로 비교 불가 객체면 TypeError → 순번 카운터를 끼운다. decrease-key가 없어 다익스트라는 '낡은 항목 건너뛰기' 패턴이 필수다.",
+  "dict는 3.7부터 삽입 순서를 보장하지만 set은 순서를 보장하지 않는다. 문자열 해시는 실행마다 달라질 수 있어(해시 랜덤화, 기억 기반) set 순회 순서에 의존한 trace는 재현되지 않는다. 교재의 고정 trace에는 set 순회 순서가 결과에 영향을 주지 않는 예제만 써야 한다.",
+  "슬라이싱 비용이 숨는다: 재귀 이분 탐색에서 a[mid+1:]을 넘기면 O(log n)이 O(n)이 된다. 병합 정렬의 a[:mid] 복사는 괜찮지만 인덱스 버전과 구분해 설명해야 한다. 문자열은 불변이라 루프 안의 s += c는 O(n²)이 될 수 있어 ''.join을 쓴다.",
+  "int는 크기 제한이 없다: (lo+hi)//2 오버플로 이야기는 Python에선 불필요하지만, 큰 수 연산은 O(1)이 아니고 롤링 해시에서는 직접 mod를 해야 한다. 3.11부터 int와 str 사이 변환에 자릿수 제한(기본 4300자리, 수치는 기억 기반)이 있어 큰 피보나치 출력에서 놀랄 수 있다. 음수의 //와 %는 바닥 나눗셈이라 C/Java와 결과가 다르다.",
+  "가변 기본 인자 함정: `def f(n, memo={})`의 memo는 호출 사이에 공유된다. 메모이제이션 장에서 의도적으로 쓰는 경우와 버그인 경우를 구분해 알려 줘야 한다. functools.lru_cache/cache는 인자가 해시 가능해야 하므로 list 대신 tuple을 넘긴다.",
+  "Python 표준 라이브러리에는 균형 BST(정렬 집합/맵)가 없다. Java TreeMap·C++ set을 전제로 한 교재·문제 풀이를 옮길 때는 bisect + list(삽입 O(n)), heapq, 또는 서드파티 sortedcontainers로 대체해야 하고, 이것이 균형 트리를 부록으로 보내도 실용상 괜찮은 이유다.",
+  "정렬은 key 기반이고 stable이다: cmp 함수가 없어(functools.cmp_to_key로 우회) 튜플 키·다단계 정렬 관용구를 따로 가르쳐야 한다. list.sort()는 None을 반환하고 sorted()는 새 리스트를 만든다는 차이도 trace에서 자주 틀리는 지점이다.",
+  "음수 인덱스가 조용히 동작한다: a[i-1]에서 i=0이면 예외 없이 a[-1]을 읽어 틀린 답이 나온다. DP 표의 경계(dp[i-1], dp[i-2])에서 특히 흔하므로 기저 조건 처리를 장마다 명시해야 한다.",
+  "동시 대입의 의미: `a, b = b, a % b`, `prev, cur = cur, prev + cur`, `cur.next, prev, cur = prev, cur, cur.next`는 우변을 먼저 전부 평가한다. 머릿속 재생에서 가장 자주 틀리는 부분이라 3장 추적표에서 명시적으로 다뤄야 한다. 중첩 함수에서 바깥 변수를 바꾸려면 nonlocal이 필요하다는 점도 재귀 카운터 예제에서 걸린다.",
+  "난이도는 주제명이 아니라 예제 선택에 달려 있다: 같은 '단조 스택' 장도 '다음 큰 원소'는 쉽고 '히스토그램 최대 직사각형'은 어렵다. 장 제목만으로 순서를 정하지 말고 장마다 대표 예제 1개를 frontmatter에 고정해야 난이도 검사가 의미를 가진다.",
+  "코드 줄 수는 난이도의 나쁜 대리 지표다: 플로이드(5줄), 그리디(정렬 + 루프), 단조 스택(8줄), 유니온 파인드(10줄)는 짧지만 '왜 맞는가'가 어렵다. 증명 부담과 추상화 점프를 별도 축으로 측정하지 않으면 급경사를 놓친다.",
+  "시각화가 예쁜 것과 머릿속 재생이 되는 것은 다르다: 세그먼트 트리·다익스트라는 애니메이션은 좋지만 상태가 커서 n=4~6을 넘으면 암산이 안 된다. 장마다 '암산용 최소 입력'을 따로 정해 두지 않으면 공장에서 재생할 거리가 없다.",
+  "선수 지식 그래프는 한 줄이 아니다: 비트 연산·gcd·모듈러 같은 수학 계열은 본선과 거의 독립이라 '쉬어 가는 장'으로 급경사 사이에 끼워 넣을 수 있다(제안 순서의 6·27·48장). 반대로 장 번호를 파일명에 고정하면 다리 장을 중간에 끼우기 어려워진다.",
+  "화면을 볼 수 없는 시간이 길다는 조건: 장을 읽은 직후가 아니라 몇 시간 뒤에 회상하므로, 장마다 '한 줄 공식 + 고정 입력'을 짧게 다시 보는 요약 화면(카드 한 장)과 며칠 뒤 재방문 지점이 커리큘럼 수준에서 설계돼야 한다. 79개 장을 한 번씩만 지나가면 앞 장을 잊는다.",
+  "면접 로드맵(NeetCode 등)은 빈도 순이지 난이도 순이 아니며 기초 단원(Big-O, 재귀, 정렬 내부)을 전제한다. 그대로 목차로 쓰면 초반부터 급경사가 생긴다.",
+  "한국어 자료(BarkingDog, 이코테, 백준 단계별)는 C++ 또는 코딩 테스트 유형 중심이라 '구현/시뮬레이션'을 큰 단원으로 두지만 자료구조 내부(해시, 힙, 트리 구현)는 얕다. 목표가 코딩 테스트인지 원리 이해인지에 따라 본편 구성이 달라진다."
+ ],
+ "unreachable": [
+  "runestone.academy pythonds 본문 (Cloudflare 차단) — GitHub raw의 toctree.rst로 대체",
+  "mitpress.mit.edu CLRS 4판 페이지 (403), penguinrandomhouse.com 페이지에는 목차 없음 — 전체 목차는 기억 + 전환 가이드 PDF로 부분 확인",
+  "wiley.com 및 oreilly.com의 Goodrich 목차 (403) — zyBooks 목차로 대체",
+  "link.springer.com Skiena 3판 페이지 (차단) — 2차 출처와 2판 목차 PDF로 대체",
+  "khanacademy.org (봇 차단 페이지), web.archive.org (연결 실패) — Khan 단원 순서는 기억 기반",
+  "leetcode.com/explore (403) — Explore 카드 순서는 검색 스니펫의 커뮤니티 제안뿐",
+  "neetcode.io/roadmap의 렌더링된 선수 관계 DAG (JS 렌더링) — 카테고리 배열만 JS 번들에서 확인",
+  "roadmap.sh 인터랙티브 페이지 (JS 렌더링), github.com 트리 페이지 (403), jsdelivr 파일 목록 (50MB 초과) — 공식 PDF로 대체",
+  "algoexpert.io (Unsupported browser 페이지)",
+  "acmicpc.net/step 백준 단계별로 풀어보기 (HTML에 단계 목록 없음)",
+  "educative.io DSA 경로 (가져오지 않음)",
+  "wiki.python.org TimeComplexity (리다이렉트 페이지만 반환, 본문 추출 실패) — docs.python.org로 대체",
+  "hello-algo.com (지시에 따라 직접 접근하지 않고 GitHub raw 사용)",
+  "link.springer.com 요소 상호작용성 논문 본문 (내용 추출 실패) — 검색 스니펫만",
+  "freeCodeCamp 블록 내부의 챌린지 순서 (superblock 구조 파일만 확인)"
+ ],
+ "openQuestions": [
+  "학습 목표가 코딩 테스트(백준·프로그래머스)까지 포함하는가, 원리 이해와 지루함 해소가 전부인가? 전자라면 구현/시뮬레이션 연습 장과 입출력 장을 15~20장 사이에 추가해야 한다.",
+  "79개 장이 혼자 유지하기에 많은가? 대안은 본편 50개 안팎(73~79장을 부록으로 이동)으로 줄이고 나머지를 2부로 두는 것이다.",
+  "대상 Python 버전은? 3.14 이상이면 heapq의 max 함수를 기본으로 쓸 수 있고, 그 이하면 부호 반전 관용구를 가르쳐야 한다.",
+  "재귀를 기초 정렬 뒤(제안안)에 둘지, 학습자의 Python 숙련도가 높다면 Grokking·Goodrich처럼 더 앞에 둘지.",
+  "연결 리스트를 3개 장으로 둘 가치가 있는가? Python 실무에서는 드물지만 '뒤집기'는 최고의 암산 연습이라 유지했다. 학습자 취향에 따라 1개 장으로 줄일 수 있다.",
+  "수학 트랙(소수·에라토스테네스의 체, 조합·모듈러 역원)을 어디까지 넣을지. gcd와 빠른 거듭제곱만 본편에 넣었고 나머지는 숫자만으로 암산하기 좋아 추가 후보다.",
+  "난이도 측정 규칙의 임계값(상태 칸 수, LOC, 단계 수)은 검증되지 않은 초안이다. 처음 10~15개 장을 실제로 읽고 공장에서 재생해 본 뒤 보정이 필요하다.",
+  "다익스트라와 벨만-포드의 선후: 개념 수 기준으로 벨만-포드를 먼저 뒀지만(CPH, MIT 6.006과 동일), 실용성·BFS와의 연속성을 중시하면 다익스트라를 먼저 둘 수도 있다.",
+  "NeetCode 로드맵 DAG의 정확한 간선, Khan Academy와 LeetCode Explore의 최신 단원 목록은 브라우저로 직접 확인이 필요하다(이번에는 기억과 스니펫에 의존).",
+  "프림 알고리즘, 퀵 셀렉트, LIS O(n log n), 위상 정렬의 DFS 방식처럼 '선택 절'로 처리한 변형들을 독립 장으로 승격할지 여부."
+ ]
+}

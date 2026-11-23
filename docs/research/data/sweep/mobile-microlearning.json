@@ -1,0 +1,1004 @@
+{
+ "key": "mobile-microlearning",
+ "angle": "mobile-microlearning",
+ "summary": "폰 우선 학습 제품 19개(Brilliant, Duolingo, Mimo, Sololearn, Enki, Grasshopper, Fibu(구 Programming Hero), Codecademy Go, Khan Academy, Anki/AnkiDroid, Mochi, RemNote, Algorithms: Explained and Animated, Imprint, Headway, Readwise, Web Stories 등)와 설계 지침(Apple HIG, Android/Material, WCAG 2.2, NN/g, WebKit, MDN, web.dev)을 조사했다. 공통 골격은 (1) 2~5분짜리 단위, (2) 사용자가 직접 넘기는 탭-스루 카드, (3) 화면 하단의 큰 주 버튼, (4) '다음에 할 것'이 하나로 정해진 선형 경로, (5) 보여주기 전에 먼저 맞히게 하는 능동 회상, (6) 간격 반복 복습이다. 이 프로젝트의 진짜 학습은 사이트가 아니라 공장에서의 머릿속 재생(=인출 연습)에서 일어나므로, 사이트는 '머릿속 과제를 싣는 곳 + 답을 확인하는 곳'으로 설계해야 한다. 근거로 Roediger & Karpicke(2006)에서 1주 뒤 회상은 시험 집단 61% 대 재학습 집단 40%였고 재학습 집단이 오히려 과신했다. 포인트·배지·리더보드·리그는 부작용 보고가 가장 많은 요소(87편 매핑 연구)이고 혼자 쓰는 사이트엔 대상도 없으므로 버린다. 스트릭을 쓴다면 Duolingo처럼 문턱을 '1개 완료'로 낮추고 쉬는 날을 허용한다. 코드는 360px 폭에서 18px 글꼴 기준 약 32자, 14px 기준 약 40자가 한계라 '한 줄 36~40자, 한 화면 12~15줄'을 생성 규칙으로 고정해야 한다. 오프라인은 조사한 상용 앱 대부분이 약한데(Brilliant 미지원, Khan은 영상만) 정적 사이트 + 서비스 워커로 쉽게 앞설 수 있다. 다만 iOS Safari는 7일간 상호작용이 없으면 localStorage/IndexedDB/서비스 워커를 지우므로 홈 화면 설치와 진도 내보내기/가져오기가 필수다. 터치 타깃은 Apple 44pt, Android 48dp(약 9mm)가 기준이고 장갑·더러운 손 환경이면 56px 이상과 탭 존 방식이 안전하다. 학습자가 놓치고 있을 가능성이 큰 것은 작업장 휴대폰 규정과 안전, 교대근무의 '하루' 경계, 화면 잠금 복귀, 음성 복습의 한계, 진도 데이터 유실, 그리고 카드를 넘기는 것만으로 생기는 '진도 착각'이다.",
+ "findings": [
+  {
+   "claim": "폰 학습 제품의 한 단위는 대체로 2~5분이고, 연구상 '이상적 길이'의 합의는 없다.",
+   "detail": "Imprint는 App Store 설명에 'Complete a chapter in two minutes or less'라고 쓴다. Mimo는 TechCrunch(2016) 기사에서 'lessons that don't take longer than a couple of minutes', Enki는 TechCrunch 인용문으로 '5-minute workout', Headway는 요약 1편 15분 미만이다. 2020~2024년 연구 40편을 본 체계적 리뷰(Monib 외, Heliyon)는 보고된 길이가 1~3분, 5~7분, 5~8분, 5~10분, 10~15분으로 제각각이며 합의된 최적 길이가 없다고 정리한다.",
+   "sources": [
+    "https://apps.apple.com/us/app/imprint-learn-visually/id1482780647",
+    "https://techcrunch.com/?p=1372157",
+    "https://apps.apple.com/us/app/enki-learn-coding-programming/id993753145",
+    "https://apps.apple.com/us/app/headway-daily-book-summaries/id1457185832",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11774797/"
+   ],
+   "confidence": "high",
+   "implication": "챕터 하나를 통째로 한 단위로 삼지 말고, '한 번 흘끗 보는 단위'(카드 5~9장, 2분 이내)를 최소 단위로 두고 챕터는 그 단위 3~6개의 묶음으로 만든다. 쉬는 시간 1회에 단위 1~2개를 끝낼 수 있어야 한다."
+  },
+  {
+   "claim": "탭-스루(스토리형) 카드는 페이지당 글자 수와 장수에 구체적 상한이 있다.",
+   "detail": "Google Web Stories 가이드는 스토리 4~30쪽(평균 10~20쪽), 쪽당 200자 이하(이상적으로 10단어 미만), 글이 한 문장을 넘는 쪽은 전체의 10% 이내, 최소 글꼴 24pt, 단순 애니메이션 500ms 미만을 권한다. Imprint는 Apple 에디터 평에서 'click-through summaries', Headway는 'tapping through a portion of bite-sized ideas', Algorithms: Explained and Animated는 사용자 리뷰에서 'click through animations… digest at your own pace and quickly replay'로 묘사된다.",
+   "sources": [
+    "https://amp.dev/documentation/guides-and-tutorials/start/create_successful_stories/",
+    "https://apps.apple.com/us/app/imprint-learn-visually/id1482780647",
+    "https://apps.apple.com/us/app/headway-daily-book-summaries/id1457185832",
+    "https://apps.apple.com/us/app/algorithms-explained-animated/id1047532631"
+   ],
+   "confidence": "high",
+   "implication": "알고리즘 트레이스를 '한 카드 = 상태 변화 1개'로 쪼개고 자동 재생 없이 탭으로만 넘긴다. 카드 한 장에는 그림 1개 + 한 문장 + 강조된 코드 1~2줄만 둔다. 머릿속에서 재생하는 것도 결국 이 정지 프레임들의 순서이므로 형식이 목적과 맞는다."
+  },
+  {
+   "claim": "Duolingo는 스트릭 유지 조건을 '일일 목표 달성'에서 '레슨 1개 완료'로 낮춰 리텐션을 올렸다.",
+   "detail": "Duolingo 블로그에 따르면 가장 높은 'intense' 목표를 고른 학습자가 스트릭 보유율이 가장 낮았다. 조건을 레슨 1개로 바꾸자 14일차 리텐션 +3.3%, 일일 활성 학습자 +1%, 스트릭 보유 비율 +10.5%(신규 +19%)였다(모두 상대 변화). 7일 스트릭 도달자는 다음 날 복귀 확률이 2.4배다. 수치는 Duolingo 자체 발표이며 독립 검증은 없다.",
+   "sources": [
+    "https://blog.duolingo.com/improving-the-streak",
+    "https://blog.duolingo.com/how-duolingo-streak-builds-habit"
+   ],
+   "confidence": "high",
+   "implication": "습관 장치를 넣는다면 '오늘 카드 1장 회상'만으로 그날을 채운 것으로 친다. 분량 목표(XP, 분)는 두지 않는다."
+  },
+  {
+   "claim": "스트릭은 손실 회피로 작동하므로 불안·번아웃을 낳을 수 있고, 권장 완충 장치는 프리즈·유예 시간·점진 감소다.",
+   "detail": "Smashing Magazine(2026-02)은 스트릭 프리즈, 마감 후 2~3시간 유예, 0으로 리셋하지 않는 감소 모델, 끊겼을 때 손실이 아니라 성취를 말하는 문구, 그리고 '하루'를 사용자 현지 시간대의 달력 날짜로 정의하라고 권한다. Duolingo는 프리즈 2개 장착 허용으로 일일 활성 학습자가 +0.38% 늘었다고 한다. Smashing 글은 서버를 진실의 원천으로 삼으라고 하지만 이는 부정행위 방지가 필요한 다중 사용자 제품 전제다.",
+   "sources": [
+    "https://smashingmagazine.com/2026/02/designing-streak-system-ux-psychology/",
+    "https://blog.duolingo.com/how-duolingo-streak-builds-habit"
+   ],
+   "confidence": "high",
+   "implication": "혼자 쓰는 정적 사이트는 localStorage만으로 충분하다. 숫자 스트릭 대신 달력 히트맵을 쓰고, 교대근무에 맞춰 '하루'의 경계를 자정이 아닌 직접 고른 시각(예: 새벽 4시)으로 두며, 휴무일은 끊김으로 세지 않는다."
+  },
+  {
+   "claim": "포인트·배지·리더보드·경쟁은 교육용 소프트웨어에서 부작용이 가장 많이 보고된 요소다.",
+   "detail": "Almeida 외의 체계적 매핑 연구(Information and Software Technology, 87편)는 배지, 리더보드, 경쟁, 포인트를 부작용 보고가 가장 많은 요소로 꼽았고, 가장 흔한 부작용은 효과 없음, 성과 저하, 동기 문제, 이해 부족, 무관함이었다. Mogavi 외(arXiv 2203.16175, 초록만 확인)는 Duolingo 포럼 9년치와 15명 인터뷰에서 게임 요소에 몰입해 학습 초점을 잃는 'gamification misuse'를 보고한다.",
+   "sources": [
+    "https://arxiv.org/pdf/2305.08346",
+    "https://arxiv.org/abs/2203.16175"
+   ],
+   "confidence": "high",
+   "implication": "XP, 배지, 리그, 하트는 넣지 않는다. 보상은 '이 알고리즘을 화면 없이 끝까지 재생했다'는 사실 자체와 숙달 지도(챕터별 상태 색)로 충분하다."
+  },
+  {
+   "claim": "세션을 짧게 만드는 것만으로는 학습량이 늘지 않았다(Duolingo 실험).",
+   "detail": "Duolingo의 'Time Spent Learning Well' 글은 레슨을 더 짧게 만든 실험이 전체 TSLW를 떨어뜨렸다고 밝힌다. 같은 글은 '하루 5분만 쓰면 목표 도달에 매우 오래 걸린다'고 하고, 외부 연구에서 완료한 레슨 수가 학습 향상의 가장 강한 예측 변수였다고 인용한다. 어려운 레슨일수록 시간이 더 걸린다는 데이터도 있다.",
+   "sources": [
+    "https://blog.duolingo.com/time-spent-learning-well"
+   ],
+   "confidence": "high",
+   "implication": "사이트 체류 시간은 짧아도 되지만 총 학습량은 공장에서의 머릿속 재생으로 채워야 한다. 각 단위의 마지막 카드는 반드시 '들고 나갈 머릿속 과제'(예: [5,2,4,1]을 삽입 정렬로 끝까지 돌려보기)여야 한다."
+  },
+  {
+   "claim": "다시 읽기보다 스스로 떠올리기가 1주 뒤 기억에 훨씬 유리하고, 다시 읽은 쪽이 오히려 더 자신만만하다.",
+   "detail": "Roediger & Karpicke(2006)에 대한 워싱턴대 보도자료 기준으로 5분 뒤 회상은 반복 학습 81% 대 반복 시험 75%였으나, 1주 뒤에는 반복 시험 61% 대 반복 학습 40%로 뒤집혔다. 반복 학습 집단은 내용을 잘 안다고 과신했다. PubMed 초록은 쿠키 벽으로 직접 읽지 못해 대학 보도자료를 근거로 삼았다. Anki 공식 문서도 능동 회상과 간격 효과를 근거로 든다.",
+   "sources": [
+    "https://source.washu.edu/2006/03/repeated-testtaking-better-for-retention-than-repeated-studying-research-shows/",
+    "https://docs.ankiweb.net/background.html"
+   ],
+   "confidence": "medium",
+   "implication": "공장에서의 머릿속 재생은 그 자체가 인출 연습이라 방향이 옳다. 사이트의 기본 화면은 '질문만 보이고 답은 가려진' 상태여야 하며, 휴식 시간에는 새 내용을 읽기 전에 방금 머릿속으로 돌린 결과를 먼저 확인하는 흐름이 맞다. 카드를 넘기며 읽기만 하는 모드는 과신을 만든다."
+  },
+  {
+   "claim": "간격 반복은 백엔드 없이 구현할 수 있고, 핵심 위험은 복습 부채다.",
+   "detail": "Anki 문서에 따르면 FSRS의 기본 목표 기억률은 90%이며 97% 이상은 부하가 급증해 비권장이다. 새 카드 하루 약 20장이면 복습이 하루 약 200장에 이른다는 예시가 있고, 밀린 복습이 있으면 새 카드를 멈추라고 권한다. 'Easy Days'로 요일별 부하도 줄일 수 있다. Readwise Mastery는 고정 날짜 대신 회상 확률 반감기(soon 7일, later 14일, someday 28일)를 쓰고 확률이 50% 이하로 떨어진 카드를 낮은 순으로 보여준다. 오픈소스 ts-fsrs는 FSRS 스케줄러를 TypeScript로 제공한다(README 확인. v6은 Node 24 이상 요구).",
+   "sources": [
+    "https://docs.ankiweb.net/deck-options.html",
+    "https://docs.readwise.io/readwise/docs/faqs/reviewing-highlights",
+    "https://raw.githubusercontent.com/open-spaced-repetition/ts-fsrs/main/README.md"
+   ],
+   "confidence": "high",
+   "implication": "알고리즘 카드는 단어 카드보다 무거우므로 새 카드는 하루 2~5장으로 제한한다. 구현은 Leitner 상자(1, 2, 4, 8, 16일)나 Readwise식 반감기처럼 직접 짜는 단순한 방식부터 시작하고, 필요해지면 ts-fsrs로 바꾼다. 며칠 쉬고 돌아오면 새 카드를 자동으로 멈추고 밀린 것 중 일부만 보여준다."
+  },
+  {
+   "claim": "터치 타깃의 공식 기준은 Apple 44×44pt, Android 48×48dp(약 9mm), WCAG 최소 24px·강화 44px이다.",
+   "detail": "Apple HIG(데이터 JSON으로 확인)는 iOS 컨트롤 기본 44×44pt, 최소 28×28pt, 테두리 있는 요소 주변 약 12pt, 없는 요소 약 24pt 여백을 권한다. Android 접근성 도움말은 48×48dp, 간격 8dp 이상을 권하며 물리 크기 약 9mm, 권장 범위 7~10mm라고 한다. WCAG 2.2의 2.5.8(AA)은 24×24 CSS px, 2.5.5(AAA)는 44×44이고, 한 손 사용자·큰 손가락·흔들리는 환경의 사용자를 수혜자로 든다.",
+   "sources": [
+    "https://developer.apple.com/tutorials/data/design/human-interface-guidelines/accessibility.json",
+    "https://support.google.com/accessibility/android/answer/7101858?hl=en",
+    "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html"
+   ],
+   "confidence": "high",
+   "implication": "기준은 일반 환경용 하한이다. 장갑·기름 묻은 손·한 손을 가정하면 주 버튼은 높이 56~64px에 화면 폭 전체로 하고, 버튼 간격은 12px 이상을 생성 규칙에 넣는다. 작은 아이콘 버튼은 만들지 않는다."
+  },
+  {
+   "claim": "한 손 사용은 흔하지만 '엄지 영역 그림'은 저자가 철회했으므로, 근거가 남는 원칙은 '컨트롤은 아래, 내용은 위'다.",
+   "detail": "Hoober(2013)는 1,333건 관찰 중 화면을 만지던 780명에서 한 손 49%, 받쳐 쥐기 36%, 양손 15%를 보고했고 사람들이 과제에 따라 몇 초마다 쥐는 법을 바꾼다고 했다. 저자는 2017년 댓글에서 도달 영역 그림은 부정확하니 무시하라고 하고 사람들은 주로 화면 가운데를 만진다고 밝혔다. Smashing(2020)은 하단 내비게이션(5개 이하), 주 동작을 엄지 근처에, 제스처는 보이는 버튼의 보조로만 쓰라고 권한다. AnkiDroid는 화면 4분할 탭 존과 4방향 스와이프에 동작을 배정할 수 있고 답 버튼은 하단에 있다.",
+   "sources": [
+    "https://www.uxmatters.com/mt/archives/2013/02/how-do-users-really-hold-mobile-devices.php",
+    "https://smashingmagazine.com/2020/02/design-mobile-apps-one-hand-usage/",
+    "https://docs.ankidroid.org/"
+   ],
+   "confidence": "high",
+   "implication": "이전/다음은 하단 고정 바에 두고, 추가로 화면 오른쪽 절반 탭 = 다음, 왼쪽 절반 탭 = 이전인 탭 존을 둔다. 스와이프만으로 되는 동작은 만들지 않는다. 상단 모서리에는 위험하거나 자주 쓰는 컨트롤을 두지 않는다."
+  },
+  {
+   "claim": "360px 폭에서 코드는 18px 글꼴로 약 32자가 한계이며, 가로 스크롤은 피해야 한다.",
+   "detail": "ctrl.blog는 좌우 10px 여백의 360px 화면에서 18px 글꼴로 32자가 들어간다고 계산하고, 들여쓰기 2칸, 코드 블록 32자 제한, 가로 스크롤 회피를 권한다(가로 방향이면 약 64자). matklad는 페이지 수준 가로 넘침이 문장 앞머리를 잘라낸다며 스크롤을 코드 블록 안에만 가두라고(`overflow-x: auto`) 한다. 아래 환산은 이 조사에서 직접 계산한 값이다. 고정폭 글자 폭을 0.6em으로 잡으면 여백 12px씩일 때 14px 글꼴 약 40자, 16px 약 35자, 13px 약 43자다(ctrl.blog의 18px 32자와 일치).",
+   "sources": [
+    "https://www.ctrl.blog/entry/mobile-code-blocks.html",
+    "https://matklad.github.io/2025/04/22/horizontal-scroll.html"
+   ],
+   "confidence": "high",
+   "implication": "Python 예제의 생성 규칙을 '한 줄 36~40자 이하, 함수 하나 12~15줄 이하, 중첩 3단계 이하'로 고정하고 빌드 때 스크립트로 검사한다. 변수명은 짧게(i, j, lo, hi, mid) 통일한다. 짧은 이름은 외우기에도 유리하다. 4칸 들여쓰기를 유지할지 2칸으로 줄일지는 초기에 한 번 정해 전 챕터에 고정한다."
+  },
+  {
+   "claim": "폰으로 읽어도 이해도는 떨어지지 않지만, 어려운 글은 더 느리게 읽힌다.",
+   "detail": "NN/g(2016)는 읽기 1,629건 분석에서 이해도 차이가 실질적으로 없었다고(모바일이 약 3%p 높음) 보고했다. 다만 어려운 지문은 모바일에서 단어당 약 30ms 더 걸렸고(상호작용 p=0.01), 난도에 따른 이해도 저하 경향은 p=.10으로 약한 신호였다. 참가자 수는 본문 기재가 276명이나 나열된 네 연구의 합은 286명으로 원문 자체가 불일치한다.",
+   "sources": [
+    "https://www.nngroup.com/articles/mobile-content/"
+   ],
+   "confidence": "high",
+   "implication": "폰만으로 공부해도 된다. 대신 난도가 오르는 챕터일수록 카드당 정보량을 줄이고 카드 수를 늘려, 체감 난도가 급히 뛰지 않게 한다."
+  },
+  {
+   "claim": "밝은 환경과 작은 글자에는 라이트 모드가 유리하고, 다크 모드의 배터리 절감은 실내 밝기에서 3~9%에 그친다.",
+   "detail": "NN/g가 정리한 연구들에서 정상 시력 사용자는 라이트 모드 수행이 더 좋았고 글자가 작을수록 차이가 커졌다. 아주 밝은 주변광에서는 차이가 사라질 수 있다. 권고는 다크 모드를 기본값으로 삼지 말되 전환 옵션은 제공하라는 것이다. Purdue 연구(Pixel 2/4/5, Moto Z3)는 밝기 30~50%에서 다크 모드 절감이 평균 3~9%, 100%에서 39~47%라고 보고했다.",
+   "sources": [
+    "https://www.nngroup.com/articles/dark-mode/",
+    "https://www.purdue.edu/newsroom/releases/2021/Q3/dark-mode-may-not-save-your-phones-battery-life-as-much-as-you-think,-but-there-are-a-few-silver-linings.html"
+   ],
+   "confidence": "high",
+   "implication": "OS 설정만 따르지 말고 화면 안에 수동 전환 버튼을 둔다. 조명이 밝은 작업장에서는 고대비 라이트 테마, 야간조나 어두운 휴게실에서는 다크 테마를 쓴다. 두 테마 모두 대비 4.5:1 이상으로 하고, 다이어그램 색이 양쪽에서 구분되는지 확인한다."
+  },
+  {
+   "claim": "오프라인은 상용 앱의 약점이고, 정적 사이트 + 서비스 워커로 전부 오프라인이 가능하다.",
+   "detail": "Brilliant 도움말은 레슨에 인터넷이 필요하고 다운로드·오프라인 사용이 안 된다고 명시한다(검색 결과로 확인). Khan Academy는 영상만 북마크 후 다운로드할 수 있고 글은 오프라인이 안 된다. iOS는 11.3부터 서비스 워커와 Cache Storage를 지원한다. web.dev는 구조화 데이터는 IndexedDB, 네트워크 리소스는 Cache Storage를 권하고 localStorage는 동기식이며 서비스 워커에서 쓸 수 없다고 한다.",
+   "sources": [
+    "https://brilliant.org/help/using-brilliant/can-i-download-brilliant-lessons-or-use-them-offline/",
+    "https://support.khanacademy.org/hc/da/articles/202487370-How-can-I-use-Khan-Academy-without-an-internet-connection",
+    "https://firt.dev/notes/pwa-ios/",
+    "https://web.dev/learn/pwa/offline-data"
+   ],
+   "confidence": "medium",
+   "implication": "모든 챕터(텍스트 + SVG + JS)를 설치 시점에 미리 캐시한다. 외부 CDN 글꼴이나 라이브러리에 의존하지 않고 전부 자체 번들로 둔다. 새 버전이 배포되면 '업데이트 있음' 표시만 띄우고 학습 중에는 갈아끼우지 않는다."
+  },
+  {
+   "claim": "iOS Safari는 7일간 상호작용이 없으면 스크립트로 쓴 저장소를 전부 지우며, 홈 화면에 설치한 웹앱은 별도 카운터를 쓴다.",
+   "detail": "WebKit 블로그에 따르면 대상은 IndexedDB, LocalStorage, SessionStorage, 서비스 워커 등록과 캐시이고 조건은 '사이트 상호작용 없이 Safari 사용 7일'이다. 홈 화면 웹앱은 자체 사용 일수 카운터를 가져 삭제되지 않을 것으로 기대한다고 한다. MDN도 Safari만의 선제적 삭제를 기술하며 한 출처의 데이터는 일부가 아니라 한꺼번에 지워진다고 한다. iOS의 설치된 웹앱은 Safari와 저장소를 공유하지 않는다(firt.dev, web.dev). Chromium은 `navigator.storage.persist()`를 휴리스틱으로 승인하며 설치된 PWA면 승인될 수 있다.",
+   "sources": [
+    "https://webkit.org/blog/10218/full-third-party-cookie-blocking-and-more/",
+    "https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria",
+    "https://firt.dev/notes/pwa-ios/",
+    "https://web.dev/learn/pwa/installation",
+    "https://web.dev/learn/pwa/offline-data"
+   ],
+   "confidence": "high",
+   "implication": "첫날 홈 화면에 설치하고 그 아이콘으로만 연다(Safari 탭에서 쌓은 진도는 설치본으로 넘어가지 않는다). 시작 시 `navigator.storage.persist()`를 요청한다. 진도 전체를 JSON 파일로 내보내고 가져오는 기능을 처음부터 넣고, 마지막 백업 날짜를 설정 화면에 표시한다."
+  },
+  {
+   "claim": "모바일에서 상태 저장의 마지막 믿을 만한 시점은 visibilitychange(hidden)이고, 페이지는 예고 없이 폐기될 수 있다.",
+   "detail": "Chrome의 Page Lifecycle 문서는 hidden 상태를 '앱과 사용자 데이터를 저장할 마지막 신뢰 가능한 시점'이라 하고, unload는 '특히 모바일에서 극히 불안정'하며 앱 전환기에서 브라우저를 닫으면 발생하지 않는다고 한다. 폐기된 페이지는 `document.wasDiscarded`로 확인해 복원한다. 문서는 화면 잠금을 직접 다루지 않는다. Readwise는 Daily Review 도중 앱을 나가면 처음으로 돌아가던 버그를 고쳤다는 릴리스 노트가 있다(검색 스니펫).",
+   "sources": [
+    "https://developer.chrome.com/docs/web-platform/page-lifecycle-api",
+    "https://docs.readwise.io/readwise/docs/faqs/reviewing-highlights"
+   ],
+   "confidence": "high",
+   "implication": "카드를 넘길 때마다 위치를 저장하고 visibilitychange에서도 한 번 더 저장한다. 모든 카드에 고유 URL(해시)을 주고, 앱을 열면 첫 화면 맨 아래 큰 버튼이 '이어서 보기'여야 한다. 각 카드는 앞 카드를 못 봐도 이해되게(현재 배열 상태와 포인터를 매 카드에 다시 그림) 만들어 잠금 후 복귀 비용을 없앤다."
+  },
+  {
+   "claim": "Screen Wake Lock API로 화면 꺼짐을 막을 수 있으나 탭이 가려지면 풀린다.",
+   "detail": "MDN은 이 API를 2025년 3월부터 Baseline으로 표시한다. HTTPS가 필요하고, 문서가 비활성·비가시 상태가 되거나 배터리가 낮으면 시스템이 잠금을 해제하므로 visibilitychange에서 다시 요청해야 한다. 활성 여부를 화면에 표시하고 끌 방법을 주라고 권한다. firt.dev 기준 iOS Safari는 16.4, 설치된 PWA는 18.4부터 지원한다.",
+   "sources": [
+    "https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API",
+    "https://firt.dev/notes/pwa-ios/"
+   ],
+   "confidence": "high",
+   "implication": "트레이스 화면에 '화면 켜두기' 토글을 선택 기능으로 둔다(기본 꺼짐). 폰을 세워 두고 손 안 대고 보는 상황에만 쓴다. 이것 때문에라도 HTTPS 호스팅이 필요하다."
+  },
+  {
+   "claim": "브라우저 음성 합성은 OS 음성을 쓰며, 화면 잠금·백그라운드에서의 지속 재생은 보장되지 않는다.",
+   "detail": "MDN에 따르면 SpeechSynthesis는 OS의 음성 합성 시스템을 쓰고 음성 목록·속도·높낮이를 조절할 수 있다. iOS는 7.0부터 지원한다. 잠금 화면에서 음성이 멈춘다는 내용은 Apple 개발자 포럼과 WebKit 버그 리포트의 검색 스니펫 수준 근거뿐이라 불확실하다. 제품 쪽에서는 Headway가 '읽기 또는 듣기'를, AnkiDroid가 카드 본문 TTS 옵션을 제공한다.",
+   "sources": [
+    "https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API",
+    "https://firt.dev/notes/pwa-ios/",
+    "https://apps.apple.com/us/app/headway-daily-book-summaries/id1457185832",
+    "https://docs.ankidroid.org/",
+    "https://developer.apple.com/forums/thread/849627"
+   ],
+   "confidence": "medium",
+   "implication": "코드를 그대로 읽어 주는 TTS는 쓸모가 없다. 챕터마다 '말로 푸는 요약'(불변식 한 문장 + 흐름 세 문장, 자연스러운 한국어)을 별도 필드로 써 두면 화면 낭독에도, 눈으로 읽는 1분 복습에도 쓸 수 있다. 음성은 나중 단계의 선택 기능으로 두고, 실제 기기에서 잠금 시 동작을 먼저 시험한다."
+  },
+  {
+   "claim": "웹 푸시 알림은 iOS에서 홈 화면 설치 웹앱에만 되고 푸시 서버가 필요하다.",
+   "detail": "firt.dev에 따르면 iOS 웹 푸시는 16.4부터 설치된 PWA에서만 되고 Safari 탭에서는 안 된다. 백그라운드 동기화와 주기적 백그라운드 동기화는 미지원이다. Smashing은 공격적인 알림이 피로와 이탈을 부른다고 경고한다. 푸시 서버 필요 여부는 이 조사에서 따로 확인하지 않은 일반 지식이다.",
+   "sources": [
+    "https://firt.dev/notes/pwa-ios/",
+    "https://smashingmagazine.com/2026/02/designing-streak-system-ux-psychology/"
+   ],
+   "confidence": "medium",
+   "implication": "알림은 만들지 않는다. 필요하면 폰의 기본 알람이나 캘린더에 '출근 전 오늘의 머릿속 과제 확인'을 직접 걸어 둔다."
+  },
+  {
+   "claim": "OS 글자 크기 설정을 웹에서 존중하려면 rem/em 단위와 Chrome의 text-scale 메타 태그가 필요하다.",
+   "detail": "Chrome 가이드는 `<meta name=\"text-scale\" content=\"scale\">`를 넣고, 글꼴은 rem/em, 줄 높이는 단위 없는 값으로, 루트 font-size는 px로 지정하지 말고, 고정 높이 컨테이너와 nowrap을 피하고, 200% 확대와 320px 폭에서 시험하라고 한다. Apple HIG는 iOS 본문 기본 17pt, 최소 11pt, 17pt 이하 글자 대비 4.5:1을 제시한다. 이 태그가 Chrome 146(2026-03)에 출시됐다는 것과 Android 사용자의 약 37%가 글자 배율을 바꾼다는 수치는 검색 스니펫 수준이다.",
+   "sources": [
+    "https://developer.chrome.com/docs/modern-web-guidance/guides/accessibility/respect-os-text-scale",
+    "https://developer.apple.com/tutorials/data/design/human-interface-guidelines/accessibility.json"
+   ],
+   "confidence": "medium",
+   "implication": "본문 17~18px 상당, 코드 14~15px 상당을 rem으로 잡고, 화면 안에 글자 크기 조절(A-/A+)을 둔다. 코드 글자를 키우면 줄당 글자 수가 줄어드므로 긴 줄은 블록 안에서만 스크롤되게 하고 이어지는 줄에는 들여쓰기 표시를 준다."
+  },
+  {
+   "claim": "폰에서 코드를 타이핑하게 하는 것은 일관되게 불만이 나오며, 성공 사례는 탭 몇 번으로 입력하거나 아예 복습 전용으로 간다.",
+   "detail": "Grasshopper는 TechCrunch에서 과제 풀이가 'only takes a few taps to write out'이라고 소개됐다. Codecademy Go는 App Store 설명에서 스스로를 'review, practice' 보조 앱으로 규정하고 매일 플래시카드를 제공하며, 한 리뷰는 '진지하게 배우려면 스마트폰으로는 안 한다', 다른 리뷰는 퀴즈가 직관적이지 않다고 한다. LeetCode·freeCodeCamp의 모바일 편집기 입력 문제는 포럼 글의 검색 스니펫 수준 근거다.",
+   "sources": [
+    "https://techcrunch.com/2018/04/18/grasshopper-a-learn-to-code-app-from-googles-area-120-incubator-goes-live/",
+    "https://apps.apple.com/us/app/codecademy-go/id1376029326"
+   ],
+   "confidence": "medium",
+   "implication": "코드 편집기는 만들지 않는다. 상호작용은 탭만으로 한다: 다음 상태 고르기(4지선다), 줄 순서 맞추기, 빈칸 하나를 칩에서 고르기, 포인터가 어디로 갈지 배열 칸을 직접 탭하기. 브라우저 안에서 Python을 실제 실행하는 기능은 초기 버전에서 빼고, 트레이스는 빌드 때 미리 계산해 JSON으로 넣는다."
+  },
+  {
+   "claim": "마이크로러닝의 반복되는 비판은 복잡한 주제 전달의 한계와 파편화다.",
+   "detail": "Monib 외의 리뷰는 인지·행동·정서 성과에 긍정적 효과를 보고하면서도, 복잡한 주제를 효과적으로 전달할 수 있는지에 대한 비판, 파편화된 학습 경험, 사전 지식이 부족한 학습자의 어려움, 목표나 내용이 너무 많을 때의 인지 과부하를 한계로 든다. 권고는 단위 하나에 구체적 목표 하나, 자체 완결적이면서 더 큰 시리즈에 들어맞게 만드는 것이다. 이 리뷰는 의료 분야 연구 비중이 높다.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11774797/"
+   ],
+   "confidence": "high",
+   "implication": "난도 급변 금지 제약과 직접 맞닿는다. 단위마다 '목표 하나'와 '선행 단위 링크'를 필수 필드로 두고, 챕터 첫 카드는 항상 이전 챕터의 불변식을 한 번 회상하게 한다. 전체 지도를 두어 조각들이 어디에 붙는지 보이게 한다."
+  },
+  {
+   "claim": "Algorithms: Explained and Animated는 '보기(단계별 애니메이션) + 해보기(Sim Mode)' 구조이고 한국어를 지원한다.",
+   "detail": "App Store 설명과 공식 사이트에 따르면 정렬 6종, 리스트 탐색 2종, 그래프 탐색 5종, 자료구조 7종(리스트, 배열, 스택, 큐, 해시 테이블, 힙, 이진 탐색 트리), 재귀(하노이), 보안·압축 등을 애니메이션으로 설명하고 'Sim Mode'에서 조건을 바꿔 시도한다. 한국어 포함 7개 언어, 33.6MB, 일부만 무료다. 설명문에 코드에 대한 언급은 없다.",
+   "sources": [
+    "https://apps.apple.com/us/app/algorithms-explained-animated/id1047532631",
+    "https://algorithm.wiki/en/app/"
+   ],
+   "confidence": "high",
+   "implication": "가장 가까운 기존 제품이다. 설치해서 카드 한 장의 정보량과 단계 쪼개는 방식을 직접 참고할 만하다. 차별점은 Python 코드 줄과 단계의 동기화, 회상 과제, 간격 복습이다."
+  },
+  {
+   "claim": "장갑을 낀 손은 정전식 화면에서 인식이 불안정하다.",
+   "detail": "검색 결과(장갑 제조사·산업안전 매체)에 따르면 정전식 화면은 전도성이 필요해 얇은 장갑은 될 때가 있고 두꺼운 장갑은 안 되며, 카본 블랙이 들어간 검은 코팅 작업 장갑은 대체로 동작한다고 한다. 원문은 열어 보지 않았고 Android의 터치 민감도 설정 관련 공식 문서는 찾지 못했다.",
+   "sources": [
+    "https://eu.pipglobal.com/en/about-us/news-and-events/?nID=112",
+    "https://junipersys.com/support/article/13313"
+   ],
+   "confidence": "low",
+   "implication": "길게 누르기, 드래그, 두 손가락 확대, 정밀 스와이프에 의존하는 기능을 만들지 않는다. 모든 기능이 큰 탭 한 번으로 되어야 한다. 실수로 넘긴 경우를 위해 '이전'이 항상 같은 자리에 있어야 한다."
+  },
+  {
+   "claim": "공장 현장에서 개인 휴대폰 사용을 일반적으로 금지하는 미국 연방 규정은 없지만, 주의 분산은 인정된 위험이고 사업장 규정은 제각각이다.",
+   "detail": "검색 결과(법률·산업안전 매체)에 따르면 OSHA의 명시적 금지는 크레인 운전 규정 정도이고, 그 밖에는 일반 의무 조항으로 다뤄진다. 지적되는 위험은 기계 주변 주의 분산, 폰을 떨어뜨렸을 때 움직이는 기계로 손을 뻗는 반사 행동, 오염 물질이 폰을 통해 옮는 것이다. 한국 법령과 해당 사업장 규정은 조사하지 않았다.",
+   "sources": [
+    "https://ohsonline.com/Blogs/The-OHS-Wire/2014/10/Distracted-Working.aspx",
+    "https://www.ecmag.com/magazine/articles/article-detail/safety-phoning-it-safely-evolving-guidelines-attempt-balance-cellphone-safety-and"
+   ],
+   "confidence": "low",
+   "implication": "'작업 중에는 머리로만, 폰은 휴식 시간에만'을 전제로 설계한다. 출근 전이나 휴식 때 과제 2~3개를 머리에 싣고, 다음 휴식에 확인하는 주기가 기본 사용 흐름이다. 라인 옆에서 폰을 꺼내도록 유도하는 기능(알림, 짧은 타이머 게임)은 넣지 않는다."
+  }
+ ],
+ "commonFeatures": [
+  {
+   "feature": "2~5분짜리 한입 크기 단위",
+   "seenIn": [
+    "Imprint",
+    "Mimo",
+    "Enki",
+    "Duolingo",
+    "Sololearn",
+    "Headway",
+    "Brilliant",
+    "Grasshopper"
+   ],
+   "whyItMatters": "쉬는 시간 한 번에 끝나야 다시 열게 된다. 단위가 작아야 머릿속 재생 과제 하나와 1:1로 대응된다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "사용자가 직접 넘기는 탭-스루 단계 카드와 진행 표시",
+   "seenIn": [
+    "Imprint",
+    "Headway",
+    "Algorithms: Explained and Animated",
+    "Google Web Stories",
+    "Brilliant",
+    "Mimo"
+   ],
+   "whyItMatters": "알고리즘 트레이스는 본래 이산적인 단계다. 정지 프레임의 순서가 곧 외울 대상이고, 자동 재생이 아니라 놓친 곳에서 멈출 수 있다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "화면 하단에 고정된 큰 주 버튼과 44~48 이상 터치 타깃",
+   "seenIn": [
+    "AnkiDroid",
+    "Duolingo",
+    "Mimo",
+    "Apple HIG",
+    "Android 접근성 가이드",
+    "WCAG 2.2"
+   ],
+   "whyItMatters": "한 손, 장갑, 서 있는 자세에서 오조작을 줄인다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "'다음에 할 것'이 하나로 정해진 선형 학습 경로와 이어서 보기",
+   "seenIn": [
+    "Brilliant",
+    "Mimo",
+    "Duolingo",
+    "Khan Academy",
+    "Sololearn",
+    "Readwise"
+   ],
+   "whyItMatters": "짧은 틈에 무엇을 할지 고르는 데 시간을 쓰지 않게 한다. 난도 순서를 강제하는 수단이기도 하다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "보여주기 전에 맞히게 하는 능동 회상 질문과 즉시 피드백",
+   "seenIn": [
+    "Brilliant",
+    "Mimo",
+    "Grasshopper",
+    "Enki",
+    "Imprint",
+    "Anki",
+    "Codecademy Go",
+    "Fibu"
+   ],
+   "whyItMatters": "인출 연습이 재학습보다 장기 기억에 유리하고, 읽기만 하면 과신이 생긴다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "단계와 동기화된 시각 설명(그림과 강조된 코드 줄)",
+   "seenIn": [
+    "Algorithms: Explained and Animated",
+    "Brilliant",
+    "Imprint",
+    "Fibu"
+   ],
+   "whyItMatters": "'시각적 교과서'라는 목적 그 자체다. 코드 줄과 상태 그림이 한 화면에서 짝지어져야 머릿속에서 같이 재생된다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "오프라인 사용",
+   "seenIn": [
+    "Khan Academy(영상만)",
+    "Anki/AnkiDroid",
+    "Mochi",
+    "Brilliant(미지원 사례)"
+   ],
+   "whyItMatters": "작업장 통신 상태에 의존하지 않고 데이터도 쓰지 않는다. 상용 앱 대부분이 약한 부분이다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "진도 저장과 중단 지점 복귀",
+   "seenIn": [
+    "Khan Academy",
+    "Brilliant",
+    "Duolingo",
+    "Readwise",
+    "Mimo"
+   ],
+   "whyItMatters": "화면 잠금과 호출로 수시로 끊기는 환경에서 복귀 비용이 0이어야 한다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "한 화면에 들어가는 짧은 코드 조각",
+   "seenIn": [
+    "Mimo",
+    "Grasshopper",
+    "Codecademy Go",
+    "Sololearn"
+   ],
+   "whyItMatters": "360~430px에서는 줄당 32~40자가 한계다. 짧아야 외울 수 있다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "라이트/다크 테마 수동 전환",
+   "seenIn": [
+    "AnkiDroid",
+    "NN/g 권고",
+    "Apple HIG"
+   ],
+   "whyItMatters": "밝은 작업장과 어두운 휴게실·야간조를 오간다. OS 설정만으로는 상황별 전환이 번거롭다.",
+   "fitForThisProject": "must"
+  },
+  {
+   "feature": "간격 반복 복습 큐(오늘 복습할 것)",
+   "seenIn": [
+    "Anki",
+    "Mochi",
+    "RemNote",
+    "Enki",
+    "Sololearn",
+    "Headway",
+    "Readwise",
+    "Mimo"
+   ],
+   "whyItMatters": "'오늘 공장에서 무엇을 머릿속으로 돌릴지'를 정해 준다. 배운 것을 잊기 직전에 다시 꺼내게 한다.",
+   "fitForThisProject": "should"
+  },
+  {
+   "feature": "핵심만 모은 빠른 복습 카드(공식·불변식 카드, 1분 요약)",
+   "seenIn": [
+    "Codecademy Go",
+    "Imprint",
+    "Headway",
+    "Readwise",
+    "Anki"
+   ],
+   "whyItMatters": "출근 직전 30초에 훑어볼 수 있는 형태가 있어야 머릿속 과제를 싣기 쉽다.",
+   "fitForThisProject": "should"
+  },
+  {
+   "feature": "직접 조건을 바꿔 돌려보는 시뮬레이션 모드",
+   "seenIn": [
+    "Algorithms: Explained and Animated",
+    "Brilliant",
+    "Mimo(playground)",
+    "Sololearn(code editor)"
+   ],
+   "whyItMatters": "머릿속으로 돌린 자기만의 입력을 확인할 수 있다. 단 입력은 4~6개 원소의 프리셋 선택 정도로 제한해야 폰에서 쓸 만하다.",
+   "fitForThisProject": "should"
+  },
+  {
+   "feature": "복습 부하 상한과 밀린 복습 처리",
+   "seenIn": [
+    "Anki",
+    "RemNote",
+    "Readwise"
+   ],
+   "whyItMatters": "며칠 쉬면 복습이 쌓여 사이트를 열기 싫어진다. 새 카드 자동 중지와 일부만 보여주기가 필요하다.",
+   "fitForThisProject": "should"
+  },
+  {
+   "feature": "글자 크기 조절과 OS 글자 배율 존중, 모션 줄이기 존중",
+   "seenIn": [
+    "Apple HIG",
+    "Chrome text-scale 가이드",
+    "AnkiDroid",
+    "MDN prefers-reduced-motion"
+   ],
+   "whyItMatters": "작은 글자의 코드는 서서 보는 거리에서 읽기 어렵다. 전환 애니메이션은 흘끗 볼 때 방해가 된다.",
+   "fitForThisProject": "should"
+  },
+  {
+   "feature": "탭 존·제스처 배정(화면 좌우 탭으로 이전/다음)",
+   "seenIn": [
+    "AnkiDroid",
+    "Google Web Stories",
+    "Instagram 스토리형 포맷"
+   ],
+   "whyItMatters": "버튼을 정확히 겨냥하지 않아도 넘길 수 있다. 장갑 환경에서 특히 유용하다.",
+   "fitForThisProject": "should"
+  },
+  {
+   "feature": "가벼운 일일 습관 표시(달력 히트맵, 쉬는 날 허용)",
+   "seenIn": [
+    "Duolingo",
+    "Brilliant",
+    "Mimo",
+    "Codecademy Go",
+    "Readwise",
+    "Grasshopper",
+    "Fibu"
+   ],
+   "whyItMatters": "문턱을 낮춘 스트릭은 꾸준함에 도움이 되지만 손실 프레임은 불안을 만든다. 혼자 쓰는 도구에서는 기록 열람 용도면 충분하다.",
+   "fitForThisProject": "could"
+  },
+  {
+   "feature": "듣기 모드(오디오·TTS)",
+   "seenIn": [
+    "Headway",
+    "AnkiDroid"
+   ],
+   "whyItMatters": "눈과 손을 쓰지 않는 복습이 가능하다. 다만 코드는 음성에 맞지 않고 잠금 화면 재생이 불확실하며 작업장 이어폰 규정에 걸릴 수 있다.",
+   "fitForThisProject": "could"
+  },
+  {
+   "feature": "화면 켜두기(Wake Lock)",
+   "seenIn": [
+    "MDN Screen Wake Lock API"
+   ],
+   "whyItMatters": "트레이스를 따라가는 동안 화면이 꺼지지 않는다. 배터리 비용이 있어 선택 기능이어야 한다.",
+   "fitForThisProject": "could"
+  },
+  {
+   "feature": "앱 내 코드 편집기·실행 환경",
+   "seenIn": [
+    "Mimo",
+    "Sololearn",
+    "Grasshopper",
+    "Fibu",
+    "LeetCode"
+   ],
+   "whyItMatters": "폰 타이핑은 반복적으로 불만이 나오는 부분이고 이 프로젝트의 목적(흐름 암기)과도 거리가 있다.",
+   "fitForThisProject": "skip"
+  },
+  {
+   "feature": "XP·배지·리더보드·리그·하트",
+   "seenIn": [
+    "Duolingo",
+    "Brilliant",
+    "Mimo",
+    "Sololearn",
+    "Fibu"
+   ],
+   "whyItMatters": "부작용 보고가 가장 많은 요소이고 혼자 쓰는 사이트에는 경쟁 상대가 없다.",
+   "fitForThisProject": "skip"
+  },
+  {
+   "feature": "푸시 알림·리마인더",
+   "seenIn": [
+    "Duolingo",
+    "AnkiDroid",
+    "Headway(위젯)"
+   ],
+   "whyItMatters": "백엔드가 필요하고 작업 중 폰을 보게 만든다. 폰 기본 알람으로 대체할 수 있다.",
+   "fitForThisProject": "skip"
+  },
+  {
+   "feature": "계정·기기 간 동기화·커뮤니티·AI 튜터·온보딩 개인화·수료증",
+   "seenIn": [
+    "Brilliant",
+    "Sololearn",
+    "Enki",
+    "Mimo",
+    "Khan Academy",
+    "Grasshopper"
+   ],
+   "whyItMatters": "다중 사용자·수익화 제품의 기능이다. 사용자 한 명, 백엔드 없음 조건에서는 내보내기/가져오기 파일로 충분하다.",
+   "fitForThisProject": "skip"
+  }
+ ],
+ "blindSpots": [
+  "작업장 휴대폰 규정과 안전: 작업 중 폰 사용이 금지되거나 위험할 수 있다. 사이트는 '휴식 시간에 싣고 확인하는 곳'으로, 실제 학습은 폰 없이 머리로 하는 구조로 잡아야 한다.",
+  "머릿속 재생이 가능한 크기: 화면 없이 돌리려면 예제 입력이 원소 4~6개 수준이어야 하고, 알고리즘마다 '고정 대표 예제'를 하나 정해 매번 같은 것을 써야 기억의 닻이 된다(이 조사의 추론이며 별도 검증은 하지 않았다).",
+  "진도 착각: 카드를 넘기는 것은 배운 느낌만 준다. 재학습 집단이 더 과신했다는 결과처럼, 답을 가리고 먼저 떠올리는 절차가 없으면 실력과 자신감이 어긋난다.",
+  "iOS 저장소 삭제: Safari 탭으로만 쓰면 7일 미사용 시 진도와 오프라인 캐시가 지워질 수 있다. 홈 화면 설치본은 저장소가 Safari와 분리되어 있어 중간에 옮기면 진도가 따라오지 않는다.",
+  "진도 데이터의 유일본이 브라우저 안에 있다: 브라우저 데이터 삭제, 폰 교체, 앱 재설치로 전부 사라진다. JSON 내보내기/가져오기와 '마지막 백업 날짜' 표시가 필요하다.",
+  "교대근무의 '하루' 경계: 야간조는 자정을 넘겨 일하므로 스트릭과 복습 일정의 날짜 기준이 자정이면 어긋난다. 휴무일 처리도 정해야 한다.",
+  "화면 잠금 후 복귀: 30초~1분마다 화면이 꺼지는 환경에서는 각 카드가 앞 카드 없이도 이해되어야 하고, 스크롤 위치가 아니라 카드 번호로 상태를 저장해야 한다.",
+  "코드 줄 길이는 저작 규칙이어야 한다: AI 에이전트가 챕터를 생성할 때 '줄당 36~40자, 12~15줄, 중첩 3단계'를 SKILL.md에 명시하고 빌드 스크립트로 검사하지 않으면 챕터마다 가로 스크롤이 생긴다.",
+  "난도 급변을 감지할 수단이 없다: 사용자가 한 명이라 통계가 없다. 카드마다 '막혔다' 표시 버튼을 두고 챕터별로 모아 보면 어느 지점에서 난도가 뛰는지 스스로 찾을 수 있다(이 조사의 제안).",
+  "장갑·더러운 손·습기: 정밀 제스처, 길게 누르기, 드래그는 실패한다. 반대로 탭 존이 넓으면 실수로 넘어가기 쉬우므로 '이전'이 항상 같은 자리에 있어야 한다.",
+  "음성 복습의 한계: TTS는 코드를 읽지 못하고, 잠금 화면에서 웹 음성이 계속 나오는지는 기기마다 다르며, 작업장에서 이어폰이 금지일 수 있다. 음성용 대본은 화면용 본문과 따로 써야 한다.",
+  "며칠 쉰 뒤 복귀: 복습이 밀려 있으면 부담 때문에 다시 열지 않게 된다. 새 카드 중지와 밀린 것 일부만 제시하는 규칙을 미리 정해야 한다.",
+  "배터리와 데이터: 다크 모드 절감은 실내 밝기에서 3~9%뿐이라 화면 밝기와 애니메이션 양이 더 중요하다. 무거운 런타임이나 계속 도는 애니메이션은 피한다.",
+  "시력과 조명: 서서 팔 길이로 보는 상황에서 14px 미만 코드는 읽기 어렵다. 밝은 조명에서는 저대비 색 구분(연한 회색 강조 등)이 보이지 않는다. 색만으로 상태를 구분하지 말고 모양·테두리·라벨을 함께 쓴다.",
+  "알림은 백엔드 없이는 안 된다: iOS 웹 푸시는 설치된 웹앱에서만 되고 서버가 필요하다. 처음부터 폰 기본 알람을 쓰는 것으로 정하는 편이 낫다.",
+  "가로 모드 의존 금지: 가로로 돌리면 약 64자가 들어가지만 한 손 사용과 맞지 않는다. 세로에서 완결되어야 한다.",
+  "실기기 검증: 에이전트가 만든 화면은 데스크톱 브라우저에서만 확인되기 쉽다. 360px 폭, 글자 배율 130~200%, 오프라인, 화면 잠금 후 복귀를 실제 폰에서 확인하는 점검 목록이 필요하다.",
+  "파편화: 작은 단위만 쌓으면 조각 지식이 된다. 단위마다 선행 단위 링크와 전체 지도상의 위치가 있어야 한다."
+ ],
+ "unreachable": [
+  "Google Play 스토어 상세 페이지(Codecademy Go, Sololearn): JS 렌더링으로 본문이 잘려 App Store 페이지로 대체",
+  "developer.apple.com HIG 접근성 HTML 페이지: 본문 미수신, 같은 문서의 데이터 JSON으로 대체",
+  "m3.material.io 접근성 페이지: 본문 미수신, Android Accessibility Help로 대체",
+  "pubmed.ncbi.nlm.nih.gov/16507066 (Roediger & Karpicke 초록): 쿠키 벽, 워싱턴대 보도자료로 대체",
+  "web.dev/articles/page-lifecycle-api: 404, developer.chrome.com 판으로 대체",
+  "ghacks.net의 Py 앱 리뷰: 403. Py 앱 App Store 페이지는 빈 응답이라 Py 앱의 현재 상태와 레슨 구조는 확인하지 못함",
+  "arXiv 2203.16175 본문: 초록만 확인",
+  "arXiv 2305.08346: 앞부분(초록과 서론)만 텍스트로 확인",
+  "PMC11774797: 앞 10만 자만 확인(부록 일부 미확인)",
+  "Brilliant의 레슨당 단계 수·소요 시간에 대한 공식 자료: 찾지 못함",
+  "Duolingo 도움말의 레슨 길이·오프라인 정책: 찾지 못함",
+  "Mimo의 레슨 설계 블로그: 찾지 못함",
+  "LeetCode 모바일 경험: 검색 스니펫만 확보",
+  "reddit.com: 지침에 따라 직접 접근하지 않음",
+  "Brilliant 오프라인 도움말, Khan Academy 오프라인 도움말: 원문을 직접 열지 않고 검색 결과 요약으로 확인"
+ ],
+ "subjects": [
+  {
+   "name": "Brilliant",
+   "url": "https://brilliant.org",
+   "kind": "인터랙티브 STEM 학습 앱(iOS/Android/웹)",
+   "features": [
+    "직접 조작하는 문제와 시각 모델, 즉시 피드백(llms.txt)",
+    "AI 튜터 Koji의 단계별 안내",
+    "학습 경로와 레벨 게임보드, 다음 레슨으로 이끄는 동반자(ustwo 사례)",
+    "스트릭과 스트릭 차지(하루 빠짐 보전)",
+    "Rive 기반 스트릭·경로 애니메이션, 리더보드"
+   ],
+   "strengths": [
+    "읽기보다 풀기 중심",
+    "막힌 학습자를 위한 격려 피드백 컴포넌트",
+    "시각 모델 품질"
+   ],
+   "weaknesses": [
+    "오프라인 미지원(도움말)",
+    "레슨당 단계 수·시간에 대한 공식 수치 없음",
+    "막히면 30~45분 걸린다는 서드파티 리뷰(낮은 신뢰도)",
+    "구독제"
+   ],
+   "chapterOrPageTemplate": "짧은 설명 → 조작 가능한 시각 모델이나 문제 → 즉시 피드백 → 다음 단계(공식 자료에 단계 수 명시 없음)",
+   "mobileNotes": "기기 간 진도 동기화. 인터넷 필수."
+  },
+  {
+   "name": "Duolingo",
+   "url": "https://www.duolingo.com",
+   "kind": "언어 학습 앱(스트릭·습관 설계의 기준 사례)",
+   "features": [
+    "레슨 1개 완료로 스트릭 연장",
+    "스트릭 프리즈(최대 2개 장착)",
+    "마일스톤 애니메이션",
+    "Time Spent Learning Well 지표(경로 레슨 가중)",
+    "쉬운 과제로 시작하는 일일 퀘스트"
+   ],
+   "strengths": [
+    "문턱을 낮춘 습관 설계와 공개된 실험 수치",
+    "쉬는 날 허용 장치"
+   ],
+   "weaknesses": [
+    "게임 요소 과몰입 보고(Mogavi 외)",
+    "레슨을 더 짧게 한 실험은 학습 시간 지표를 떨어뜨림",
+    "레슨 길이·오프라인에 대한 공식 자료 미확인"
+   ],
+   "chapterOrPageTemplate": "짧은 연습 문제 여러 개로 된 레슨(문항 수는 서드파티마다 12~20개로 엇갈림, 낮은 신뢰도)",
+   "mobileNotes": "iOS 위젯과 배지 알림을 습관 유도에 사용(Smashing 인용 수치)."
+  },
+  {
+   "name": "Mimo",
+   "url": "https://mimo.org",
+   "kind": "모바일 코딩 학습 앱",
+   "features": [
+    "2~3분 이내 미니 레슨(2016 TechCrunch)",
+    "짧은 설명 한 문장 + 상호작용 코드 조각 + 응답마다 피드백",
+    "선형 경로 대시보드",
+    "스트릭·XP·리더보드, Pro의 스트릭 복구",
+    "모바일 IDE·플레이그라운드"
+   ],
+   "strengths": [
+    "자투리 시간 사용을 전제로 한 레슨 길이",
+    "설명과 코드가 한 화면에 붙어 있음"
+   ],
+   "weaknesses": [
+    "이른 페이월(온보딩 15단계)",
+    "레슨 완료 후 오프라인 오류 리뷰(검색 스니펫)",
+    "게임화 의존",
+    "앱 253.9MB"
+   ],
+   "chapterOrPageTemplate": "한 문장 설명 → 코드 조각 상호작용 → 피드백 → 다음",
+   "mobileNotes": "오답 시 'Try again'과 구체적 힌트 제공."
+  },
+  {
+   "name": "Sololearn",
+   "url": "https://www.sololearn.com",
+   "kind": "모바일 코딩 학습 앱",
+   "features": [
+    "한입 크기 레슨, 20개 이상 코스",
+    "모바일 코드 편집기",
+    "간격 반복을 내세운 학습 설계(자체 설명)",
+    "AI 도우미 Kodie와 커뮤니티 질문"
+   ],
+   "strengths": [
+    "Python 포함 폭넓은 언어",
+    "첫 레슨부터 연습"
+   ],
+   "weaknesses": [
+    "전체 기능은 Pro 체험 결제 필요",
+    "앱 136.1MB",
+    "레슨 구조 세부는 스토어 설명 이상 확인 못함"
+   ],
+   "mobileNotes": "Apple 에디터 평: 컴퓨터 앞에 앉지 않고 자투리 시간에 연습."
+  },
+  {
+   "name": "Enki",
+   "url": "https://www.enki.com",
+   "kind": "모바일 코딩·데이터 학습 앱",
+   "features": [
+    "하루 5분 '워크아웃'(TechCrunch 인용문)",
+    "상호작용 질문",
+    "간격 반복",
+    "일일 습관 추적, AI 코치"
+   ],
+   "strengths": [
+    "운동 앱 비유의 일일 소량 학습",
+    "간격 반복 내장"
+   ],
+   "weaknesses": [
+    "알고리즘·자료구조 전용 아님",
+    "구독제",
+    "세부 UX 미확인(스토어 설명 기준)"
+   ],
+   "chapterOrPageTemplate": "짧은 읽기 → 상호작용 질문 → 간격 복습",
+   "mobileNotes": "앱 47.3MB."
+  },
+  {
+   "name": "Grasshopper (Google Area 120)",
+   "url": "https://en.wikipedia.org/wiki/Grasshopper_(mobile_app)",
+   "kind": "모바일 JavaScript 입문 앱(2023-06-15 종료)",
+   "features": [
+    "점점 어려워지는 퍼즐과 퀴즈",
+    "탭 몇 번으로 작성하는 실제 JavaScript",
+    "실행할 때마다 피드백",
+    "성취·진행 표시·코딩 스트릭"
+   ],
+   "strengths": [
+    "폰에서 타이핑 부담을 줄인 입력 방식",
+    "이용자 68%가 동기 상승 응답(자체 설문)"
+   ],
+   "weaknesses": [
+    "서비스 종료로 학습 자산 소멸",
+    "JavaScript 전용",
+    "입력 UI 세부는 미확인"
+   ],
+   "chapterOrPageTemplate": "퍼즐 → 코드 작성(탭) → 실행 → 피드백 → 퀴즈",
+   "mobileNotes": "외부 서비스 의존의 위험을 보여주는 사례. 자기 저장소의 정적 사이트는 이 위험이 없다."
+  },
+  {
+   "name": "Py",
+   "url": "https://www.ghacks.net/2017/08/09/py-for-android-learn-programming-and-it-skills/",
+   "kind": "모바일 코딩 학습 앱(현재 상태 미확인)",
+   "features": [
+    "약 20개 코스와 코스별 연습(2017 리뷰의 검색 스니펫)"
+   ],
+   "strengths": [
+    "무료·무광고였다는 2017년 평(검색 스니펫)"
+   ],
+   "weaknesses": [
+    "리뷰 원문 403, App Store 페이지 빈 응답으로 검증 불가",
+    "현재 제공 여부 불명"
+   ],
+   "mobileNotes": "이 항목은 전부 낮은 신뢰도."
+  },
+  {
+   "name": "Programming Hero (현재 App Store 명칭: Fibu)",
+   "url": "https://apps.apple.com/us/app/programming-hero-coding-fun/id1478201849",
+   "kind": "게임형 모바일 코딩 학습 앱",
+   "features": [
+    "자료구조(스택, 큐, 연결 리스트, 트리, 그래프)와 알고리즘(이진 탐색, 정렬, 시간 복잡도) 포함",
+    "3초·5초·45초 퀴즈 게임",
+    "일일 스트릭 보상, 배지, 포인트",
+    "앱 내 코딩, 시각 설명과 스토리텔링"
+   ],
+   "strengths": [
+    "Python 기반 자료구조·알고리즘을 폰에서 다룸",
+    "초 단위 퀴즈로 빠른 회상"
+   ],
+   "weaknesses": [
+    "보상 중심 게임화",
+    "타이머 압박",
+    "앱 116.2MB, 프리미엄 구독"
+   ],
+   "chapterOrPageTemplate": "스토리형 설명 → 퀴즈 게임 → 앱 내 코딩",
+   "mobileNotes": "구 Programming Hero 스토어 주소가 Fibu 목록으로 열림."
+  },
+  {
+   "name": "Codecademy Go",
+   "url": "https://apps.apple.com/us/app/codecademy-go/id1376029326",
+   "kind": "웹 강의의 모바일 복습 보조 앱",
+   "features": [
+    "매일 훑어보는 플래시카드",
+    "문법 연습",
+    "진도 추적과 스트릭",
+    "실무 팁 글"
+   ],
+   "strengths": [
+    "'복습·연습 전용'이라는 명확한 역할 설정",
+    "앱 29.3MB로 가벼움"
+   ],
+   "weaknesses": [
+    "퀴즈가 동작하지 않거나 직관적이지 않다는 리뷰",
+    "복습 순서가 쉬운 것에서 어려운 것 순이 아니라는 리뷰",
+    "본 학습은 데스크톱 전제"
+   ],
+   "chapterOrPageTemplate": "플래시카드 묶음 → 짧은 퀴즈",
+   "mobileNotes": "학습자 인용: 하루 몇 분의 개념 복습이 코딩하지 않는 날에도 기억 유지에 도움."
+  },
+  {
+   "name": "Khan Academy 모바일",
+   "url": "https://www.khanacademy.org/downloads",
+   "kind": "종합 학습 앱",
+   "features": [
+    "영상 북마크 후 다운로드로 오프라인 시청",
+    "다운로드 화질 설정",
+    "앱과 웹 간 진도 동기화, 이어서 보기",
+    "저연결 환경용 별도 플랫폼 Kolibri"
+   ],
+   "strengths": [
+    "오프라인 다운로드 제공",
+    "진도 동기화"
+   ],
+   "weaknesses": [
+    "글은 오프라인 불가, 영상만 가능",
+    "동기화 실패 리뷰 존재",
+    "영상 중심이라 흘끗 보기에 부적합"
+   ],
+   "mobileNotes": "검색 결과 요약 기준(원문 미열람)."
+  },
+  {
+   "name": "Anki / AnkiDroid",
+   "url": "https://docs.ankidroid.org/",
+   "kind": "간격 반복 플래시카드(오픈소스)",
+   "features": [
+    "능동 회상 + 간격 반복, SM-2와 FSRS(기본 목표 기억률 90%)",
+    "4방향 스와이프·더블 터치·4분할 탭 존에 동작 배정",
+    "카드 TTS, 답 자동 표시, 전체 화면, 화이트보드",
+    "하루 새 카드·복습 상한, Easy Days",
+    "하단 답 버튼(다음 복습 시점 표시)"
+   ],
+   "strengths": [
+    "로컬 저장으로 계정 없이 사용",
+    "제스처와 화면을 세밀하게 조정 가능",
+    "학습 과학 근거를 문서화"
+   ],
+   "weaknesses": [
+    "카드 제작 부담",
+    "새 카드 20장이면 복습 약 200장이 되는 부하",
+    "시각적 단계 설명에는 맞지 않음"
+   ],
+   "chapterOrPageTemplate": "질문 면 → (떠올림) → 답 표시 → Again/Hard/Good/Easy 평가",
+   "mobileNotes": "탭 존 방식과 하단 버튼 배치가 한 손 사용의 참고 모델."
+  },
+  {
+   "name": "Mochi",
+   "url": "https://mochi.cards/docs/",
+   "kind": "Markdown 노트 + 간격 반복 카드",
+   "features": [
+    "Markdown으로 노트와 카드 작성, 서로 연결",
+    "템플릿과 동적 필드",
+    "FSRS, 벼락치기 모드, 역방향 복습",
+    "백업·내보내기·가져오기, API"
+   ],
+   "strengths": [
+    "노트와 카드가 한 작업 공간에 있음",
+    "텍스트 기반이라 생성·버전 관리가 쉬움"
+   ],
+   "weaknesses": [
+    "알고리즘 시각화 기능 없음",
+    "세부 간격 규칙은 색인 페이지에서 확인 못함"
+   ],
+   "chapterOrPageTemplate": "Markdown 본문 안에서 카드 정의 → 복습 큐",
+   "mobileNotes": "챕터 Markdown에서 복습 카드를 함께 정의하는 방식의 참고 사례."
+  },
+  {
+   "name": "RemNote",
+   "url": "https://help.remnote.com/en/articles/6026144-the-remnote-spaced-repetition-algorithm",
+   "kind": "노트 + 간격 반복",
+   "features": [
+    "기본 스케줄러 Anki SM-2, FSRS 선택 가능",
+    "Forgot/Hard/Good/Easy 4버튼",
+    "시작 Ease 230%, 최소 130%, Easy 보너스 1.3",
+    "늦은 복습 보너스"
+   ],
+   "strengths": [
+    "스케줄러 수치를 공개 문서화",
+    "카드별·전체 스케줄러 변경 가능"
+   ],
+   "weaknesses": [
+    "설정 복잡도",
+    "노트에서 카드가 생성되는 방식은 해당 문서에서 확인 못함"
+   ],
+   "mobileNotes": "직접 구현 시 버튼 4개보다 2개(떠올림/못 떠올림)가 장갑 환경에 맞다(이 조사의 판단)."
+  },
+  {
+   "name": "Algorithms: Explained and Animated",
+   "url": "https://algorithm.wiki/en/app/",
+   "kind": "알고리즘 애니메이션 학습 앱(iOS/Android)",
+   "features": [
+    "단계별 애니메이션 설명",
+    "조건을 바꿔 돌려보는 Sim Mode",
+    "정렬 6종, 탐색, 그래프 탐색 5종, 자료구조 7종, 하노이, 보안·압축",
+    "한국어 포함 7개 언어",
+    "일부 무료 후 전체 구매"
+   ],
+   "strengths": [
+    "사용자 속도로 넘기고 바로 다시 볼 수 있음",
+    "주제 범위가 이 프로젝트와 거의 겹침",
+    "앱 33.6MB"
+   ],
+   "weaknesses": [
+    "설명문상 코드 연동 언급 없음",
+    "회상 문제나 간격 복습 언급 없음"
+   ],
+   "chapterOrPageTemplate": "주제 선택 → 클릭-스루 애니메이션 설명 → Sim Mode 시도",
+   "mobileNotes": "세로·가로 모두 지원(iPad). 직접 설치해 단계 분량을 참고할 만하다."
+  },
+  {
+   "name": "Imprint",
+   "url": "https://apps.apple.com/us/app/imprint-learn-visually/id1482780647",
+   "kind": "시각 요약 마이크로러닝 앱",
+   "features": [
+    "2분 이내 챕터",
+    "애니메이션 시각 자료가 붙은 클릭-스루 요약",
+    "매일 퀴즈",
+    "통찰·그림 저장 후 복습"
+   ],
+   "strengths": [
+    "그림 중심의 한 카드 한 생각",
+    "읽기를 꺼리는 사용자도 끝까지 본다는 리뷰"
+   ],
+   "weaknesses": [
+    "앱 225.8MB",
+    "구독제",
+    "코드·기술 절차에는 미검증"
+   ],
+   "chapterOrPageTemplate": "시각 카드 연속(탭으로 넘김) → 중간 퀴즈 → 저장",
+   "mobileNotes": "챕터 길이 2분이라는 명시적 상한이 참고 수치."
+  },
+  {
+   "name": "Headway",
+   "url": "https://apps.apple.com/us/app/headway-daily-book-summaries/id1457185832",
+   "kind": "책 요약 마이크로러닝 앱",
+   "features": [
+    "15분 미만 요약, 읽기 또는 듣기",
+    "탭으로 넘기는 일일 마이크로러닝 세션",
+    "간격 반복 플래시카드",
+    "홈 화면 위젯, 챌린지"
+   ],
+   "strengths": [
+    "같은 내용을 글과 음성으로 제공",
+    "저장한 통찰을 카드로 전환"
+   ],
+   "weaknesses": [
+    "수동적 요약 소비 위주",
+    "앱 236.2MB",
+    "구독제"
+   ],
+   "chapterOrPageTemplate": "핵심 아이디어 카드 연속 → 저장 → 플래시카드 복습",
+   "mobileNotes": "Apple Watch 지원."
+  },
+  {
+   "name": "LeetCode 모바일",
+   "url": "https://leetcode.com",
+   "kind": "코딩 문제 풀이 플랫폼의 모바일 경험",
+   "features": [
+    "폰·태블릿에서 문제 풀이와 제출(2026.4 릴리스 노트, 검색 스니펫)"
+   ],
+   "strengths": [
+    "문제 읽기·토론 열람에는 사용 가능"
+   ],
+   "weaknesses": [
+    "모바일 편집기가 자주 오작동한다는 포럼 글(검색 스니펫)",
+    "폰 타이핑 전제"
+   ],
+   "mobileNotes": "전부 낮은 신뢰도. 폰에서 코드 작성을 요구하지 말아야 할 근거로만 사용."
+  },
+  {
+   "name": "Google Web Stories (탭-스루 스토리 포맷)",
+   "url": "https://amp.dev/documentation/guides-and-tutorials/start/create_successful_stories/",
+   "kind": "세로 전체 화면 탭-스루 콘텐츠 포맷과 저작 가이드",
+   "features": [
+    "4~30쪽, 평균 10~20쪽",
+    "쪽당 200자 이하, 최소 글꼴 24pt",
+    "애니메이션 500ms 미만",
+    "탭으로 앞뒤 이동, 상하단 안전 영역 고려"
+   ],
+   "strengths": [
+    "쪽당 분량에 대한 구체적 수치 기준",
+    "세로 화면 전제"
+   ],
+   "weaknesses": [
+    "마케팅·미디어 콘텐츠 기준이라 코드에는 그대로 적용 불가",
+    "쪽당 10단어 권고는 설명에는 너무 짧음"
+   ],
+   "chapterOrPageTemplate": "표지 → 한 쪽 한 메시지 연속 → 마무리",
+   "mobileNotes": "탭 가능한 요소를 줄여 넘김 조작을 가리지 말라는 권고."
+  },
+  {
+   "name": "Readwise Daily Review",
+   "url": "https://docs.readwise.io/readwise/docs/faqs/reviewing-highlights",
+   "kind": "하이라이트 일일 복습(간격 반복)",
+   "features": [
+    "문서별 빈도 조절과 가중 재노출",
+    "Mastery: 회상 확률 반감기(7/14/28일), 50% 이하 카드부터 제시",
+    "Keep/Discard 처리",
+    "테마 복습(기본 5개, 1~15개 조절, 스트릭에 반영)"
+   ],
+   "strengths": [
+    "하루 분량이 작고 고정적",
+    "고정 날짜가 아닌 확률 기반의 단순한 일정"
+   ],
+   "weaknesses": [
+    "Daily Review 기본 개수와 스와이프 조작은 문서에서 확인 못함",
+    "수동적 다시 읽기 비중이 큼"
+   ],
+   "chapterOrPageTemplate": "오늘의 카드 몇 장 → 각 카드에 유지/버림/숙달 처리 → 끝",
+   "mobileNotes": "복습 도중 앱을 나가면 위치를 잃던 버그를 수정했다는 릴리스 노트(검색 스니펫)."
+  }
+ ],
+ "openQuestions": [
+  "폰이 Android인가 iPhone인가? 설치 방식, 저장소 삭제 정책, Wake Lock, TTS 음성 품질이 달라진다.",
+  "작업장에서 폰을 꺼낼 수 있는 때는 언제인가(휴식 시간만인가), 이어폰은 허용되는가? 음성 복습 기능의 필요 여부가 여기서 갈린다.",
+  "작업장에 Wi-Fi나 데이터 통신이 되는가? 안 된다면 전 챕터 사전 캐시가 필수이고 업데이트는 집에서만 받게 된다.",
+  "작업 중 장갑을 끼는가, 어떤 종류인가? 탭 존 크기와 제스처 범위를 정하는 기준이다.",
+  "근무 형태가 주간 고정인가 교대인가? 복습 일정과 달력의 '하루' 경계를 정해야 한다.",
+  "Python 들여쓰기를 표준 4칸으로 둘지 폭 절약을 위해 2칸으로 줄일지? 외울 코드의 모양이므로 초기에 한 번 정해야 한다.",
+  "브라우저 안에서 Python을 실제 실행하는 기능(Pyodide 등)이 폰에서 감당할 만한가? 이 조사에서는 다루지 않았다.",
+  "복습 카드의 단위를 무엇으로 할 것인가: 알고리즘 하나당 한 장인가, 불변식·점화식·한 단계 전이마다 한 장인가?",
+  "한국어 TTS가 한국어·영어 용어·변수명이 섞인 문장을 들을 만하게 읽는가? 실제 기기 시험이 필요하다.",
+  "화면 잠금 상태에서 웹 음성 합성이 계속 재생되는가? 근거가 포럼 글뿐이라 기기에서 확인해야 한다.",
+  "진도 백업을 파일 내보내기로만 할 것인가, 아니면 저장소에 수동으로 올려 두는 절차를 둘 것인가?",
+  "한국 산업안전 법령이나 해당 사업장 규정상 작업 중 휴대폰 사용 제한이 있는가? 조사하지 않았다."
+ ]
+}
