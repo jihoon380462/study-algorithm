@@ -1,6 +1,10 @@
+> **폐기된 문서다. 따르지 않는다.**
+> 사용자가 받아들이지 않은 전제(버튼으로 넘기는 화면, 머릿속 재생 카드, 조사자가 임의로 넓힌 범위)로 쓰였다.
+> 지금 기준은 저장소 루트의 `CLAUDE.md`와 `.claude/skills/textbook-chapter/SKILL.md`다. 기록으로만 남긴다.
+
 # 04. 난이도 규칙과 챕터 지도
 
-조사일 2026-11-23. 원자료는 [data/curriculum-roadmap.json](data/curriculum-roadmap.json)과 [data/curriculum-reviews.json](data/curriculum-reviews.json)에 있다.
+조사일 2026-11-23. 원자료는 [data/curriculum-roadmap.json](../data/curriculum-roadmap.json)과 [data/curriculum-reviews.json](../data/curriculum-reviews.json)에 있다.
 
 ## 1. 요약
 
