@@ -158,7 +158,7 @@ out['br'] = {'input': S, 'rows': srow, 'result': ok, 'maxDepth': depth,
              'nested': {'input': '{[()]}', 'result': ok4, 'maxDepth': d4},
              'extraClose': {'input': '())', 'rows': srow5, 'result': ok5}}
 out['code'] = {'selection_sort': CODE_SEL, 'bsearch': CODE_BS, 'balanced': CODE_BR}
-json.dump(out, open('cards.json', 'w'), ensure_ascii=False, indent=1)
+json.dump(out, open('pilot-cards.json', 'w'), ensure_ascii=False, indent=1)
 print(json.dumps({k: out[k] for k in ('python', 'lint')}, ensure_ascii=False))
 print('SEL', comps, swaps, res, rounds, '| sorted input:', c2, s2, '| n5 events:', c5 + s5)
 for r in rows: print('  ', r['kind'], r['i'], r['j'], r['m'], r['what'], r['result'], r['a'])
